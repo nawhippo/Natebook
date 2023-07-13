@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Entity
+@Table(name = "posts")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,14 +4,19 @@ import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import repository.*;
+import service.UserService;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
+
+    private final UserService userService;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
     private  UserRepository userRepository;
 
     @GetMapping
@@ -41,5 +46,10 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/createAccount")
+    public void createAccount(@RequestBody User user){
+        userService.saveUser(user);
     }
 }

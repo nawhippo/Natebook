@@ -9,7 +9,23 @@ import java.util.List;
 
 
 @Entity
+@Table(name = "users")
 public class User {
+    public User(Long id, String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<User> friends) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.posts = posts;
+        this.messages = messages;
+        this.friends = friends;
+    }
+
+    public User() {
+
+    }
+
     public String getUsername() {
         return username;
     }
@@ -80,7 +96,21 @@ public class User {
         this.email = email;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public void setFriends(List<User> friends) {
+        this.friends = friends;
+    }
 
     public void setId(Long id) {
         this.id = id;
