@@ -17,10 +17,7 @@ import java.util.List;
 @SpringBootTest
 class SocialMediaAppApplicationTests {
 	private UserRepository userRepository;
-
-
 	private TestEntityManager entityManager;
-
 	@Test
 	void contextLoads() {
 		User test = new User();

@@ -3,6 +3,7 @@ package repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import models.User;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,5 +13,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long>{
     List<User> findByFirstname(String firstName);
     List<User> findByLastname(String lastName);
-    List<User> FindByFirstNameAndLastName(String firstName, String lastName);
+    User findByUserID(long uid);
+    @Query("SELECT u FROM User u WHERE u.firstname = :firstname AND u.lastname = :lastname")
+    List<User> findByFirstnameAndLastname(@Param("firstname") String firstname, @Param("lastname") String lastname);
 }

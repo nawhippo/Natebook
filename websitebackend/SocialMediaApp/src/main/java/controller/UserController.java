@@ -1,5 +1,6 @@
 package controller;
 import models.Message;
+import models.Post;
 import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import repository.*;
 import service.UserService;
+import service.UserServiceImpl;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
@@ -18,38 +22,42 @@ public class UserController {
         this.userService = userService;
     }
     private  UserRepository userRepository;
-
+    private UserServiceImpl userserviceimpl;
     @GetMapping
     public String handleRequest(){
         return "Welcome to the users page!";
     }
 
+    @GetMapping("/{userId}/friends")
+    public ResponseEntity<List<User>> getAllFriends(@PathVariable Long userId){
+        return userserviceimpl.getFriends(userId);
+    }
+
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserbyId(@PathVariable Long userId){
-        User user = userRepository.findById(userId).orElse(null);
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        }else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<User> findUserbyId(@PathVariable Long userId){
+
+        return userserviceimpl.findByUserID(userId);
+    }
+
+    @GetMapping("/{userId}/messages")
+    public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId){
+        return userserviceimpl.getAllMessages(userId);
     }
 
     @GetMapping("/{userId}/{messageId}")
-    public ResponseEntity<Message> getMessagebyId(@PathVariable Long userId, @PathVariable Long messageId){
-        User user = userRepository.findById(userId).orElse(null);
-        if (user != null) {
-            for (int i = 0; i < user.getMessages().size(); i++) {
-                if (user.getMessages().get(i).getId() == messageId) {
-                    return ResponseEntity.ok(user.getMessages().get(i));
-                }
-            }
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Message> getMessageById(@PathVariable Long userId, @PathVariable Long messageId) {
+        return userserviceimpl.getMessageById(userId, messageId);
+    }
+
+
+    @GetMapping("/{userId}/{postId}")
+    public ResponseEntity<Post> getPostById(@PathVariable Long userId, @PathVariable Long postId) {
+        return userserviceimpl.getPostById(userId, postId);
     }
 
     @PostMapping("/createAccount")
     public void createAccount(@RequestBody User user){
+
         userService.saveUser(user);
     }
 }

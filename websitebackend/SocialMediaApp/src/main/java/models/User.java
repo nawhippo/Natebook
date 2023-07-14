@@ -2,6 +2,7 @@ package models;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.Id;
 
+import java.util.Collections;
 import java.util.List;
 //is a database entity, how fun.
 
@@ -11,8 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
-    public User(Long id, String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<User> friends) {
-        this.id = id;
+    public User(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<User> friends) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -20,6 +20,17 @@ public class User {
         this.posts = posts;
         this.messages = messages;
         this.friends = friends;
+    }
+
+
+    public User(String firstname, String lastname, String email, String username) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.posts = Collections.emptyList();
+        this.messages = Collections.emptyList();
+        this.friends = Collections.emptyList();
     }
 
     public User() {
