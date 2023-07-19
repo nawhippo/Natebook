@@ -1,4 +1,4 @@
-package models;
+package SoloProject.SocialMediaApp.models;
 
 
 import jakarta.persistence.*;
@@ -6,21 +6,23 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "tables")
+@Table(name = "messages")
 public class Message {
 
     @OneToMany
-    private List<User> recipients;
+    private List<AppUser> recipients;
 
-    @OneToOne
-    private User sender;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser sender;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String content;
 
-    public Message(Long id, String content, User sender, List<User> recipients) {
+    public Message(Long id, String content, AppUser sender, List<AppUser> recipients) {
         this.id = id;
         this.content = content;
         this.sender = sender;
@@ -41,12 +43,12 @@ public class Message {
     }
 
 
-    public User getSender() {
+    public AppUser getSender() {
         return sender;
     }
 
 
-    public List<User> getRecipients() {
+    public List<AppUser> getRecipients() {
         return recipients;
     }
 
@@ -58,12 +60,12 @@ public class Message {
         this.content = content;
     }
 
-    public void setSender(User user) {
-        this.sender = user;
+    public void setSender(AppUser appUser) {
+        this.sender = appUser;
     }
 
 
-    public void setRecipients(List<User> recipients) {
+    public void setRecipients(List<AppUser> recipients) {
         this.recipients = recipients;
     }
 }

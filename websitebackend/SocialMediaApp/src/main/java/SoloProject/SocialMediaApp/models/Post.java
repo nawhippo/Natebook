@@ -1,8 +1,6 @@
-package models;
+package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Entity
 @Table(name = "posts")
@@ -12,7 +10,7 @@ public class Post {
     private Long id;
     @ManyToOne
     @JoinColumn(name ="user_id")
-    private User user;
+    private AppUser appUser;
 
 
     //title
@@ -26,12 +24,12 @@ public class Post {
 
 
 
-    public User getUser() {
-        return user;
+    public AppUser getUser() {
+        return appUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 
     public String getTitle() {

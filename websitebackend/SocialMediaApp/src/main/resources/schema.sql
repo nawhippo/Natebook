@@ -1,24 +1,31 @@
--- Drop the users table if it exists
-DROP TABLE IF EXISTS users CASCADE;
-
--- Drop the posts table if it exists
-DROP TABLE IF EXISTS posts CASCADE;
-
--- Create a table for users
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS app_user (
   id SERIAL PRIMARY KEY,
-  firstname VARCHAR(50) NOT NULL,
-  lastname VARCHAR(50) NOT NULL,
-  email VARCHAR(100) NOT NULL,
-  username VARCHAR(50) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  firstname VARCHAR(255),
+  lastname VARCHAR(255),
+  email VARCHAR(255),
+  username VARCHAR(255)
 );
 
--- Create a table for posts only if it doesn't exist
 CREATE TABLE IF NOT EXISTS posts (
   id SERIAL PRIMARY KEY,
-  user_id INT NOT NULL,
-  content TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  user_id INT,
+  title VARCHAR(255),
+  description TEXT,
+  likes INT,
+  dislikes INT,
+  FOREIGN KEY (user_id) REFERENCES app_user (id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id SERIAL PRIMARY KEY,
+  content TEXT,
+  sender_id INT,
+  FOREIGN KEY (sender_id) REFERENCES app_user (id)
+);
+
+CREATE TABLE IF NOT EXISTS message_recipients (
+  message_id INT,
+  recipient_id INT,
+  FOREIGN KEY (message_id) REFERENCES messages (id),
+  FOREIGN KEY (recipient_id) REFERENCES app_user (id)
 );

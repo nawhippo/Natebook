@@ -1,40 +1,36 @@
-package controller;
-import models.Message;
-import models.Post;
-import models.User;
+package SoloProject.SocialMediaApp.controller;
+import SoloProject.SocialMediaApp.models.AppUser;
+import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import SoloProject.SocialMediaApp.models.Message;
+import SoloProject.SocialMediaApp.models.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import repository.*;
-import service.UserService;
-import service.UserServiceImpl;
+import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-    private  UserRepository userRepository;
-    private UserServiceImpl userserviceimpl;
     @GetMapping
-    public String handleRequest(){
-        return "Welcome to the users page!";
+    public String helloWorld(){
+        return "Hello, user!";
     }
+    private final AppUserServiceImpl userserviceimpl;
+    @Autowired
+    public UserController(AppUserServiceImpl userserviceimpl) {
+        this.userserviceimpl = userserviceimpl;
+    }
+    private AppUserRepository appUserRepository;
 
     @GetMapping("/{userId}/friends")
-    public ResponseEntity<List<User>> getAllFriends(@PathVariable Long userId){
+    public ResponseEntity<List<AppUser>> getAllFriends(@PathVariable Long userId){
         return userserviceimpl.getFriends(userId);
     }
-
     @GetMapping("/{userId}")
-    public ResponseEntity<User> findUserbyId(@PathVariable Long userId){
+    public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId){
 
         return userserviceimpl.findByUserID(userId);
     }
@@ -56,8 +52,8 @@ public class UserController {
     }
 
     @PostMapping("/createAccount")
-    public void createAccount(@RequestBody User user){
+    public void createAccount(@RequestBody AppUser appUser){
 
-        userService.saveUser(user);
+        userserviceimpl.saveUser(appUser);
     }
 }

@@ -1,6 +1,6 @@
-package models;
+package SoloProject.SocialMediaApp.models;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,9 +10,14 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "users")
-public class User {
-    public User(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<User> friends) {
+@Table(name = "app_users")
+public class AppUser {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -23,7 +28,7 @@ public class User {
     }
 
 
-    public User(String firstname, String lastname, String email, String username) {
+    public AppUser(String firstname, String lastname, String email, String username) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -33,7 +38,7 @@ public class User {
         this.friends = Collections.emptyList();
     }
 
-    public User() {
+    public AppUser() {
 
     }
 
@@ -49,29 +54,32 @@ public class User {
         return messages;
     }
 
-    public List<User> getFriends() {
+    public List<AppUser> getFriends() {
         return friends;
     }
 
-    @jakarta.persistence.Id
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    String firstname;
-    String lastname;
-    String email;
+    @Column
+    private String firstname;
 
-    String username;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Column
+    private String lastname;
+
+    @Column
+    private String email;
+
+    @Column
+    private String username;
+
+    @OneToMany(mappedBy = "app_user", cascade = CascadeType.ALL)
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<Message> messages;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<User> friends;
-
+    @OneToMany
+    @JoinColumn(name = "friend_id")
+    private List<AppUser> friends;
 
     @Override
     public String toString() {
@@ -119,7 +127,7 @@ public class User {
         this.messages = messages;
     }
 
-    public void setFriends(List<User> friends) {
+    public void setFriends(List<AppUser> friends) {
         this.friends = friends;
     }
 

@@ -1,8 +1,7 @@
 package SoloProject.SocialMediaApp;
+import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
-import repository.UserRepository;
-import models.User;
+import SoloProject.SocialMediaApp.models.AppUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -16,14 +15,14 @@ import java.util.Collections;
 class SocialMediaAppApplicationTests {
 
 @Autowired
-private UserRepository userRepository;
+private AppUserRepository appUserRepository;
 
 @Autowired
 private TestEntityManager entityManager;
 
 	@Test
 	void contextLoads() {
-		User test = new User();
+		AppUser test = new AppUser();
 		test.setFirstname("Larry");
 		test.setLastname("Fart");
 		test.setEmail("NateWip@Cooledudes.com");
@@ -31,9 +30,9 @@ private TestEntityManager entityManager;
 		test.setPosts(Collections.emptyList());
 		test.setMessages(Collections.emptyList());
 		test.setFriends(Collections.emptyList());
-		User savedUser = userRepository.save(test);
+		AppUser savedAppUser = appUserRepository.save(test);
 
-		User retrievedUser = entityManager.find(User.class, savedUser.getId());
+		AppUser retrievedAppUser = entityManager.find(AppUser.class, savedAppUser.getId());
 		// Add assertions or further test logic as needed
 	}
 }
