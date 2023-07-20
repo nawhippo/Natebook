@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId){
 
-        return userserviceimpl.findByUserID(userId);
+        return userserviceimpl.findByAppUserID(userId);
     }
 
     @GetMapping("/{userId}/messages")

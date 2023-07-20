@@ -11,7 +11,7 @@ public interface AppUserService {
 
     AppUser createUser(String firstname, String lastname, String username, String email);
 
-    ResponseEntity<AppUser> findByUserID(Long id);
+    ResponseEntity<AppUser> findByAppUserID(Long id);
 
     ResponseEntity<List<AppUser>> getFriends(Long userId);
     ResponseEntity<List<AppUser>> findByFirstname(String firstname);

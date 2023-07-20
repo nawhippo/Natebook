@@ -19,9 +19,6 @@
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
   </component>
-  <component name="DBNavigator.Project.FileConnectionMappingManager">
-    <mapping file-url="file://$PROJECT_DIR$/websitebackend/SocialMediaApp/src/main/resources/schema.sql" connection-id="df1ffba0-06cf-4bb6-a054-aede4228ec26" session-id="MAIN" current-schema="public" />
-  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />

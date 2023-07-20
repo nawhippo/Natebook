@@ -8,27 +8,32 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name ="user_id")
     private AppUser appUser;
 
+    @Column
+    private String title;
 
-    //title
-    String title;
-    //description
-    String description;
-    //like/dislike
-    int likes;
-    int dislikes;
+    @Column
+    private String description;
 
+    @Column
+    private int likes;
 
+    @Column
+    private int dislikes;
 
+    public Long getId() {
+        return id;
+    }
 
-    public AppUser getUser() {
+    public AppUser getAppUser() {
         return appUser;
     }
 
-    public void setUser(AppUser appUser) {
+    public void setAppUser(AppUser appUser) {
         this.appUser = appUser;
     }
 
@@ -64,16 +69,7 @@ public class Post {
         this.dislikes = dislikes;
     }
 
-
-
     public void setId(Long id) {
         this.id = id;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-
-
 }

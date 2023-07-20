@@ -32,7 +32,7 @@ private TestEntityManager entityManager;
 		test.setFriends(Collections.emptyList());
 		AppUser savedAppUser = appUserRepository.save(test);
 
-		AppUser retrievedAppUser = entityManager.find(AppUser.class, savedAppUser.getId());
+		AppUser retrievedAppUser = entityManager.find(AppUser.class, savedAppUser.getAppUserID());
 		// Add assertions or further test logic as needed
 	}
 }

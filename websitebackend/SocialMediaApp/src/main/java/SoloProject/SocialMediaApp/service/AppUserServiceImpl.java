@@ -30,8 +30,8 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ResponseEntity<AppUser> findByUserID(Long id) {
-        AppUser appUser = repository.findByUserID(id);
+    public ResponseEntity<AppUser> findByAppUserID(Long id) {
+        AppUser appUser = repository.findByAppUserID(id);
         if (appUser != null) {
             return ResponseEntity.ok(appUser);
         } else {
@@ -63,7 +63,7 @@ public class AppUserServiceImpl implements AppUserService {
     //Post functions
     @Override
     public ResponseEntity<Post> getPostById(Long userId, Long postId){
-        AppUser appUser = findByUserID(userId).getBody();
+        AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
             for (Post post : appUser.getPosts()) {
                 if (post.getId().equals(postId)) {
@@ -77,7 +77,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResponseEntity<Message> getMessageById(Long userId, Long messageId){
-        AppUser appUser = findByUserID(userId).getBody();
+        AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
             for (Message message : appUser.getMessages()) {
                 if (message.getId().equals(messageId)) {
@@ -94,7 +94,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResponseEntity<List<Post>> getAllPosts(Long userId) {
-        AppUser appUser = findByUserID(userId).getBody();
+        AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
             return (ResponseEntity<List<Post>>) appUser.getPosts();
         } else {
@@ -107,7 +107,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResponseEntity<List<Message>> getAllMessages(Long userId) {
-        AppUser appUser = findByUserID(userId).getBody();
+        AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
             return (ResponseEntity<List<Message>>) appUser.getMessages();
         } else {
@@ -119,7 +119,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResponseEntity<List<AppUser>> getFriends(Long userId) {
-        AppUser appUser = findByUserID(userId).getBody();
+        AppUser appUser = findByAppUserID(userId).getBody();
         return (ResponseEntity<List<AppUser>>) appUser.getFriends();
     }
 

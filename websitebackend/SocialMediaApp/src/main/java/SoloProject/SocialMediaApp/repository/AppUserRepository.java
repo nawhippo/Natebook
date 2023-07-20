@@ -7,12 +7,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
-
 @Repository
-public interface AppUserRepository extends JpaRepository<AppUser, Long>{
+public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     List<AppUser> findByFirstname(String firstName);
+
     List<AppUser> findByLastname(String lastName);
-    AppUser findByUserID(long uid);
-    @Query("SELECT u FROM User u WHERE u.firstname = :firstname AND u.lastname = :lastname")
+
+    AppUser findByAppUserID(long uid);
+
+    @Query("SELECT u FROM AppUser u WHERE u.firstname = :firstname AND u.lastname = :lastname")
     List<AppUser> findByFirstnameAndLastname(@Param("firstname") String firstname, @Param("lastname") String lastname);
 }
