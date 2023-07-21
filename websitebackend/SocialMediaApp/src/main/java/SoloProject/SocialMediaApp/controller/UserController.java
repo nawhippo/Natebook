@@ -11,7 +11,6 @@ import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
 public class UserController {
 
     @GetMapping

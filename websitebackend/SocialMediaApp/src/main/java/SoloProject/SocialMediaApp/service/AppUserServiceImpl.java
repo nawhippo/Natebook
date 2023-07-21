@@ -6,11 +6,13 @@ import SoloProject.SocialMediaApp.models.Post;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
 //intermediary between model and database (SoloProject.SocialMediaApp.repository)
+@Service
 public class AppUserServiceImpl implements AppUserService {
 
     AppUserRepository repository;
