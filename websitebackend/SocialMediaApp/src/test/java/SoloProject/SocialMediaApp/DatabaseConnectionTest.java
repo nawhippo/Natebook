@@ -6,15 +6,20 @@ import java.sql.SQLException;
 
 public class DatabaseConnectionTest {
     public static void main(String[] args) {
+        // Retrieve the values of the environment variables
+        String dbUrl = System.getenv("DB_URL");
+        String dbUsername = System.getenv("DB_USERNAME");
+        String dbPassword = System.getenv("DB_PASSWORD");
+
         try {
             // Load the database driver
             Class.forName("org.postgresql.Driver");
 
             // Establish a connection to the database
             Connection connection = DriverManager.getConnection(
-                    "jdbc:postgresql://ep-dry-star-174063.us-east-2.aws.neon.tech/neondb",
-                    "natewhip0",
-                    "3CsjZBSHTg6O"
+                    dbUrl,
+                    dbUsername,
+                    dbPassword
             );
 
             // If the connection is successful, print a success message
