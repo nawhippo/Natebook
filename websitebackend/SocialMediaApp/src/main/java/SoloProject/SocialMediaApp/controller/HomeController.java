@@ -14,6 +14,6 @@ public class HomeController {
 
     @GetMapping("/about") // The endpoint URL: /api/about
     public String about() {
-        return "{\"message\": \"Facebook clone DUDE!.\"}";
+        return "{\"message\": \"Welcome to my about page\"}";
     }
 }

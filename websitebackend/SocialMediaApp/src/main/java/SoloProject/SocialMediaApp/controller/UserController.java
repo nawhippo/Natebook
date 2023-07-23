@@ -55,4 +55,18 @@ public class UserController {
 
         userserviceimpl.saveUser(appUser);
     }
+
+    @PostMapping("/{userId}/sendMessage")
+    public ResponseEntity<Message> sendMessage(
+            @PathVariable Long userId,
+            @RequestParam String content,
+            @RequestParam List<Long> recipientIds
+    ) {
+        return userserviceimpl.sendMessage(userId, content, recipientIds);
+    }
+
+    @GetMapping("/{userId}/posts")
+    public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId) {
+        return userserviceimpl.getAllPosts(userId);
+    }
 }

@@ -7,6 +7,18 @@ import java.util.List;
 @Entity
 @Table(name = "app_users")
 public class AppUser {
+    public void setAppUserID(Long appUserID) {
+        this.appUserID = appUserID;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long appUserID;
@@ -23,6 +35,9 @@ public class AppUser {
     @Column
     private String username;
 
+    @Column
+    private String password;
+
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<Post> posts;
 
@@ -37,7 +52,7 @@ public class AppUser {
     )
     private List<AppUser> friends;
 
-    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends) {
+    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -45,13 +60,15 @@ public class AppUser {
         this.posts = posts;
         this.messages = messages;
         this.friends = friends;
+        this.password = password;
     }
 
-    public AppUser(String firstname, String lastname, String email, String username) {
+    public AppUser(String firstname, String lastname, String email, String username, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.username = username;
+        this.password = password;
         this.posts = Collections.emptyList();
         this.messages = Collections.emptyList();
         this.friends = Collections.emptyList();

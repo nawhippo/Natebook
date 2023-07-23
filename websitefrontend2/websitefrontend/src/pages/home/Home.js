@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Home = () => {
-  const [aboutData, setAboutData] = useState(null);
+  const [homeData, setHomeData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -13,7 +13,7 @@ const Home = () => {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setAboutData(data);
+        setHomeData(data);
         setIsLoading(false);
       } catch (error) {
         setError(error.message);
@@ -34,8 +34,18 @@ const Home = () => {
 
   return (
     <div>
-      <h1>About Page</h1>
-      <p>{aboutData && aboutData.message}</p>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            FirstName: 
+            <input type="text" name="firstName" value={FormData.firstNane} onChange={handleChange} />
+          </label>
+          <label>
+            LastName: 
+            <input type="text" name="lastName" value={FormData.firstNane} onChange={handleChange} />
+          </label>
+        </div>
+      </form>
     </div>
   );
 };

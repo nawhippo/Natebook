@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,8 +20,8 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     @Override
-    public AppUser createUser(String firstName, String lastName, String username, String email){
-    AppUser newuser = new AppUser(firstName, lastName, username, email);
+    public AppUser createUser(String firstName, String lastName, String username, String email, String password){
+    AppUser newuser = new AppUser(firstName, lastName, username, email, password);
     saveUser(newuser);
     return newuser;
     }
@@ -125,5 +126,36 @@ public class AppUserServiceImpl implements AppUserService {
         return (ResponseEntity<List<AppUser>>) appUser.getFriends();
     }
 
+
+
+    @Override
+    public ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds) {
+        // Find the sender user
+        AppUser senderUser = findByAppUserID(senderId).getBody();
+        if (senderUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Find the recipient users
+        List<AppUser> recipients = new ArrayList<>();
+        for (Long recipientId : recipientIds) {
+            AppUser recipient = findByAppUserID(recipientId).getBody();
+            if (recipient != null) {
+                recipients.add(recipient);
+            }
+        }
+
+        // Create the message
+        Message message = new Message();
+        message.setContent(content);
+        message.setSender(senderUser);
+        message.setRecipients(recipients);
+
+        // Save the message to the sender's messages list
+        senderUser.getMessages().add(message);
+        saveUser(senderUser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+    }
 
 }

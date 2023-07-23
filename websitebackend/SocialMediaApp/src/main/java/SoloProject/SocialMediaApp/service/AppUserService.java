@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AppUserService {
 
-    AppUser createUser(String firstname, String lastname, String username, String email);
+    AppUser createUser(String firstName, String lastName, String username, String email, String password);
 
     ResponseEntity<AppUser> findByAppUserID(Long id);
 
@@ -26,7 +26,7 @@ public interface AppUserService {
     ResponseEntity<Message> getMessageById(Long MessageId, Long userId);
     ResponseEntity<List<Message>> getAllMessages(Long userid);
 
-
+    ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds);
 
 
 }
