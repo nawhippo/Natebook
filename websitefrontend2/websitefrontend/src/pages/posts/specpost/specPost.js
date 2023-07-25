@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
-const specFriend = ({ userId, friendId }) => {
-  const [friendData, setFriendData] = useState(null);
+const MessageById = ({ userId, messageId }) => {
+  const [messageData, setMessageData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchFriendData = async () => {
+    const fetchMessage = async () => {
       try {
-        const response = await fetch(`/api/${userId}/friends/${friendId}`);
+        const response = await fetch(`/api/${userId}/${messageId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setFriendData(data);
+        setMessageData(data);
         setIsLoading(false);
       } catch (error) {
         setError(error.message);
@@ -21,8 +21,8 @@ const specFriend = ({ userId, friendId }) => {
       }
     };
 
-    fetchFriendData();
-  }, [userId, friendId]);
+    fetchMessage();
+  }, [userId, messageId]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -34,17 +34,19 @@ const specFriend = ({ userId, friendId }) => {
 
   return (
     <div>
-      <h1>Friend Details</h1>
-      {friendData ? (
-        <div className="friend-card">
-          <h2>{friendData.name}</h2>
-          <p>{friendData.email}</p>
+      {messageData ? (
+        <div>
+          <h1>Message Details</h1>
+          <p>ID: {messageData.id}</p>
+          <p>Title: {messageData.title}</p>
+          <p>Description: {messageData.description}</p>
+          {/* Additional message properties can be displayed here */}
         </div>
       ) : (
-        <p>Friend not found.</p>
+        <p>Message not found.</p>
       )}
     </div>
   );
 };
 
-export default specFriend;
+export default MessageById;

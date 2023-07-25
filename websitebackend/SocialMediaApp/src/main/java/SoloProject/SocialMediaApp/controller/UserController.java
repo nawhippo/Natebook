@@ -28,6 +28,13 @@ public class UserController {
     public ResponseEntity<List<AppUser>> getAllFriends(@PathVariable Long userId){
         return userserviceimpl.getFriends(userId);
     }
+
+    @GetMapping("/{userId}/friends/{friendId}")
+    public ResponseEntity<AppUser> getFriendById(@PathVariable Long userId, @PathVariable Long friendId) {
+        return userserviceimpl.getFriendById(userId, friendId);
+    }
+
+
     @GetMapping("/{userId}")
     public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId){
 
@@ -69,4 +76,7 @@ public class UserController {
     public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId) {
         return userserviceimpl.getAllPosts(userId);
     }
+
+
+
 }

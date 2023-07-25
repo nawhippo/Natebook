@@ -41,7 +41,15 @@ public class AppUserServiceImpl implements AppUserService {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @Override
+    public ResponseEntity<AppUser> findByUsername(String username) {
+        AppUser appUser = repository.findByUsername(username);
+        if (appUser != null) {
+            return ResponseEntity.ok(appUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @Override
     public ResponseEntity<List<AppUser>> findByFirstname(String firstname) {
@@ -127,7 +135,19 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
-
+    @Override
+    public ResponseEntity<AppUser> getFriendById(Long userId, Long friendId) {
+        AppUser appUser = findByAppUserID(userId).getBody();
+        if (appUser != null) {
+            for (AppUser friend : appUser.getFriends()) {
+                if (friend.getAppUserID().equals(friendId)) {
+                    return ResponseEntity.ok(friend);
+                }
+            }
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
     @Override
     public ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds) {
         // Find the sender user

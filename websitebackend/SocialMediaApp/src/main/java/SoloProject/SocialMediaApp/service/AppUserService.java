@@ -14,6 +14,10 @@ public interface AppUserService {
     ResponseEntity<AppUser> findByAppUserID(Long id);
 
     ResponseEntity<List<AppUser>> getFriends(Long userId);
+    ResponseEntity<AppUser> getFriendById(Long userId, Long friendId);
+
+    ResponseEntity<AppUser> findByUsername(String username);
+
     ResponseEntity<List<AppUser>> findByFirstname(String firstname);
     ResponseEntity<List<AppUser>> findByLastname(String firstname);
     ResponseEntity<List<AppUser>> findByFirstNameAndLastName(String firstname, String lastname);
