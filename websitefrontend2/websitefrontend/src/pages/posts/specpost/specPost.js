@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
-const MessageById = ({ userId, messageId }) => {
-  const [messageData, setMessageData] = useState(null);
+const SinglePost = ({ userId, postId }) => {
+  const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchMessage = async () => {
+    const fetchPost = async () => {
       try {
-        const response = await fetch(`/api/${userId}/${messageId}`);
+        const response = await fetch(`/api/${userId}/${postId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const data = await response.json();
-        setMessageData(data);
+        const postData = await response.json();
+        setPost(postData);
         setIsLoading(false);
       } catch (error) {
         setError(error.message);
@@ -21,8 +21,8 @@ const MessageById = ({ userId, messageId }) => {
       }
     };
 
-    fetchMessage();
-  }, [userId, messageId]);
+    fetchPost();
+  }, [userId, postId]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -32,21 +32,21 @@ const MessageById = ({ userId, messageId }) => {
     return <div>Error: {error}</div>;
   }
 
+  if (!post) {
+    return <div>No post found.</div>;
+  }
+
   return (
     <div>
-      {messageData ? (
-        <div>
-          <h1>Message Details</h1>
-          <p>ID: {messageData.id}</p>
-          <p>Title: {messageData.title}</p>
-          <p>Description: {messageData.description}</p>
-          {/* Additional message properties can be displayed here */}
-        </div>
-      ) : (
-        <p>Message not found.</p>
-      )}
+      <h1>Post Details</h1>
+      <div className="post-card">
+        <h2>{post.title}</h2>
+        <p>{post.description}</p>
+        <p>{post.likes}</p>
+        <p>{post.dislikes}</p>
+      </div>
     </div>
   );
 };
 
-export default MessageById;
+export default SinglePost;

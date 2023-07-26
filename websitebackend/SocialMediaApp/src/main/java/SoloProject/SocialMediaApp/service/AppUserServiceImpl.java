@@ -138,7 +138,9 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public ResponseEntity<AppUser> getFriendById(Long userId, Long friendId) {
         AppUser appUser = findByAppUserID(userId).getBody();
-        if (appUser != null) {
+        if (appUser == null) {
+            return ResponseEntity.notFound().build();
+        } else {
             for (AppUser friend : appUser.getFriends()) {
                 if (friend.getAppUserID().equals(friendId)) {
                     return ResponseEntity.ok(friend);
@@ -146,8 +148,9 @@ public class AppUserServiceImpl implements AppUserService {
             }
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
+
+
     @Override
     public ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds) {
         // Find the sender user
