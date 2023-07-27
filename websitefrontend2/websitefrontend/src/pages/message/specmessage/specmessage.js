@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const MessageDisplay = ({userId, messageId}) => {
+const specMessage = ({userId, messageId}) => {
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
@@ -31,4 +31,4 @@ const MessageDisplay = ({userId, messageId}) => {
   );
 };
 
-export default MessageDisplay;
+export default specMessage;

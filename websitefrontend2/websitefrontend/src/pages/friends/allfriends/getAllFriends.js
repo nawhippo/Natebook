@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 //user id is a prop passed to this function
-const AllFriends = ( {userid} ) => {
+const getAllFriends = ( {userid} ) => {
   const [allFriendsData, setAllFriendsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,4 +51,4 @@ const AllFriends = ( {userid} ) => {
       </div>
   );
       }
-export default AllFriends;
+export default getAllFriends;

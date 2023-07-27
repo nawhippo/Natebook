@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 //user id is a prop passed to this function
-const AllPosts = ( {userid} ) => {
+const getAllPosts = ( {userid} ) => {
   const [allPostsData, setallPostsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,7 +24,7 @@ const AllPosts = ( {userid} ) => {
     };
 
     fetchData();
-  }, [userId]);
+}, [userId]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -54,4 +54,4 @@ const AllPosts = ( {userid} ) => {
       </div>
   );
       }
-export default AllPosts;
+export default getAllPosts;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const SinglePost = ({ userId, postId }) => {
+const specPost = ({ userId, postId }) => {
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,10 +43,10 @@ const SinglePost = ({ userId, postId }) => {
         <h2>{post.title}</h2>
         <p>{post.description}</p>
         <p>{post.likes}</p>
-        <p>{post.dislikes}</p>
+        <p>{post.dislikes}</p>+
       </div>
     </div>
   );
 };
 
-export default SinglePost;
+export default specPost;

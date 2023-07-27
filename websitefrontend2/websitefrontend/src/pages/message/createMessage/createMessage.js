@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const MyForm = ({ userId }) => {
+const createMessage = ({ userId }) => {
   const [formData, setFormData] = useState({
     recipients: [],
     content: "",
@@ -67,4 +67,4 @@ const MyForm = ({ userId }) => {
   );
 };
 
-export default MyForm;
+export default createMessage;

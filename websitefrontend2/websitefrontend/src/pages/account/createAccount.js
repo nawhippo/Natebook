@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const MyForm = () => {
+const createAccount = () => {
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -104,4 +104,4 @@ const MyForm = () => {
   );
 };
 
-export default MyForm;
+export default createAccount;
