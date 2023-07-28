@@ -4,14 +4,15 @@ import About from './pages/about/About';
 import { UserProvider } from './pages/login/UserContext';
 import { useUserContext } from './pages/login/UserContext';
 import Login from './pages/login/Login';
-import Home from './pages/home/Home';
+import Home from './pages/home/home';
 import createAccount from './pages/account/createAccount';
 import getAllPosts from './pages/posts/allposts/getAllPosts';
-import specPost from './pages/posts/specpost/specPost';
+import specPost from './pages/posts/specpost/specpost';
 import specFriend from './pages/friends/specfriend/specfriend';
 import getAllFriends from './pages/friends/allfriends/getAllFriends';
 import createMessage from './pages/message/createMessage/createMessage';
 import getAllMessages from './pages/message/getAllMessages/getAllMessages';
+import
 
 class App extends Component {
   render() {
