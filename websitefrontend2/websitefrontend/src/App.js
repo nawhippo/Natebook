@@ -4,15 +4,15 @@ import About from './pages/about/About';
 import { UserProvider } from './pages/login/UserContext';
 import { useUserContext } from './pages/login/UserContext';
 import Login from './pages/login/Login';
-import Home from './pages/home/home';
+import Home from './pages/home/Home';
 import createAccount from './pages/account/createAccount';
 import getAllPosts from './pages/posts/allposts/getAllPosts';
-import specPost from './pages/posts/specpost/specpost';
-import specFriend from './pages/friends/specfriend/specfriend';
+import specPost from './pages/posts/specpost/specPost';
+import specFriend from './pages/friends/specfriend/specFriend';
 import getAllFriends from './pages/friends/allfriends/getAllFriends';
 import createMessage from './pages/message/createMessage/createMessage';
 import getAllMessages from './pages/message/getAllMessages/getAllMessages';
-import
+import createPost from './pages/posts/createPost/createPost'
 
 class App extends Component {
   render() {
@@ -22,7 +22,7 @@ class App extends Component {
           <header className="App-header">
             <Switch>
               {/* Routes that don't require authentication */}
-              <Route exact path="/" component={Home} />
+              <Route path="/" component={Home} />
               <Route path="/about" component={About} />
               <Route path="/createAccount" component={createAccount} />
 

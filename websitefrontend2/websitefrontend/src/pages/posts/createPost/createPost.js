@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { useUserContext } from './UserContext';
 
-const CreatePostPage = () => {
-  const { user } = useUserContext();
+const CreatePostPage = (userId) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
   const handleCreatePost = async () => {
     try {
-      const response = await fetch(`/createPost/${user.userId}`, {
+      const response = await fetch(`/createPost/userId`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
