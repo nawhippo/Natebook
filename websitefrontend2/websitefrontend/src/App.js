@@ -25,12 +25,11 @@ class App extends Component {
               <Route path="/" component={Home} />
               <Route path="/about" component={About} />
               <Route path="/createAccount" component={createAccount} />
-
+              <Route path="/login" component={Login}/>
               {/* Routes that require authentication */}
               <UserProvider>
                 <Route path="/getAllFriends" component={getAllFriends}/>
                 <Route path="/specFriend" component={specFriend}/>
-                <Route path="/login" component={Login} />
                 <Route path="/createMessage" component={createMessage}/>
                 <Route path="/getAllMessages" component={getAllMessages}/>
                 <Route path="/specPost" component={specPost}/>
