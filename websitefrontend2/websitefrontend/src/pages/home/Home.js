@@ -34,18 +34,9 @@ const Home = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            FirstName: 
-            <input type="text" name="firstName" value={FormData.firstNane} onChange={handleChange} />
-          </label>
-          <label>
-            LastName: 
-            <input type="text" name="lastName" value={FormData.firstNane} onChange={handleChange} />
-          </label>
-        </div>
-      </form>
+      <h2>TEST TEST</h2>
+      <h1>Home Page</h1>
+      <p>{homeData && homeData.message}</p>
     </div>
   );
 };

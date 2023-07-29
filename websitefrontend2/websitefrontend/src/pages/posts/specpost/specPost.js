@@ -8,7 +8,7 @@ const specPost = ({ userId, postId }) => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`/api/${userId}/${postId}`);
+        const response = await fetch(`/${userId}/${postId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

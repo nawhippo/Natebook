@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useUserContext } from './UserContext'; // Adjust the import path accordingly
+import { useHistory } from 'react-router-dom'; // Import useHistory hook
+import { useUserContext } from './UserContext';
 
-const Login = (props) => {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const { setUser } = useUserContext();
+  const history = useHistory(); // Get access to the history object
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -21,24 +23,30 @@ const Login = (props) => {
   const handleLogin = (event) => {
     event.preventDefault();
 
-    fetch(`/login?username=${username}&password=${password}`, {
+    fetch('/api/login', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          // If login is successful, fetch user data
+          return response.json();
+        } else {
+          // If login fails, handle error
+          setError('Invalid username or password.');
+          throw new Error('Invalid username or password.');
+        }
+      })
       .then((data) => {
-        fetch(`/users/${data.userId}`)
-          .then((response) => response.json())
-          .then((userData) => {
-            setUser(userData);
-            props.history.push('/home');
-          })
-          .catch((error) => {
-            console.error('Error fetching user data:', error);
-          });
+        // Set user data in context and redirect to home page
+        setUser(data);
+        history.push('/api/home');
       })
       .catch((error) => {
         console.error('Error logging in:', error);
-        setError('Invalid username or password.');
       });
   };
 
@@ -61,4 +69,6 @@ const Login = (props) => {
   );
 };
 
-export default Login;
+
+
+export default Login

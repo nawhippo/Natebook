@@ -16,7 +16,11 @@ import java.util.List;
 @Service
 public class AppUserServiceImpl implements AppUserService {
 
-    AppUserRepository repository;
+    private final AppUserRepository repository;
+
+    public AppUserServiceImpl(AppUserRepository repository) {
+        this.repository = repository;
+    }
 
 
     @Override

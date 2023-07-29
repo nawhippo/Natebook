@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const createAccount = () => {
+const CreateAccount = () => { // Changed function name to start with uppercase
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -18,7 +18,7 @@ const createAccount = () => {
     event.preventDefault();
 
     //perform the fetch request here to send the form data to the server
-    fetch("/createAccount", {
+    fetch("/api/createAccount", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,4 +104,4 @@ const createAccount = () => {
   );
 };
 
-export default createAccount;
+export default CreateAccount;

@@ -10,7 +10,7 @@ const getAllPosts = ( {userid} ) => {
     const fetchData = async () => {
       try {
         //dollar sign cause variable data.
-        const response = await fetch(`/api/${userid}/posts`);
+        const response = await fetch(`/${userid}/posts`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

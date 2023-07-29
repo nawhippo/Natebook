@@ -4,7 +4,7 @@ const specMessage = ({userId, messageId}) => {
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    fetch(`api/ ${userId}/${messageId}`)
+    fetch(`/${userId}/${messageId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

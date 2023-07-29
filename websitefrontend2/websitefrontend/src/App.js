@@ -13,7 +13,7 @@ import getAllFriends from './pages/friends/allfriends/getAllFriends';
 import createMessage from './pages/message/createMessage/createMessage';
 import getAllMessages from './pages/message/getAllMessages/getAllMessages';
 import createPost from './pages/posts/createPost/createPost'
-
+import ProtectedRoute from './pages/login/ProtectedRoute';
 class App extends Component {
   render() {
     return (
@@ -22,20 +22,22 @@ class App extends Component {
           <header className="App-header">
             <Switch>
               {/* Routes that don't require authentication */}
-              <Route path="/" component={Home} />
               <Route path="/about" component={About} />
               <Route path="/createAccount" component={createAccount} />
               <Route path="/login" component={Login}/>
+              <Route path="/home" exact component={Home}/>
               {/* Routes that require authentication */}
               <UserProvider>
-                <Route path="/getAllFriends" component={getAllFriends}/>
-                <Route path="/specFriend" component={specFriend}/>
-                <Route path="/createMessage" component={createMessage}/>
-                <Route path="/getAllMessages" component={getAllMessages}/>
-                <Route path="/specPost" component={specPost}/>
-                <Route path="/getAllPosts" component={getAllPosts}/>
-                <Route path="/createPost" component={createPost}/>
-              </UserProvider>
+
+              <ProtectedRoute path="/getAllFriends" component={getAllFriends} />
+              <ProtectedRoute path="/specFriend" component={specFriend} />
+              <ProtectedRoute path="/createMessage" component={createMessage} />
+              <ProtectedRoute path="/getAllMessages" component={getAllMessages}
+              />
+              <ProtectedRoute path="/specPost" component={specPost} />
+              <ProtectedRoute path="/getAllPosts" component={getAllPosts} />
+              <ProtectedRoute path="/createPost" component={createPost} />
+              </UserProvider> */
             </Switch>
           </header>
         </div>

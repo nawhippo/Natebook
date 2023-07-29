@@ -7,6 +7,16 @@ import java.util.List;
 @Entity
 @Table(name = "app_users")
 public class AppUser {
+    @Column
+    private String role;
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public void setAppUserID(Long appUserID) {
         this.appUserID = appUserID;
     }
@@ -72,6 +82,7 @@ public class AppUser {
         this.posts = Collections.emptyList();
         this.messages = Collections.emptyList();
         this.friends = Collections.emptyList();
+        this.role = "USER";
     }
 
     public AppUser() {

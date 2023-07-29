@@ -6,13 +6,14 @@ import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/api") // The base path for all endpoints in this controller
 public class UserController {
 
     @GetMapping
@@ -60,8 +61,15 @@ public class UserController {
     }
 
     @PostMapping("/createAccount")
-    public void createAccount(@RequestBody AppUser appUser){
+    public void createAccount(@RequestBody Map<String, String> formData) {
 
+        String firstName = formData.get("firstname");
+        String lastName = formData.get("lastname");
+        String email = formData.get("email");
+        String password = formData.get("password");
+        String username = formData.get("username");
+
+        AppUser appUser = new AppUser(firstName, lastName, email, password, username);
         userserviceimpl.saveUser(appUser);
     }
 
@@ -77,25 +85,6 @@ public class UserController {
     @GetMapping("/{userId}/posts")
     public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId) {
         return userserviceimpl.getAllPosts(userId);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AppUser> login(@RequestParam String username, @RequestParam String password) {
-        // Find the user by username (assuming username is unique)
-        AppUser user = appUserRepository.findByUsername(username);
-
-        if (user == null) {
-            // User not found
-            return ResponseEntity.notFound().build();
-        }
-
-        if (user.getPassword().equals(password)) {
-            //password matches, login successful
-            return ResponseEntity.ok(user);
-        } else {
-            // Invalid credentials
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
     }
 
 }
