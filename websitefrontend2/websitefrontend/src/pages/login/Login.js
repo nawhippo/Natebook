@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom'; // Import useHistory hook
 import { useUserContext } from './UserContext';
@@ -23,12 +24,13 @@ const Login = () => {
   const handleLogin = (event) => {
     event.preventDefault();
 
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+
     fetch('/api/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
+      body: formData,
     })
       .then((response) => {
         if (response.ok) {
@@ -41,9 +43,9 @@ const Login = () => {
         }
       })
       .then((data) => {
-        // Set user data in context and redirect to home page
+        // Set user data in context and redirect to previous page
         setUser(data);
-        history.push('/api/home');
+        history.goBack();
       })
       .catch((error) => {
         console.error('Error logging in:', error);
@@ -69,6 +71,4 @@ const Login = () => {
   );
 };
 
-
-
-export default Login
+export default Login;

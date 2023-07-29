@@ -24,7 +24,7 @@ class App extends Component {
               {/* Routes that don't require authentication */}
               <Route path="/about" component={About} />
               <Route path="/createAccount" component={createAccount} />
-              <Route path="/login" component={Login}/>
+              
               <Route path="/home" exact component={Home}/>
               {/* Routes that require authentication */}
               <UserProvider>
@@ -34,6 +34,7 @@ class App extends Component {
               <ProtectedRoute path="/createMessage" component={createMessage} />
               <ProtectedRoute path="/getAllMessages" component={getAllMessages}
               />
+              <Route path="/login" component={Login}/>
               <ProtectedRoute path="/specPost" component={specPost} />
               <ProtectedRoute path="/getAllPosts" component={getAllPosts} />
               <ProtectedRoute path="/createPost" component={createPost} />
