@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useUserContext } from '../../login/UserContext'; 
 
-const GetAllFriends = ({ userId }) => { // Changed function name to start with uppercase
+const GetAllFriends = () => {
+  const { userId } = useUserContext(); 
   const [allFriendsData, setAllFriendsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,7 +39,7 @@ const GetAllFriends = ({ userId }) => { // Changed function name to start with u
       <h1>All Friends </h1>
 
       {allFriendsData && allFriendsData.length > 0 ? (
-        allFriendsData.map((friend) => ( // Changed aboutData to allFriendsData
+        allFriendsData.map((friend) => (
           <div key={friend.id} className="friend-card">
             <h2>{friend.name}</h2>
             <p>{friend.email}</p>

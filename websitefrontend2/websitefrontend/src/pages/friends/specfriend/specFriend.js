@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useUserContext } from '../../login/UserContext'; 
 
-const specFriend = ({ userId, friendId }) => {
+
+const SpecFriend = ({ friendId }) => {
+  const { userId } = useUserContext(); 
   const [friendData, setFriendData] = useState(null);
 
   useEffect(() => {
@@ -34,4 +37,4 @@ const specFriend = ({ userId, friendId }) => {
   );
 };
 
-export default specFriend;
+export default SpecFriend;

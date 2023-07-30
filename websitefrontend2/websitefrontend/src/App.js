@@ -14,31 +14,44 @@ import createMessage from './pages/message/createMessage/createMessage';
 import getAllMessages from './pages/message/getAllMessages/getAllMessages';
 import createPost from './pages/posts/createPost/createPost'
 import ProtectedRoute from './pages/login/ProtectedRoute';
+import Banner from './banners/banner';
+
+
+
+const LoggedInMessage = () => {
+  const { user } = useUserContext(); // Access user data using the useUserContext hook
+
+  if (user) {
+    return <div className="logged-in-message">Logged in as: {user.username}</div>;
+  }
+  return null;
+};
+
+
 class App extends Component {
   render() {
     return (
       <Router>
         <div className="App">
+          <Banner />
           <header className="App-header">
             <Switch>
-              {/* Routes that don't require authentication */}
-              <Route path="/about" component={About} />
-              <Route path="/createAccount" component={createAccount} />
-              
-              <Route path="/home" exact component={Home}/>
-              {/* Routes that require authentication */}
               <UserProvider>
+                {/* Routes that don't require authentication */}
+                <Route path="/about" component={About} />
+                <Route path="/createAccount" component={createAccount} />
 
-              <ProtectedRoute path="/getAllFriends" component={getAllFriends} />
-              <ProtectedRoute path="/specFriend" component={specFriend} />
-              <ProtectedRoute path="/createMessage" component={createMessage} />
-              <ProtectedRoute path="/getAllMessages" component={getAllMessages}
-              />
-              <Route path="/login" component={Login}/>
-              <ProtectedRoute path="/specPost" component={specPost} />
-              <ProtectedRoute path="/getAllPosts" component={getAllPosts} />
-              <ProtectedRoute path="/createPost" component={createPost} />
-              </UserProvider> */
+                {/* Routes that require authentication */}
+                <Route path="/home" exact component={Home} />
+                <Route path="/getAllFriends" component={getAllFriends} />
+                <Route path="/specFriend/:userId" component={specFriend} /> {/* :userId is the placeholder for the user ID */}
+                <Route path="/createMessage" component={createMessage} />
+                <Route path="/getAllMessages" component={getAllMessages} />
+                <Route path="/login" component={Login} />
+                <Route path="/specPost/:userId" component={specPost} /> {/* :userId is the placeholder for the user ID */}
+                <Route path="/getAllPosts" component={getAllPosts} />
+                <Route path="/createPost" component={createPost} />
+              </UserProvider>
             </Switch>
           </header>
         </div>

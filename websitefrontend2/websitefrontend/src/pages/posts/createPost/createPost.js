@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-
-const CreatePostPage = (userId) => {
+import { useUserContext } from '../../login/UserContext';
+const CreatePost = () => {
+  //obviously only you can only use your own id for this.
+  const { userId } = useUserContext(); // Access the userId from the UserContext
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
   const handleCreatePost = async () => {
     try {
-      const response = await fetch(`/createPost/userId`, {
+      const response = await fetch(`/createPost/${userId}`, { // Use the userId in the URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,4 +54,4 @@ const CreatePostPage = (userId) => {
   );
 };
 
-export default CreatePostPage;
+export default CreatePost;

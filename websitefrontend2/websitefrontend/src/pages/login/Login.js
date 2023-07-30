@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom'; // Import useHistory hook
+import { useHistory } from 'react-router-dom';
 import { useUserContext } from './UserContext';
 
 const Login = () => {
@@ -8,8 +7,14 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const { setUser } = useUserContext();
-  const history = useHistory(); // Get access to the history object
+  const { user, setUser } = useUserContext();
+  const history = useHistory();
+
+  // Check if the user is already logged in, and redirect to the home page
+  if (user) {
+    history.push('/home');
+    return null; // Return null to prevent rendering the login form
+  }
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -24,31 +29,33 @@ const Login = () => {
   const handleLogin = (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
+    const requestBody = {
+      username: username,
+      password: password,
+    };
 
     fetch('/api/login', {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json', // Correct the content type to JSON
+      },
+      body: JSON.stringify(requestBody), // Convert the object to JSON string
     })
       .then((response) => {
         if (response.ok) {
-          // If login is successful, fetch user data
+          console.log('login successful');
           return response.json();
         } else {
-          // If login fails, handle error
           setError('Invalid username or password.');
           throw new Error('Invalid username or password.');
         }
       })
       .then((data) => {
-        // Set user data in context and redirect to previous page
         setUser(data);
-        history.goBack();
       })
       .catch((error) => {
         console.error('Error logging in:', error);
+        setError('Error logging in. Please try again later.');
       });
   };
 

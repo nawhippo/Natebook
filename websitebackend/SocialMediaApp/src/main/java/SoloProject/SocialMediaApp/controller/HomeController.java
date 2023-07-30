@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
     @GetMapping("/home") // The endpoint URL: /api/home
     public String home() {
-        return "{\"message\": \"hello user, welcome to my react app, it is a basic CRUD application.\"}";
+        return "{\"message\": \"hello, welcome to my react app, it is a basic CRUD application.\"}";
     }
 
     @GetMapping("/about") // The endpoint URL: /api/about

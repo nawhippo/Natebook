@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-const specPost = ({ userId, postId }) => {
+//we can't use a context provider for this. as we can look at other people's posts.
+const SpecPost = ({ userId, postId }) => {
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,4 +50,4 @@ const specPost = ({ userId, postId }) => {
   );
 };
 
-export default specPost;
+export default SpecPost;

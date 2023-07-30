@@ -1,18 +1,26 @@
 import React, { useState } from "react";
+import { useUserContext } from "../../login/UserContext";
 
-const createMessage = ({ userId }) => {
+const CreateMessage = () => {
+  const { userId } = useUserContext(); // Access the userId from the UserContext
   const [formData, setFormData] = useState({
     recipients: [],
     content: "",
   });
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-
     const { recipients, content } = formData;
-    fetch(`/api/users/${userId}/sendMessage`, {
+    fetch(`/users/${userId}/sendMessage`, { // Use the userId in the URL
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,4 +75,4 @@ const createMessage = ({ userId }) => {
   );
 };
 
-export default createMessage;
+export default CreateMessage;

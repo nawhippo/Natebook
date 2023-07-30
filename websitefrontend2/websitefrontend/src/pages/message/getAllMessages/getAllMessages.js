@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useUserContext } from '../../login/UserContext';
 
-const getAllMessages = ({ userId }) => {
+const GetAllMessages = () => {
+  const { userId } = useUserContext(); // Access the userId from the UserContext
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    fetch(`api/${userId}/messages`)
+    fetch(`/${userId}/messages`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -35,4 +37,4 @@ const getAllMessages = ({ userId }) => {
   );
 };
 
-export default getAllMessages;
+export default GetAllMessages;
