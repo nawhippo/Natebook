@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useUserContext } from './UserContext'; // Import the useUserContext hook
 
-const specMessage = ({userId, messageId}) => {
+const specMessage = ({ messageId }) => {
+  const { userId } = useUserContext(); // Access the userId from the UserContext
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
@@ -13,7 +15,7 @@ const specMessage = ({userId, messageId}) => {
       })
       .then(data => setMessage(data))
       .catch(error => console.error('Error fetching message:', error));
-  }, []);
+  }, [userId, messageId]); // Include userId and messageId in the dependency array
 
   return (
     <div>
