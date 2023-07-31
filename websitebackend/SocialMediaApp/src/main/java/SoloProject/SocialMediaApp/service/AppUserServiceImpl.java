@@ -3,9 +3,9 @@ package SoloProject.SocialMediaApp.service;
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.models.Post;
+import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,6 +29,8 @@ public class AppUserServiceImpl implements AppUserService {
     saveUser(newuser);
     return newuser;
     }
+
+
 
     @Override
     public ResponseEntity<AppUser> saveUser(AppUser appUser) {
@@ -61,6 +63,7 @@ public class AppUserServiceImpl implements AppUserService {
         return ResponseEntity.ok(appUsers);
 
     }
+
 
     @Override
     public ResponseEntity<List<AppUser>> findByLastname(String lastname) {

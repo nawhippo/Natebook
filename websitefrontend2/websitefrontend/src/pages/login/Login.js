@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useUserContext } from './UserContext';
 
@@ -11,10 +11,11 @@ const Login = () => {
   const history = useHistory();
 
   // Check if the user is already logged in, and redirect to the home page
-  if (user) {
-    history.push('/home');
-    return null; // Return null to prevent rendering the login form
-  }
+  useEffect(() => {
+    if (user) {
+      history.push('/home');
+    }
+  }, [user, history]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -33,13 +34,12 @@ const Login = () => {
       username: username,
       password: password,
     };
-
     fetch('/api/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', // Correct the content type to JSON
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody), // Convert the object to JSON string
+      body: JSON.stringify(requestBody),
     })
       .then((response) => {
         if (response.ok) {
@@ -51,13 +51,15 @@ const Login = () => {
         }
       })
       .then((data) => {
-        setUser(data);
+        setUser(data); // Here, data will be the user object
+        history.push('/home');
       })
       .catch((error) => {
         console.error('Error logging in:', error);
         setError('Error logging in. Please try again later.');
       });
   };
+  
 
   return (
     <div>

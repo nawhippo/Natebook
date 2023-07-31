@@ -60,6 +60,7 @@ const CreateAccount = () => { // Changed function name to start with uppercase
               value={formData.firstname}
               onChange={handleChange}
             />
+            <br></br>
           </label>
           <label>
             Last Name:
@@ -69,6 +70,7 @@ const CreateAccount = () => { // Changed function name to start with uppercase
               value={formData.lastname}
               onChange={handleChange}
             />
+              <br></br>
           </label>
           <label>
             Email:
@@ -79,6 +81,7 @@ const CreateAccount = () => { // Changed function name to start with uppercase
               onChange={handleChange}
             />
           </label>
+          <br></br>
           <label>
             User Name:
             <input
@@ -88,6 +91,7 @@ const CreateAccount = () => { // Changed function name to start with uppercase
               onChange={handleChange}
             />
           </label>
+          <br></br>
           <label>
             Password:
             <input

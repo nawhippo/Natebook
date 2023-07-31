@@ -36,7 +36,20 @@ public class UserController {
     public ResponseEntity<AppUser> getFriendById(@PathVariable Long userId, @PathVariable Long friendId) {
         return userserviceimpl.getFriendById(userId, friendId);
     }
+    @GetMapping("/user")
+    public ResponseEntity<AppUser> getUserData() {
+        // Simulate login and fetch user data based on user ID (e.g., 1)
+        Long userId = 1L;
+        AppUser user = appUserRepository.findById(userId).orElse(null);
 
+        if (user != null) {
+            // If the user is found, return the user data with a 200 OK response
+            return ResponseEntity.ok(user);
+        } else {
+            // If the user is not found, return a 404 Not Found response
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId){

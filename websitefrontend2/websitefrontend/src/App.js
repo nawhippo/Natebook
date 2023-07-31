@@ -31,12 +31,14 @@ const LoggedInMessage = () => {
 class App extends Component {
   render() {
     return (
+      <UserProvider>
       <Router>
+       
         <div className="App">
           <Banner />
           <header className="App-header">
             <Switch>
-              <UserProvider>
+             
                 {/* Routes that don't require authentication */}
                 <Route path="/about" component={About} />
                 <Route path="/createAccount" component={createAccount} />
@@ -51,11 +53,11 @@ class App extends Component {
                 <Route path="/specPost/:userId" component={specPost} /> {/* :userId is the placeholder for the user ID */}
                 <Route path="/getAllPosts" component={getAllPosts} />
                 <Route path="/createPost" component={createPost} />
-              </UserProvider>
-            </Switch>
+            </Switch>    
           </header>
         </div>
       </Router>
+      </UserProvider>
     );
   }
 }

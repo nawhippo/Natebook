@@ -18,6 +18,7 @@ public interface AppUserService {
 
     ResponseEntity<AppUser> findByUsername(String username);
 
+
     ResponseEntity<List<AppUser>> findByFirstname(String firstname);
     ResponseEntity<List<AppUser>> findByLastname(String firstname);
     ResponseEntity<List<AppUser>> findByFirstNameAndLastName(String firstname, String lastname);

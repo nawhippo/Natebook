@@ -21,7 +21,7 @@ public class SecurityController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> handleLogin(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> handleLogin(@RequestBody LoginRequest loginRequest) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
         // Perform login logic here, validate credentials, etc.
@@ -30,7 +30,8 @@ public class SecurityController {
         AppUser user = appUserRepository.findByUsername(username);
         if (user != null) {
             if (user.getPassword().equals(password)) {
-                return ResponseEntity.ok("{\"message\": \"Login successful\"}");
+                // Return the user object as the response entity
+                return ResponseEntity.ok(user);
             } else {
                 // If login fails, return an error message
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Invalid username or password\"}");

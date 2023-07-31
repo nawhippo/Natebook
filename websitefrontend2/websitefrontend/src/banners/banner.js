@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import './banner.css'; // Import the stylesheet
 
 const Banner = () => {
   const history = useHistory();
@@ -12,18 +13,15 @@ const Banner = () => {
   return (
     <div className="banner">
       {/* Add your banner content here */}
-      <h1>Welcome to Our Website!</h1>
-      <p>Enjoy your stay!</p>
+      <h1>NateBook</h1>
       {/* Links should be wrapped within a Router component */}
-      <button onClick={() => handleLinkClick('/getAllFriends')}>View Friend</button>
-      <br />
+      <button onClick={() => handleLinkClick('/getAllFriends')}>View Friends List</button>
       <button onClick={() => handleLinkClick('/getAllPosts')}>View All of Your Posts</button>
-      <br />
       <button onClick={() => handleLinkClick('/getAllMessages')}>View Messages</button>
-      <br />
       <button onClick={() => handleLinkClick('/about')}>About</button>
-      <br />
       <button onClick={() => handleLinkClick('/home')}>Home</button>
+      <button onClick={() => handleLinkClick('/login')}>Login</button>
+      <button onClick={() => handleLinkClick('/createAccount')}>Create Account</button>
     </div>
   );
 };
