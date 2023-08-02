@@ -58,6 +58,22 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    public ResponseEntity<AppUser> addFriend(Long userId, String username) {
+        AppUser appUser = repository.findByAppUserID(userId);
+        AppUser friend = repository.findByUsername(username);
+
+        if(friend.equals(null)){
+            return ResponseEntity.notFound().build();
+        } else {
+            List<AppUser> friends = appUser.getFriends();
+            friends.add(friend);
+            appUser.setFriends(friends);
+            AppUser updatedUser = repository.save(appUser);
+            return ResponseEntity.ok(updatedUser);
+        }
+    }
+
+    @Override
     public ResponseEntity<List<AppUser>> findByFirstname(String firstname) {
         List<AppUser> appUsers = repository.findByFirstname(firstname);
         return ResponseEntity.ok(appUsers);

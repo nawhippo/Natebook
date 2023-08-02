@@ -22,6 +22,10 @@ const Banner = () => {
       <button onClick={() => handleLinkClick('/home')}>Home</button>
       <button onClick={() => handleLinkClick('/login')}>Login</button>
       <button onClick={() => handleLinkClick('/createAccount')}>Create Account</button>
+      <button onClick={() => handleLinkClick('/createPost')}>Create Post</button>
+      <button onClick={() => handleLinkClick('/createMessage')}>Send Message</button>
+      <br></br>
+      <button onClick={() => handleLinkClick('/addFriend')}>Add Friend</button>
     </div>
   );
 };

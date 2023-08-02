@@ -32,6 +32,8 @@ public class UserController {
         return userserviceimpl.getFriends(userId);
     }
 
+    @PutMapping("/{userId}")
+
     @GetMapping("/{userId}/friends/{friendId}")
     public ResponseEntity<AppUser> getFriendById(@PathVariable Long userId, @PathVariable Long friendId) {
         return userserviceimpl.getFriendById(userId, friendId);
@@ -50,6 +52,8 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 
     @GetMapping("/{userId}")
     public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId){
