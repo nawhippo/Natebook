@@ -14,25 +14,36 @@ public interface AppUserService {
     ResponseEntity<AppUser> findByAppUserID(Long id);
 
     ResponseEntity<List<AppUser>> getFriends(Long userId);
-    ResponseEntity<AppUser> getFriendById(Long userId, Long friendId);
+    ResponseEntity<AppUser> getFriend(Long userId, Long friendId);
 
-    ResponseEntity<AppUser> findByUsername(String username);
+    ResponseEntity<AppUser> getFriend(Long userId, String username);
 
-    ResponseEntity<AppUser> addFriend(Long userId, String username);
 
-    ResponseEntity<List<AppUser>> findByFirstname(String firstname);
-    ResponseEntity<List<AppUser>> findByLastname(String firstname);
-    ResponseEntity<List<AppUser>> findByFirstNameAndLastName(String firstname, String lastname);
+
+
+    ResponseEntity<AppUser> findUser(Long id);
+
+    ResponseEntity<AppUser> findUser(String username);
 
     ResponseEntity<AppUser> saveUser (AppUser appUser);
+
+    ResponseEntity<List<AppUser>> findUser(String firstname, String lastname);
+
+    ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname);
 
     ResponseEntity<Post> getPostById(Long userId, Long postId);
     ResponseEntity<List<Post>> getAllPosts(Long userId);
 
-    ResponseEntity<Message> getMessageById(Long MessageId, Long userId);
-    ResponseEntity<List<Message>> getAllMessages(Long userid);
+    ResponseEntity<Message> getMessageById(Long userId, Long messageId);
+    ResponseEntity<List<Message>> getAllMessages(Long userId);
+
+    ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId);
+
+    ResponseEntity<AppUser> sendFriendRequest(Long senderId, String username);
+
+    ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, String potentialFriendUsername);
+
+    ResponseEntity<AppUser> declineFriendRequest(Long recipientId, String potentialFriendUsername);
 
     ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds);
-
-
 }

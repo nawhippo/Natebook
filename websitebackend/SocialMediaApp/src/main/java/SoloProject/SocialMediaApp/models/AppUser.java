@@ -7,6 +7,14 @@ import java.util.List;
 @Entity
 @Table(name = "app_users")
 public class AppUser {
+    public List<String> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<String> requests) {
+        this.requests = requests;
+    }
+
     @Column
     private String role;
     public String getRole() {
@@ -54,6 +62,14 @@ public class AppUser {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<Message> messages;
 
+
+    //should be usernames
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    private List<String> requests;
+
+
+
+
     @ManyToMany
     @JoinTable(
             name = "user_friends",
@@ -61,6 +77,7 @@ public class AppUser {
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
     private List<AppUser> friends;
+
 
     public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends, String password) {
         this.firstname = firstname;
@@ -147,6 +164,24 @@ public class AppUser {
     public void setFriends(List<AppUser> friends) {
         this.friends = friends;
     }
+
+
+
+
+    //has to be implemented in appuser service, we have to be able to access the repository
+    public void sendFriendRequest(AppUser receiver){
+    }
+
+    public void acceptFriendRequest(AppUser receiver){
+
+    }
+
+    public void declineFriendRequest(AppUser receiver){
+
+    }
+
+
+
 
     @Override
     public String toString() {

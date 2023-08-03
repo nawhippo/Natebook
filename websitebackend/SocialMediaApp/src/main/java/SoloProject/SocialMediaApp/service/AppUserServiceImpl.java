@@ -26,10 +26,14 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public AppUser createUser(String firstName, String lastName, String username, String email, String password){
     AppUser newuser = new AppUser(firstName, lastName, username, email, password);
-    saveUser(newuser);
+    repository.save(newuser);
     return newuser;
     }
 
+    @Override
+    public ResponseEntity<AppUser> findByAppUserID(Long id) {
+        return null;
+    }
 
 
     @Override
@@ -39,7 +43,14 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ResponseEntity<AppUser> findByAppUserID(Long id) {
+    public ResponseEntity<List<AppUser>> findUser(String firstname, String lastname) {
+        return null;
+    }
+
+
+    //should only return 1 user
+    @Override
+    public ResponseEntity<AppUser> findUser(Long id) {
         AppUser appUser = repository.findByAppUserID(id);
         if (appUser != null) {
             return ResponseEntity.ok(appUser);
@@ -47,8 +58,10 @@ public class AppUserServiceImpl implements AppUserService {
             return ResponseEntity.notFound().build();
         }
     }
+
+    //should only return 1 user
     @Override
-    public ResponseEntity<AppUser> findByUsername(String username) {
+    public ResponseEntity<AppUser> findUser(String username) {
         AppUser appUser = repository.findByUsername(username);
         if (appUser != null) {
             return ResponseEntity.ok(appUser);
@@ -57,39 +70,38 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
-    @Override
-    public ResponseEntity<AppUser> addFriend(Long userId, String username) {
-        AppUser appUser = repository.findByAppUserID(userId);
-        AppUser friend = repository.findByUsername(username);
+//    @Override
+//    public ResponseEntity<AppUser> addFriend(Long userId, String username) {
+//        AppUser appUser = repository.findByAppUserID(userId);
+//        AppUser friend = repository.findByUsername(username);
+//
+//        if(friend.equals(null)){
+//            return ResponseEntity.notFound().build();
+//        } else {
+//            List<AppUser> friends = appUser.getFriends();
+//            friends.add(friend);
+//            appUser.setFriends(friends);
+//            AppUser updatedUser = repository.save(appUser);
+//            return ResponseEntity.ok(updatedUser);
+//        }
+//    }
 
-        if(friend.equals(null)){
-            return ResponseEntity.notFound().build();
+    @Override
+    public ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname) {
+        List<AppUser> appUsers;
+
+        if (firstname != null && lastname != null) {
+            appUsers = repository.findByFirstnameAndLastname(firstname, lastname);
+        } else if (firstname != null) {
+            appUsers = repository.findByFirstname(firstname);
+        } else if (lastname != null) {
+            appUsers = repository.findByLastname(lastname);
         } else {
-            List<AppUser> friends = appUser.getFriends();
-            friends.add(friend);
-            appUser.setFriends(friends);
-            AppUser updatedUser = repository.save(appUser);
-            return ResponseEntity.ok(updatedUser);
+            // No search criteria provided
+            // You may choose to return an empty list or an error response here
+            return ResponseEntity.badRequest().build();
         }
-    }
 
-    @Override
-    public ResponseEntity<List<AppUser>> findByFirstname(String firstname) {
-        List<AppUser> appUsers = repository.findByFirstname(firstname);
-        return ResponseEntity.ok(appUsers);
-
-    }
-
-
-    @Override
-    public ResponseEntity<List<AppUser>> findByLastname(String lastname) {
-        List<AppUser> appUsers = repository.findByLastname(lastname);
-        return ResponseEntity.ok(appUsers);
-    }
-
-    @Override
-    public ResponseEntity<List<AppUser>> findByFirstNameAndLastName(String firstname, String lastname) {
-        List<AppUser> appUsers = repository.findByFirstnameAndLastname(firstname, lastname);
         return ResponseEntity.ok(appUsers);
     }
 
@@ -158,8 +170,9 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
+
     @Override
-    public ResponseEntity<AppUser> getFriendById(Long userId, Long friendId) {
+    public ResponseEntity<AppUser> getFriend(Long userId, Long friendId) {
         AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser == null) {
             return ResponseEntity.notFound().build();
@@ -173,7 +186,20 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
-
+    @Override
+    public ResponseEntity<AppUser> getFriend(Long userId, String friendUsername) {
+        AppUser appUser = findByAppUserID(userId).getBody();
+        if (appUser == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            for (AppUser friend : appUser.getFriends()) {
+                if (friend.getUsername().equals(friendUsername)) {
+                    return ResponseEntity.ok(friend);
+                }
+            }
+            return ResponseEntity.notFound().build();
+        }
+    }
     @Override
     public ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds) {
         // Find the sender user
@@ -204,4 +230,56 @@ public class AppUserServiceImpl implements AppUserService {
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
-}
+
+
+    //strings are usernames
+    public ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId) {
+        AppUser friend = repository.findByAppUserID(friendId);
+        List<String> newRequests = friend.getRequests();
+        String name = repository.findByAppUserID(senderId).getUsername();
+        newRequests.add(name);
+        friend.setRequests(newRequests);
+        repository.save(friend);
+        return new ResponseEntity<>(friend, HttpStatus.OK);
+    }
+
+    public ResponseEntity<AppUser> sendFriendRequest(Long senderId, String username) {
+        AppUser friend = repository.findByUsername(username);
+        List<String> newRequests = friend.getRequests();
+        String name = repository.findByAppUserID(senderId).getUsername();
+        newRequests.add(name);
+        friend.setRequests(newRequests);
+        repository.save(friend);
+        return new ResponseEntity<>(friend, HttpStatus.OK);
+    }
+
+    //have to account for the fact that friends are Strings representing usernames.
+    public ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, String potentialFriendUsername) {
+        AppUser user = repository.findByAppUserID(recipientId);
+        AppUser friend = repository.findByUsername(potentialFriendUsername);
+        List<String> newRequests = user.getRequests();
+        List<AppUser> friends = user.getFriends();
+        List<AppUser> friends2 = friend.getFriends();
+
+        friends.add(friend);
+        friends2.add(user);
+
+        user.setFriends(friends);
+        friend.setFriends(friends2);
+
+        newRequests.remove(potentialFriendUsername);
+
+        repository.save(friend);
+        repository.save(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    public ResponseEntity<AppUser> declineFriendRequest(Long recipientId, String potentialFriendUsername) {
+        AppUser user = repository.findByAppUserID(recipientId);
+        List<String> requests = user.getRequests();
+        requests.remove(potentialFriendUsername);
+        repository.save(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    }

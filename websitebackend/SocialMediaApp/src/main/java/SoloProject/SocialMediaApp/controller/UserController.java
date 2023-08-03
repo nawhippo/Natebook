@@ -32,12 +32,37 @@ public class UserController {
         return userserviceimpl.getFriends(userId);
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/{userId}/{friendId}")
+    public ResponseEntity<AppUser> sendFriendRequestById(@PathVariable Long userId, @PathVariable Long friendRequestRecipient){
+        return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
+    }
+
+    @PutMapping("/{userId}/addFriend/{friendUsername}")
+    public ResponseEntity<AppUser> sendFriendRequestByUsername(@PathVariable Long userId, @PathVariable String friendRequestRecipient){
+        return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
+    }
+
 
     @GetMapping("/{userId}/friends/{friendId}")
     public ResponseEntity<AppUser> getFriendById(@PathVariable Long userId, @PathVariable Long friendId) {
-        return userserviceimpl.getFriendById(userId, friendId);
+        return userserviceimpl.getFriend(userId, friendId);
     }
+
+    @GetMapping("/{userId}/friends/{friendUsername}")
+    public ResponseEntity<AppUser> getFriendByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
+        return userserviceimpl.getFriend(userId, friendUsername);
+    }
+
+
+
+
+
+
+
+
+
+
+    //TODO: try to figure this out
     @GetMapping("/user")
     public ResponseEntity<AppUser> getUserData() {
         // Simulate login and fetch user data based on user ID (e.g., 1)
