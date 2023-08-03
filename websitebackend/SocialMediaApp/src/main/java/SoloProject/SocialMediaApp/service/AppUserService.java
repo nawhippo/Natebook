@@ -46,4 +46,10 @@ public interface AppUserService {
     ResponseEntity<AppUser> declineFriendRequest(Long recipientId, String potentialFriendUsername);
 
     ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds);
+
+    ResponseEntity<Post> createPost(Long userId, Post post);
+
+    ResponseEntity<List<Post>> getPostsByUserId(Long userId, Long targetUserId);
+
+    ResponseEntity<List<Post>> getPostsByUsername(Long userId, String targetUsername);
 }

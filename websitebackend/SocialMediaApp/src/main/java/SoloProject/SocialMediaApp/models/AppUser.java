@@ -7,6 +7,11 @@ import java.util.List;
 @Entity
 @Table(name = "app_users")
 public class AppUser {
+    @ElementCollection
+    @CollectionTable(name = "friend_requests", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "request")
+    private List<String> requests;
+
     public List<String> getRequests() {
         return requests;
     }
@@ -63,11 +68,6 @@ public class AppUser {
     private List<Message> messages;
 
 
-    //should be usernames
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
-    private List<String> requests;
-
-
 
 
     @ManyToMany
@@ -79,7 +79,7 @@ public class AppUser {
     private List<AppUser> friends;
 
 
-    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends, String password) {
+    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends, String password, List<String> requests) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -88,6 +88,7 @@ public class AppUser {
         this.messages = messages;
         this.friends = friends;
         this.password = password;
+        this.requests = requests;
     }
 
     public AppUser(String firstname, String lastname, String email, String username, String password) {
@@ -99,6 +100,7 @@ public class AppUser {
         this.posts = Collections.emptyList();
         this.messages = Collections.emptyList();
         this.friends = Collections.emptyList();
+        this.requests = Collections.emptyList();
         this.role = "USER";
     }
 

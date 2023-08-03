@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
+
 const CreatePost = () => {
-  //obviously only you can only use your own id for this.
   const { userId } = useUserContext(); // Access the userId from the UserContext
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [dateTime, setDateTime] = useState('');
+
+  useEffect(() => {
+    // Set the date/time to the current date and time when the component mounts
+    const currentDate = new Date();
+    setDateTime(currentDate.toISOString().slice(0, 16));
+  }, []);
 
   const handleCreatePost = async () => {
     try {
-      const response = await fetch(`/createPost/${userId}`, { // Use the userId in the URL
+      const response = await fetch(`${userId}/createPost`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -16,6 +23,7 @@ const CreatePost = () => {
         body: JSON.stringify({
           title: title,
           description: description,
+          dateTime: dateTime, // Include the date/time in the request body
         }),
       });
 
@@ -45,6 +53,13 @@ const CreatePost = () => {
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+      <div>
+        <input
+          type="datetime-local"
+          value={dateTime}
+          onChange={(e) => setDateTime(e.target.value)}
         />
       </div>
       <div>

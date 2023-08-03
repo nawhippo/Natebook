@@ -32,15 +32,6 @@ public class UserController {
         return userserviceimpl.getFriends(userId);
     }
 
-    @PutMapping("/{userId}/{friendId}")
-    public ResponseEntity<AppUser> sendFriendRequestById(@PathVariable Long userId, @PathVariable Long friendRequestRecipient){
-        return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
-    }
-
-    @PutMapping("/{userId}/addFriend/{friendUsername}")
-    public ResponseEntity<AppUser> sendFriendRequestByUsername(@PathVariable Long userId, @PathVariable String friendRequestRecipient){
-        return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
-    }
 
 
     @GetMapping("/{userId}/friends/{friendId}")
@@ -129,4 +120,44 @@ public class UserController {
         return userserviceimpl.getAllPosts(userId);
     }
 
+
+
+    @PostMapping("/{userId}/createPost")
+    public ResponseEntity<Post> createPost(
+            @PathVariable Long userId,
+            @RequestBody Post post
+    ) {
+        return userserviceimpl.createPost(userId, post);
+    }
+
+    @PutMapping("/{userId}/{friendId}")
+    public ResponseEntity<AppUser> sendFriendRequestById(@PathVariable Long userId, @PathVariable Long friendRequestRecipient){
+        return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
+    }
+
+    @PostMapping("/{userId}/sendFriendRequestByUsername/{friendUsername}")
+    public ResponseEntity<AppUser> sendFriendRequestByUsername(@PathVariable Long senderId, @PathVariable String friendUsername) {
+        return userserviceimpl.sendFriendRequest(senderId, friendUsername);
+    }
+
+    @PutMapping("/{userId}/acceptFriendRequest/{potentialFriendUsername}")
+    public ResponseEntity<AppUser> acceptFriendRequest(@PathVariable Long recipientId, @PathVariable String potentialFriendUsername) {
+        return userserviceimpl.acceptFriendRequest(recipientId, potentialFriendUsername);
+    }
+
+    @PutMapping("/{userId}/declineFriendRequest/{potentialFriendUsername}")
+    public ResponseEntity<AppUser> declineFriendRequest(@PathVariable Long recipientId, @PathVariable String potentialFriendUsername) {
+        return userserviceimpl.declineFriendRequest(recipientId, potentialFriendUsername);
+    }
+
+
+    @GetMapping("/{userId}/posts/{targetUserId}")
+    public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {
+        return userserviceimpl.getPostsByUserId(userId, targetUserId);
+    }
+
+    @GetMapping("/{userId}/postsByUsername/{friendUsername}")
+    public ResponseEntity<List<Post>> getPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
+        return userserviceimpl.getPostsByUsername(userId, friendUsername);
+    }
 }

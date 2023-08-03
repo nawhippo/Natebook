@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useUserContext } from './UserContext'; // Import the UserContext
 
-const GetAllPosts = ({ userid }) => { // Changed parameter name to lowercase "userid"
-  const [allPostsData, setAllPostsData] = useState(null); // Renamed "allPostsData"
-
+const GetAllPosts = ({ targetUsername }) => { // Use targetUsername instead of userid
+  const { user } = useUserContext(); // Access the user object from the context
+  const [allPostsData, setAllPostsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/${userid}/posts`); // Use "userid" here
+        const response = await fetch(`/${user.userId}/postsByUsername/${targetUsername}`); // Update the fetch URL
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setAllPostsData(data); // Set the correct state variable here
+        setAllPostsData(data);
         setIsLoading(false);
       } catch (error) {
         setError(error.message);
@@ -23,7 +24,7 @@ const GetAllPosts = ({ userid }) => { // Changed parameter name to lowercase "us
     };
 
     fetchData();
-  }, [userid]); // Use "userid" in the dependency array
+  }, [user.userId, targetUsername]); // Add user.userId and targetUsername to the dependency array
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -38,17 +39,18 @@ const GetAllPosts = ({ userid }) => { // Changed parameter name to lowercase "us
       <h1>All Posts</h1>
 
       {allPostsData && allPostsData.length > 0 ? (
-        allPostsData.map((post) => ( // Use "allPostsData" here
+        allPostsData.map((post) => (
           <div key={post.id} className="post-card">
             <h2>{post.title}</h2>
             <p>{post.description}</p>
             <p>{post.likes}</p>
             <p>{post.dislikes}</p>
             <p>{post.email}</p>
+            <p>{post.dateTime}</p>
           </div>
         ))
       ) : (
-        <p>No posts found.</p> 
+        <p>No posts found.</p>
       )}
     </div>
   );

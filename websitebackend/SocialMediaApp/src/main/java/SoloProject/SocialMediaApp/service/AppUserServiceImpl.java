@@ -23,6 +23,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
+
     @Override
     public AppUser createUser(String firstName, String lastName, String username, String email, String password){
     AppUser newuser = new AppUser(firstName, lastName, username, email, password);
@@ -233,6 +234,7 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     //strings are usernames
+    @Override
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId) {
         AppUser friend = repository.findByAppUserID(friendId);
         List<String> newRequests = friend.getRequests();
@@ -243,6 +245,7 @@ public class AppUserServiceImpl implements AppUserService {
         return new ResponseEntity<>(friend, HttpStatus.OK);
     }
 
+    @Override
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, String username) {
         AppUser friend = repository.findByUsername(username);
         List<String> newRequests = friend.getRequests();
@@ -254,6 +257,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     //have to account for the fact that friends are Strings representing usernames.
+    @Override
     public ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, String potentialFriendUsername) {
         AppUser user = repository.findByAppUserID(recipientId);
         AppUser friend = repository.findByUsername(potentialFriendUsername);
@@ -274,12 +278,98 @@ public class AppUserServiceImpl implements AppUserService {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @Override
     public ResponseEntity<AppUser> declineFriendRequest(Long recipientId, String potentialFriendUsername) {
         AppUser user = repository.findByAppUserID(recipientId);
         List<String> requests = user.getRequests();
         requests.remove(potentialFriendUsername);
         repository.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+
+    @Override
+    public ResponseEntity<Post> createPost(Long userId, Post post) {
+        AppUser appUser = repository.findByAppUserID(userId);
+
+        if (appUser == null) {
+            // If user not found, return a 404 Not Found response
+            return ResponseEntity.notFound().build();
+        }
+
+        // Set the user for the post
+        post.setAppUser(appUser);
+
+        // Save the post to the user's list of posts
+        List<Post> userPosts = appUser.getPosts();
+        userPosts.add(post);
+        appUser.setPosts(userPosts);
+
+        // Save the updated user to the database
+        repository.save(appUser);
+
+        // Return the created post with a 201 Created response
+        return ResponseEntity.status(HttpStatus.CREATED).body(post);
+    }
+
+
+    @Override
+    //to get other people's posts
+    public ResponseEntity<List<Post>> getPostsByUserId(Long userId, Long friendId) {
+        AppUser appUser = repository.findByAppUserID(userId);
+        if (appUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        AppUser targetUser = repository.findByAppUserID(friendId);
+        if (targetUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        //check if the targetUser is a friend of appUser
+        List<AppUser> friends = appUser.getFriends();
+        boolean isFriend = false;
+        for (AppUser friend : friends) {
+            if (friend.getAppUserID().equals(friendId)) {
+                isFriend = true;
+                break;
+            }
+        }
+        if (!isFriend) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(targetUser.getPosts());
+    }
+
+    @Override
+    public ResponseEntity<List<Post>> getPostsByUsername(Long userId, String targetUsername) {
+        AppUser appUser = repository.findByAppUserID(userId);
+
+        if (appUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        AppUser targetUser = repository.findByUsername(targetUsername);
+
+        if (targetUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Check if the targetUser is a friend of appUser
+        List<AppUser> friends = appUser.getFriends();
+        boolean isFriend = false;
+        for (AppUser friend : friends) {
+            if (friend.getUsername().equals(targetUsername)) {
+                isFriend = true;
+                break;
+            }
+        }
+
+        if (!isFriend) {
+            // If the targetUser is not a friend, return a 403 Forbidden response
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        // If targetUser is a friend, return their posts
+        return ResponseEntity.ok(targetUser.getPosts());
     }
 
     }

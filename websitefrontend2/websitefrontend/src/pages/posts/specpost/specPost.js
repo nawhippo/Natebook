@@ -44,7 +44,8 @@ const SpecPost = ({ userId, postId }) => {
         <h2>{post.title}</h2>
         <p>{post.description}</p>
         <p>{post.likes}</p>
-        <p>{post.dislikes}</p>+
+        <p>{post.dislikes}</p>
+        <p>{post.dateTime}</p>
       </div>
     </div>
   );

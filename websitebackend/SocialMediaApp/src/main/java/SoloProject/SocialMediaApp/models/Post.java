@@ -1,6 +1,8 @@
 package SoloProject.SocialMediaApp.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "posts")
@@ -24,6 +26,11 @@ public class Post {
 
     @Column
     private int dislikes;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private Date dateTime;
 
     public Long getId() {
         return id;
@@ -67,6 +74,14 @@ public class Post {
 
     public void setDislikes(int dislikes) {
         this.dislikes = dislikes;
+    }
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date dateTime) {
+        this.dateTime = dateTime;
     }
 
     public void setId(Long id) {

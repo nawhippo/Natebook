@@ -1,6 +1,7 @@
 package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,10 @@ public class Message {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<AppUser> recipients;
+
+    @Column
+    private Date dateTime; // New field for date/time
+
     public Message(Long id, String content, AppUser sender, List<AppUser> recipients) {
         this.id = id;
         this.content = content;
@@ -60,5 +65,13 @@ public class Message {
 
     public void setRecipients(List<AppUser> recipients) {
         this.recipients = recipients;
+    }
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date dateTime) {
+        this.dateTime = dateTime;
     }
 }
