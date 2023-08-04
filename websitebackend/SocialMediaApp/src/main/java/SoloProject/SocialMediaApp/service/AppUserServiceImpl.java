@@ -25,15 +25,25 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     @Override
-    public AppUser createUser(String firstName, String lastName, String username, String email, String password){
-    AppUser newuser = new AppUser(firstName, lastName, username, email, password);
-    repository.save(newuser);
-    return newuser;
+    public AppUser createUser(String firstName, String lastName, String username, String email, String password) {
+        if (repository.findByUsername(username) != null) {
+            throw new IllegalArgumentException("Username is already taken. Please choose a different username.");
+        }
+
+
+        AppUser newuser = new AppUser(firstName, lastName, username, email, password);
+        repository.save(newuser);
+        return newuser;
     }
 
     @Override
     public ResponseEntity<AppUser> findByAppUserID(Long id) {
-        return null;
+        AppUser appUser = repository.findByAppUserID(id);
+        if (appUser != null) {
+            return ResponseEntity.ok(appUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
@@ -166,8 +176,14 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResponseEntity<List<AppUser>> getFriends(Long userId) {
-        AppUser appUser = findByAppUserID(userId).getBody();
-        return (ResponseEntity<List<AppUser>>) appUser.getFriends();
+        ResponseEntity<AppUser> response = findByAppUserID(userId);
+
+        if (response != null && response.getBody() != null) {
+            AppUser appUser = response.getBody();
+            return ResponseEntity.ok(appUser.getFriends());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
@@ -324,7 +340,7 @@ public class AppUserServiceImpl implements AppUserService {
         if (targetUser == null) {
             return ResponseEntity.notFound().build();
         }
-        //check if the targetUser is a friend of appUser
+        //check if the targetUser is a friend of appUser, for security purposes.
         List<AppUser> friends = appUser.getFriends();
         boolean isFriend = false;
         for (AppUser friend : friends) {

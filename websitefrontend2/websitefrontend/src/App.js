@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import About from './pages/about/About';
 import { UserProvider } from './pages/login/UserContext';
 import { useUserContext } from './pages/login/UserContext';
@@ -12,10 +12,10 @@ import specFriend from './pages/friends/specfriend/specFriend';
 import getAllFriends from './pages/friends/allfriends/getAllFriends';
 import createMessage from './pages/message/createMessage/createMessage';
 import getAllMessages from './pages/message/getAllMessages/getAllMessages';
-import createPost from './pages/posts/createPost/createPost'
+import createPost from './pages/posts/createPost/createPost';
 import ProtectedRoute from './pages/login/ProtectedRoute';
 import Banner from './banners/banner';
-
+import './universal.css'; // Import the universal CSS file
 
 
 const LoggedInMessage = () => {
@@ -32,13 +32,11 @@ class App extends Component {
   render() {
     return (
       <UserProvider>
-      <Router>
-       
-        <div className="App">
-          <Banner />
-          <header className="App-header">
-            <Switch>
-             
+        <Router>
+          <div className="App">
+            <Banner />
+            <header className="App-header">
+              <Switch>
                 {/* Routes that don't require authentication */}
                 <Route path="/about" component={About} />
                 <Route path="/createAccount" component={createAccount} />
@@ -46,17 +44,17 @@ class App extends Component {
                 {/* Routes that require authentication */}
                 <Route path="/home" exact component={Home} />
                 <Route path="/getAllFriends" component={getAllFriends} />
-                <Route path="/specFriend/:userId" component={specFriend} /> {/* :userId is the placeholder for the user ID */}
+                <Route path="/specFriend/:userId" component={specFriend} /> 
                 <Route path="/createMessage" component={createMessage} />
                 <Route path="/getAllMessages" component={getAllMessages} />
                 <Route path="/login" component={Login} />
-                <Route path="/specPost/:userId" component={specPost} /> {/* :userId is the placeholder for the user ID */}
+                <Route path="/specPost/:userId" component={specPost} /> 
                 <Route path="/getAllPosts" component={getAllPosts} />
                 <Route path="/createPost" component={createPost} />
-            </Switch>    
-          </header>
-        </div>
-      </Router>
+              </Switch>    
+            </header>
+          </div>
+        </Router>
       </UserProvider>
     );
   }

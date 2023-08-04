@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUserContext } from './UserContext'; // Import the UserContext
-
+import { useUserContext } from '../../login/UserContext';
 const GetAllPosts = ({ targetUsername }) => { // Use targetUsername instead of userid
   const { user } = useUserContext(); // Access the user object from the context
   const [allPostsData, setAllPostsData] = useState(null);
@@ -10,7 +9,7 @@ const GetAllPosts = ({ targetUsername }) => { // Use targetUsername instead of u
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/${user.userId}/postsByUsername/${targetUsername}`); // Update the fetch URL
+        const response = await fetch(`/api/${user.userId}/postsByUsername/${targetUsername}`); 
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -24,7 +23,7 @@ const GetAllPosts = ({ targetUsername }) => { // Use targetUsername instead of u
     };
 
     fetchData();
-  }, [user.userId, targetUsername]); // Add user.userId and targetUsername to the dependency array
+  }, [user.userId, targetUsername]); 
 
   if (isLoading) {
     return <div>Loading...</div>;

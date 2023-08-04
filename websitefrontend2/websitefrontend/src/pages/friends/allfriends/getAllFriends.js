@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../../login/UserContext'; 
+import { useUserContext } from '../../login/UserContext';
 
 const GetAllFriends = () => {
-  const { userId } = useUserContext(); 
-  const [allFriendsData, setAllFriendsData] = useState(null);
+  const { user } = useUserContext();
+  const [allFriendsData, setAllFriendsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/${userId}/friends`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setAllFriendsData(data);
-        setIsLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [userId]);
+    console.log(user);
+    if (user) {
+      fetch(`/api/${user.appUserID}/allFriends`)
+        .then(response => {
+          console.log('API Response:', response); 
+          return response.json();
+        })
+        .then(data => {
+          console.log('API Data:', data);
+          setAllFriendsData(data); 
+        })
+        .catch(error => {
+          console.error("JSON PARSING ERROR or FETCH ERROR:", error);
+          setError(error.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [user]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -36,15 +39,16 @@ const GetAllFriends = () => {
 
   return (
     <div>
-      <h1>All Friends </h1>
-
-      {allFriendsData && allFriendsData.length > 0 ? (
-        allFriendsData.map((friend) => (
-          <div key={friend.id} className="friend-card">
-            <h2>{friend.name}</h2>
-            <p>{friend.email}</p>
-          </div>
-        ))
+      <h1>All Friends</h1>
+      {allFriendsData.length > 0 ? (
+        <ul>
+          {allFriendsData.map(friend => (
+            <li key={friend.id}>
+              <h2>{friend.name}</h2>
+              <p>{friend.email}</p>
+            </li>
+          ))}
+        </ul>
       ) : (
         <p>No friends found.</p>
       )}

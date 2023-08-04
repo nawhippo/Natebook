@@ -17,7 +17,6 @@ const CreateAccount = () => { // Changed function name to start with uppercase
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    //perform the fetch request here to send the form data to the server
     fetch("/api/createAccount", {
       method: "POST",
       headers: {
@@ -27,10 +26,12 @@ const CreateAccount = () => { // Changed function name to start with uppercase
     })
       .then((response) => {
         if (response.ok) {
-          //handle success
           console.log("Account created successfully!");
+        } else if (response.status === 409) {
+
+          console.error("Username is already taken. Please choose a different username.");
         } else {
-          //handle error
+
           console.error("Failed to create account.");
         }
       })
@@ -38,7 +39,6 @@ const CreateAccount = () => { // Changed function name to start with uppercase
         console.error("Error:", error);
       });
 
-    //clear the form fields after submission
     setFormData({
       firstname: "",
       lastname: "",

@@ -27,7 +27,7 @@ public class UserController {
     }
     private AppUserRepository appUserRepository;
 
-    @GetMapping("/{userId}/friends")
+    @GetMapping("/{userId}/allFriends")
     public ResponseEntity<List<AppUser>> getAllFriends(@PathVariable Long userId){
         return userserviceimpl.getFriends(userId);
     }
@@ -77,7 +77,7 @@ public class UserController {
         return userserviceimpl.findByAppUserID(userId);
     }
 
-    @GetMapping("/{userId}/messages")
+    @GetMapping("/{userId}/allMessages")
     public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId){
         return userserviceimpl.getAllMessages(userId);
     }
@@ -115,9 +115,9 @@ public class UserController {
         return userserviceimpl.sendMessage(userId, content, recipientIds);
     }
 
-    @GetMapping("/{userId}/posts")
-    public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId) {
-        return userserviceimpl.getAllPosts(userId);
+    @GetMapping("/{userId}/postsByUsername/{username}")
+    public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId, @PathVariable String username) {
+        return userserviceimpl.getPostsByUsername(userId, username);
     }
 
 
