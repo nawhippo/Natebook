@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useUserContext } from './UserContext'; // Import the useUserContext hook
 
 const specMessage = ({ messageId }) => {
-  const { userId } = useUserContext(); // Access the userId from the UserContext
+  const { userId } = useUserContext(); 
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const specMessage = ({ messageId }) => {
       })
       .then(data => setMessage(data))
       .catch(error => console.error('Error fetching message:', error));
-  }, [userId, messageId]); // Include userId and messageId in the dependency array
+  }, [userId, messageId]); //Include userId and messageId in the dependency array
 
   return (
     <div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
 
 const CreatePost = () => {
-  const { userId } = useUserContext(); // Access the userId from the UserContext
+  const { user } = useUserContext(); // Access the userId from the UserContext
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dateTime, setDateTime] = useState('');
@@ -15,7 +15,7 @@ const CreatePost = () => {
 
   const handleCreatePost = async () => {
     try {
-      const response = await fetch(`${userId}/createPost`, {
+      const response = await fetch(`/api/${user.appUserID}/createPost`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

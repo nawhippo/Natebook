@@ -16,7 +16,8 @@ const Banner = () => {
       <h1>NateBook</h1>
       {/* Links should be wrapped within a Router component */}
       <button onClick={() => handleLinkClick('/getAllFriends')}>View Friends List</button>
-      <button onClick={() => handleLinkClick('/getAllPosts')}>View All of Your Posts</button>
+      <button onClick={() => handleLinkClick('/getAllPosts')}>View Posts</button>
+      <button onClick={() => handleLinkClick('/getFriendRequests')}>View Friend Requests</button>
       <button onClick={() => handleLinkClick('/getAllMessages')}>View Messages</button>
       <button onClick={() => handleLinkClick('/about')}>About</button>
       <button onClick={() => handleLinkClick('/home')}>Home</button>

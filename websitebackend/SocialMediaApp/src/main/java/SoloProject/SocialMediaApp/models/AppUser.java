@@ -10,13 +10,13 @@ public class AppUser {
     @ElementCollection
     @CollectionTable(name = "friend_requests", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "request")
-    private List<String> requests;
+    private List<AppUser> requests;
 
-    public List<String> getRequests() {
+    public List<AppUser> getRequests() {
         return requests;
     }
 
-    public void setRequests(List<String> requests) {
+    public void setRequests(List<AppUser> requests) {
         this.requests = requests;
     }
 
@@ -79,7 +79,7 @@ public class AppUser {
     private List<AppUser> friends;
 
 
-    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends, String password, List<String> requests) {
+    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends, String password, List<AppUser> requests) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;

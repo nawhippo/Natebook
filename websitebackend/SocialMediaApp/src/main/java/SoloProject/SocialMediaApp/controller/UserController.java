@@ -122,6 +122,17 @@ public class UserController {
 
 
 
+    @GetMapping("/{userId}/messagesByUsername/{username}")
+    public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId, @PathVariable String username) {
+        return userserviceimpl.getMessagesByUsername(userId, username);
+    }
+
+    @GetMapping("/{userId}/getFriendRequests/")
+    public ResponseEntity<List<AppUser>> getAllFriendRequests(@PathVariable Long userId) {
+        return userserviceimpl.getAllFriendRequests(userId);
+    }
+
+
     @PostMapping("/{userId}/createPost")
     public ResponseEntity<Post> createPost(
             @PathVariable Long userId,

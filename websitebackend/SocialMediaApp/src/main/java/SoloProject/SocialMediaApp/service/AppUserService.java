@@ -38,6 +38,8 @@ public interface AppUserService {
     ResponseEntity<Message> getMessageById(Long userId, Long messageId);
     ResponseEntity<List<Message>> getAllMessages(Long userId);
 
+    ResponseEntity<List<AppUser>> getAllFriendRequests(Long UserId);
+
     ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId);
 
     ResponseEntity<AppUser> sendFriendRequest(Long senderId, String username);
@@ -53,4 +55,6 @@ public interface AppUserService {
     ResponseEntity<List<Post>> getPostsByUserId(Long userId, Long targetUserId);
 
     ResponseEntity<List<Post>> getPostsByUsername(Long userId, String targetUsername);
+
+    ResponseEntity<List<Message>> getMessagesByUsername(Long userId, String targetUsername);
 }
