@@ -2,20 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
 
 const GetAllPosts = () => {
-  const { user } = useUserContext(); // Access the user object from the context
+  const { user } = useUserContext();
   const [targetUsername, setTargetUsername] = useState('');
   const [allPostsData, setAllPostsData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [delayTimer, setDelayTimer] = useState(null);
 
   useEffect(() => {
-    //delay api until typing stops
-    const delayFetch = setTimeout(() => {
-      fetchData();
-    }, 500); 
-
-    
-    return () => clearTimeout(delayFetch);
+    // Delay API call until typing stops
+    if (delayTimer) clearTimeout(delayTimer);
+    if (targetUsername) {
+      const timer = setTimeout(() => {
+        fetchData();
+      }, 500);
+      setDelayTimer(timer);
+    } else {
+      setAllPostsData(null);
+    }
   }, [targetUsername]);
 
   const fetchData = async () => {

@@ -364,6 +364,8 @@ public class AppUserServiceImpl implements AppUserService {
         return ResponseEntity.ok(targetUser.getPosts());
     }
 
+
+
     @Override
     public ResponseEntity<List<Post>> getPostsByUsername(Long userId, String targetUsername) {
         AppUser appUser = repository.findByAppUserID(userId);
@@ -378,36 +380,25 @@ public class AppUserServiceImpl implements AppUserService {
             return ResponseEntity.notFound().build();
         }
 
-        List<AppUser> friends = appUser.getFriends();
-        boolean isFriend = false;
-        for (AppUser friend : friends) {
-            if (friend.getUsername().equals(targetUsername)) {
-                isFriend = true;
-                break;
+        boolean isSelf = targetUser.getAppUserID().equals(appUser.getAppUserID());
+
+        if (!isSelf) {
+            List<AppUser> friends = appUser.getFriends();
+            boolean isFriend = false;
+            for (AppUser friend : friends) {
+                if (friend.getUsername().equals(targetUsername)) {
+                    isFriend = true;
+                    break;
+                }
             }
-        }
 
-        boolean isSelf = false;
-
-        //check the database to see if it is yourself
-        if(targetUser.getAppUserID() == appUser.getAppUserID()){
-            isSelf = true;
-        }
-
-
-
-
-
-
-        if (!isFriend && !isSelf) {
-
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            if (!isFriend) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
         }
 
         return ResponseEntity.ok(targetUser.getPosts());
     }
-
-
 
     @Override
     public ResponseEntity<List<Message>> getMessagesByUsername(Long userId, String targetUsername) {

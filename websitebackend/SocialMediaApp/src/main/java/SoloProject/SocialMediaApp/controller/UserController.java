@@ -115,11 +115,11 @@ public class UserController {
         return userserviceimpl.sendMessage(userId, content, recipientIds);
     }
 
-    @GetMapping("/{userId}/postsByUsername/{username}")
-    public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId, @PathVariable String username) {
-        return userserviceimpl.getPostsByUsername(userId, username);
-    }
-
+//    @GetMapping("/{userId}/postsByUsername/{username}")
+//    public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId, @PathVariable String username) {
+//        return userserviceimpl.getPostsByUsername(userId, username);
+//    }
+//
 
 
     @GetMapping("/{userId}/messagesByUsername/{username}")

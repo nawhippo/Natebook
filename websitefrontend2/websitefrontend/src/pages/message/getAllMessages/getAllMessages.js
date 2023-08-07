@@ -6,7 +6,7 @@ const GetAllMessages = ({ targetUsername }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    fetch(`api/${user.appUserID}/messagesByUsername/${targetUsername}`)
+    fetch(`/api/${user.appUserID}/messagesByUsername/${targetUsername}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

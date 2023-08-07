@@ -1,6 +1,7 @@
 package SoloProject.SocialMediaApp.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -13,6 +14,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name ="user_id")
+    @JsonIgnore
     private AppUser appUser;
 
     @Column
