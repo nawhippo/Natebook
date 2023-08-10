@@ -20,7 +20,7 @@ public class UserController {
     public String helloWorld(){
         return "Hello, user!";
     }
-    private final AppUserServiceImpl userserviceimpl;
+    private AppUserServiceImpl userserviceimpl;
     @Autowired
     public UserController(AppUserServiceImpl userserviceimpl) {
         this.userserviceimpl = userserviceimpl;
@@ -47,10 +47,20 @@ public class UserController {
 
 
 
+    @GetMapping("/{userId}/accountDetails")
+    public ResponseEntity<AppUser> getAccountDetails(@PathVariable Long userId){
+        return userserviceimpl.getAccountDetails(userId);
+    }
 
-
-
-
+    @PutMapping("/{userId}/updateAccountDetails")
+    public ResponseEntity<AppUser> updateAccountDetails(
+            @PathVariable Long userId,
+            @RequestParam(required = false) String newFirstName,
+            @RequestParam(required = false) String newLastName,
+            @RequestParam(required = false) String newEmail
+    ) {
+        return userserviceimpl.updateAccountDetails(userId, newFirstName, newLastName, newEmail);
+    }
 
 
     //TODO: try to figure this out
@@ -141,7 +151,7 @@ public class UserController {
         return userserviceimpl.createPost(userId, post);
     }
 
-    @PutMapping("/{userId}/{friendId}")
+    @PutMapping("/{userId}/sendFriendRequestById/{friendId}")
     public ResponseEntity<AppUser> sendFriendRequestById(@PathVariable Long userId, @PathVariable Long friendRequestRecipient){
         return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
     }
@@ -171,4 +181,9 @@ public class UserController {
     public ResponseEntity<List<Post>> getPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
         return userserviceimpl.getPostsByUsername(userId, friendUsername);
     }
+
+    @GetMapping("/getAllWebsiteUsers")
+    public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() {
+    return userserviceimpl.getAllUsers();
+}
 }

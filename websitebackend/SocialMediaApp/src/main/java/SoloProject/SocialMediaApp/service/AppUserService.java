@@ -57,4 +57,11 @@ public interface AppUserService {
     ResponseEntity<List<Post>> getPostsByUsername(Long userId, String targetUsername);
 
     ResponseEntity<List<Message>> getMessagesByUsername(Long userId, String targetUsername);
+
+    ResponseEntity<List<AppUser>> getAllUsers();
+
+    ResponseEntity<AppUser> getAccountDetails(Long userid);
+
+
+    ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail);
 }

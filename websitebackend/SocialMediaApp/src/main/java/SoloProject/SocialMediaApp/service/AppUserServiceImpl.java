@@ -280,7 +280,7 @@ public class AppUserServiceImpl implements AppUserService {
         return new ResponseEntity<>(recipient, HttpStatus.OK);
     }
 
-    //have to account for the fact that friends are Strings representing usernames.
+
     @Override
     public ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, String senderUsername) {
         AppUser recipient = repository.findByAppUserID(recipientId);
@@ -437,4 +437,41 @@ public class AppUserServiceImpl implements AppUserService {
         return ResponseEntity.ok(targetUser.getMessages());
     }
 
+
+    @Override
+    public ResponseEntity<List<AppUser>> getAllUsers(){
+        List<AppUser> allUsers = repository.findAll();
+        return ResponseEntity.ok(allUsers);
+    }
+
+    @Override
+    public ResponseEntity<AppUser> getAccountDetails(Long userid){
+        AppUser user = repository.findByAppUserID(userid);
+        return ResponseEntity.ok(user);
+    }
+
+    @Override
+    public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail) {
+        AppUser user = repository.findByAppUserID(userId);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Update the user's account details if the new values are provided
+        if (newFirstName != null) {
+            user.setFirstname(newFirstName);
+        }
+        if (newLastName != null) {
+            user.setLastname(newLastName);
+        }
+        if (newEmail != null) {
+            user.setEmail(newEmail);
+        }
+
+        //save the updated user to the database
+        repository.save(user);
+
+        return ResponseEntity.ok(user);
+    }
     }

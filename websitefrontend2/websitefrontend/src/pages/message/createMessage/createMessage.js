@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useUserContext } from "../../login/UserContext";
 
 const CreateMessage = () => {
-  const { userId } = useUserContext(); // Access the userId from the UserContext
+  const { userId } = useUserContext();
   const [formData, setFormData] = useState({
     recipients: [],
     content: "",
@@ -20,7 +20,7 @@ const CreateMessage = () => {
     event.preventDefault();
 
     const { recipients, content } = formData;
-    fetch(`/users/${userId}/sendMessage`, { // Use the userId in the URL
+    fetch(`/users/${userId}/sendMessage`, { 
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,18 +29,16 @@ const CreateMessage = () => {
     })
       .then((response) => {
         if (response.ok) {
-          // Handle success
+      
           console.log("Message created successfully!");
         } else {
-          // Handle error
+        
           console.error("Failed to send message.");
         }
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-
-    // Clear the form fields after submission
     setFormData({
       recipients: [],
       content: "",

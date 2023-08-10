@@ -16,6 +16,7 @@ import createPost from './pages/posts/createPost/createPost';
 import ProtectedRoute from './pages/login/ProtectedRoute';
 import Banner from './banners/banner';
 import './universal.css'; // Import the universal CSS file
+import SendFriendRequestByUsername from './pages/friends/friendrequests/SendFriendRequestByUsername';
 
 
 const LoggedInMessage = () => {
@@ -51,6 +52,7 @@ class App extends Component {
                 <Route path="/specPost/:userId" component={specPost} /> 
                 <Route path="/getAllPosts" component={getAllPosts} />
                 <Route path="/createPost" component={createPost} />
+                <Route path="/sendFriendRequestByUsername" component={SendFriendRequestByUsername} />
               </Switch>    
             </header>
           </div>
