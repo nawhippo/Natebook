@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import About from './pages/about/About';
 import { UserProvider } from './pages/login/UserContext';
@@ -15,19 +15,9 @@ import getAllMessages from './pages/message/getAllMessages/getAllMessages';
 import createPost from './pages/posts/createPost/createPost';
 import ProtectedRoute from './pages/login/ProtectedRoute';
 import Banner from './banners/banner';
-import './universal.css'; // Import the universal CSS file
+import './universal.css';
 import SendFriendRequestByUsername from './pages/friends/friendrequests/SendFriendRequestByUsername';
-
-
-const LoggedInMessage = () => {
-  const { user } = useUserContext(); // Access user data using the useUserContext hook
-
-  if (user) {
-    return <div className="logged-in-message">Logged in as: {user.username}</div>;
-  }
-  return null;
-};
-
+import GetAllFriendRequests from './pages/friends/friendrequests/ViewAllFriendRequests';
 
 class App extends Component {
   render() {
@@ -53,6 +43,8 @@ class App extends Component {
                 <Route path="/getAllPosts" component={getAllPosts} />
                 <Route path="/createPost" component={createPost} />
                 <Route path="/sendFriendRequestByUsername" component={SendFriendRequestByUsername} />
+                <Route path="/getFriendRequests" component={GetAllFriendRequests} />
+                <Route path="/SendFriendRequest" component={SendFriendRequestByUsername} />
               </Switch>    
             </header>
           </div>
@@ -61,5 +53,4 @@ class App extends Component {
     );
   }
 }
-
 export default App;

@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'; // Make sure to import Browser
 import App from './App';
 
 ReactDOM.render(
-  <BrowserRouter forceRefresh={true}>
+  <BrowserRouter>
     <App />
   </BrowserRouter>,
   document.getElementById('root')

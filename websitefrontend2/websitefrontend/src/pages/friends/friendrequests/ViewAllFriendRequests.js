@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
 
-const GetAllFriendFriendRequests = () => {
+const GetAllFriendRequests = () => {
   const { user } = useUserContext();
   const [allFriendRequestsData, setAllFriendRequestsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -10,14 +10,14 @@ const GetAllFriendFriendRequests = () => {
   useEffect(() => {
     console.log(user);
     if (user) {
-      fetch(`/api/${user.userId}/getFriendRequests`)
+      fetch(`/api/${user.appUserID}/getFriendRequests`)
         .then(response => {
-          console.log('API Response:', response); 
+          console.log('API Response:', response);
           return response.json();
         })
         .then(data => {
           console.log('API Data:', data);
-          setAllFriendsData(data); 
+          setAllFriendRequestsData(data);
         })
         .catch(error => {
           console.error("JSON PARSING ERROR or FETCH ERROR:", error);
@@ -28,6 +28,15 @@ const GetAllFriendFriendRequests = () => {
         });
     }
   }, [user]);
+
+  const handleClick = (friendUsername) => {
+    fetch(`/api/${user.AppUserId}/acceptFriendRequest/${friendUsername}`);
+  };
+
+  const handleClickTwo = (friendUsername) => {
+    fetch(`/api/${user.AppUserId}/declineFriendRequest/${friendUsername}`);
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -36,34 +45,26 @@ const GetAllFriendFriendRequests = () => {
     return <div>Error: {error}</div>;
   }
 
-  const handleClick = () =>{
-    const data = fetch(`/api/${user.AppUserId}/acceptFriendRequest/${friend.username}`);
-  };
-
-  const handleCLickTwo = () =>{
-    const data = fetch(`/api/${user.AppUserId}/declineFriendRequest/${friend.username}`);
-  };
-
-  }
   return (
     <div>
       <h1>Friend Requests</h1>
-      {allFriendRequestsData.length > 0 ? Request(
+      {allFriendRequestsData.length > 0 ? (
         <ul>
-          {allFriendRequestsData.map(friend => Request (
+          {allFriendRequestsData.map(friend => (
             <li key={friend.id}>
               <h2>{friend.firstname}</h2>
               <p>{friend.lastname}</p>
               <p>{friend.email}</p>
-              <button OnClick={handleClick}>Add Friend</button>
-              <button OnClick={handleClick}>Decline Friend</button>
+              <button onClick={() => handleClick(friend.username)}>Add Friend</button>
+              <button onClick={() => handleClickTwo(friend.username)}>Decline Friend</button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No friends found.</p>
+        <p>No friend requests found.</p>
       )}
     </div>
   );
+};
 
-export default GetAllFriends;
+export default GetAllFriendRequests;

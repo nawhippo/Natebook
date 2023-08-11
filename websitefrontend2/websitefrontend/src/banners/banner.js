@@ -22,11 +22,13 @@ const Banner = () => {
       <button onClick={() => handleLinkClick('/about')}>About</button>
       <button onClick={() => handleLinkClick('/home')}>Home</button>
       <button onClick={() => handleLinkClick('/login')}>Login</button>
+      <button onClick={() => handleLogout('/logout')}>Log Out</button>
       <button onClick={() => handleLinkClick('/createAccount')}>Create Account</button>
       <button onClick={() => handleLinkClick('/createPost')}>Create Post</button>
       <button onClick={() => handleLinkClick('/createMessage')}>Send Message</button>
       <br></br>
       <button onClick={() => handleLinkClick('/addFriend')}>Add Friend</button>
+      <button onClick={() => handleLinkClick('/sendFriendRequest')}>Send Friend Request</button>
     </div>
   );
 };

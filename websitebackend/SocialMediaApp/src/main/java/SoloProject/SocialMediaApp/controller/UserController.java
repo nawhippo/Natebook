@@ -156,19 +156,19 @@ public class UserController {
         return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
     }
 
-    @PostMapping("/{userId}/sendFriendRequestByUsername/{friendUsername}")
-    public ResponseEntity<AppUser> sendFriendRequestByUsername(@PathVariable Long senderId, @PathVariable String friendUsername) {
-        return userserviceimpl.sendFriendRequest(senderId, friendUsername);
+    @PutMapping("/{userId}/sendFriendRequestByUsername/{friendUsername}")
+    public ResponseEntity<AppUser> sendFriendRequestByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
+        return userserviceimpl.sendFriendRequest(userId, friendUsername);
     }
 
     @PutMapping("/{userId}/acceptFriendRequest/{potentialFriendUsername}")
-    public ResponseEntity<AppUser> acceptFriendRequest(@PathVariable Long recipientId, @PathVariable String potentialFriendUsername) {
-        return userserviceimpl.acceptFriendRequest(recipientId, potentialFriendUsername);
+    public ResponseEntity<AppUser> acceptFriendRequest(@PathVariable Long userId, @PathVariable String potentialFriendUsername) {
+        return userserviceimpl.acceptFriendRequest(userId, potentialFriendUsername);
     }
 
     @PutMapping("/{userId}/declineFriendRequest/{potentialFriendUsername}")
-    public ResponseEntity<AppUser> declineFriendRequest(@PathVariable Long recipientId, @PathVariable String potentialFriendUsername) {
-        return userserviceimpl.declineFriendRequest(recipientId, potentialFriendUsername);
+    public ResponseEntity<AppUser> declineFriendRequest(@PathVariable Long userId, @PathVariable String potentialFriendUsername) {
+        return userserviceimpl.declineFriendRequest(userId, potentialFriendUsername);
     }
 
 

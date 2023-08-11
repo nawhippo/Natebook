@@ -12,7 +12,10 @@ const SendFriendRequestByUsername = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/${user.appUserId}/sendFriendRequestByUsername/${targetUsername}`);
+      const response = await fetch(`/api/${user.appUserID}/sendFriendRequestByUsername/${targetUsername}`, {
+      method: 'PUT',
+    });
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }

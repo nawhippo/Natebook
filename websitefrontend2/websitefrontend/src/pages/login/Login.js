@@ -51,7 +51,7 @@ const Login = () => {
         }
       })
       .then((data) => {
-        setUser(data); // Here, data will be the user object
+        setUser(data);
         history.push('/home');
       })
       .catch((error) => {
