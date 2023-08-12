@@ -18,6 +18,7 @@ import Banner from './banners/banner';
 import './universal.css';
 import SendFriendRequestByUsername from './pages/friends/friendrequests/SendFriendRequestByUsername';
 import GetAllFriendRequests from './pages/friends/friendrequests/ViewAllFriendRequests';
+import Logout from './pages/login/Logout';
 
 class App extends Component {
   render() {
@@ -45,6 +46,7 @@ class App extends Component {
                 <Route path="/sendFriendRequestByUsername" component={SendFriendRequestByUsername} />
                 <Route path="/getFriendRequests" component={GetAllFriendRequests} />
                 <Route path="/SendFriendRequest" component={SendFriendRequestByUsername} />
+                <Route path="/logout" component={Logout} />
               </Switch>    
             </header>
           </div>
