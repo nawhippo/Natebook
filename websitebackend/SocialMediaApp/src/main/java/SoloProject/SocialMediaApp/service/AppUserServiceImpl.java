@@ -482,10 +482,31 @@ public class AppUserServiceImpl implements AppUserService {
 
     public AppUser authenticate(String username, String password) throws AuthenticationException {
         AppUser user = repository.findByUsername(username);
+
+
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             throw new AuthenticationException("Invalid username or password");
         }
         return user;
+    }
+
+
+    public ResponseEntity<AppUser> removeFriend(Long userId, String username){
+        AppUser user = repository.findByAppUserID(userId);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<AppUser> friends = user.getFriends();
+        AppUser friend = repository.findByUsername(username);
+
+        if(friend == null){
+            return ResponseEntity.notFound().build();
+        }
+        friends.remove(friend);
+        user.setFriends(friends);
+        repository.save(user);
+        return ResponseEntity.ok(user);
     }
 
 }
