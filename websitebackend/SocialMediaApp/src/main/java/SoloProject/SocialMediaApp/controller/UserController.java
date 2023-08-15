@@ -3,6 +3,7 @@ package SoloProject.SocialMediaApp.controller;
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.models.Post;
+import SoloProject.SocialMediaApp.models.UserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ public class UserController {
     private AppUserRepository appUserRepository;
 
     @GetMapping("/{userId}/allFriends")
-    public ResponseEntity<List<AppUser>> getAllFriends(@PathVariable Long userId){
-        return userserviceimpl.getFriends(userId);
+    public ResponseEntity<List<UserDTO>> getAllFriends(@PathVariable Long userId){
+        return userserviceimpl.getAllFriendsDTOS(userId);
     }
 
 
@@ -138,8 +139,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/getFriendRequests/")
-    public ResponseEntity<List<AppUser>> getAllFriendRequests(@PathVariable Long userId) {
-        return userserviceimpl.getAllFriendRequests(userId);
+    public ResponseEntity<List<UserDTO>> getAllFriendRequests(@PathVariable Long userId) {
+        return userserviceimpl.getAllFriendRequestsDTOS(userId);
     }
 
 
@@ -161,14 +162,14 @@ public class UserController {
         return userserviceimpl.sendFriendRequest(userId, friendUsername);
     }
 
-    @PutMapping("/{userId}/acceptFriendRequest/{potentialFriendUsername}")
-    public ResponseEntity<AppUser> acceptFriendRequest(@PathVariable Long userId, @PathVariable String potentialFriendUsername) {
-        return userserviceimpl.acceptFriendRequest(userId, potentialFriendUsername);
+    @PutMapping("/{userId}/acceptFriendRequest/{potentialFriendId}")
+    public ResponseEntity<AppUser> acceptFriendRequest(@PathVariable Long userId, @PathVariable Long potentialFriendId) {
+        return userserviceimpl.acceptFriendRequest(userId, potentialFriendId);
     }
 
-    @PutMapping("/{userId}/declineFriendRequest/{potentialFriendUsername}")
-    public ResponseEntity<AppUser> declineFriendRequest(@PathVariable Long userId, @PathVariable String potentialFriendUsername) {
-        return userserviceimpl.declineFriendRequest(userId, potentialFriendUsername);
+    @PutMapping("/{userId}/declineFriendRequest/{potentialFriendId}")
+    public ResponseEntity<AppUser> declineFriendRequest(@PathVariable Long userId, @PathVariable Long potentialFriendId) {
+        return userserviceimpl.declineFriendRequest(userId, potentialFriendId);
     }
 
 

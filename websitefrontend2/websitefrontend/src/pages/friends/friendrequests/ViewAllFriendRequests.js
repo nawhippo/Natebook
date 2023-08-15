@@ -30,11 +30,11 @@ const GetAllFriendRequests = () => {
   }, [user]);
 
   const handleClick = (friendUsername) => {
-    fetch(`/api/${user.AppUserId}/acceptFriendRequest/${friendUsername}`);
+    fetch(`/api/${user.appUserID}/acceptFriendRequest/${friendUsername}`);
   };
 
   const handleClickTwo = (friendUsername) => {
-    fetch(`/api/${user.AppUserId}/declineFriendRequest/${friendUsername}`);
+    fetch(`/api/${user.appUserID}/declineFriendRequest/${friendUsername}`);
   };
 
   if (isLoading) {

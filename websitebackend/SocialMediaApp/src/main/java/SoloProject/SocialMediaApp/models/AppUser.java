@@ -1,5 +1,6 @@
 package SoloProject.SocialMediaApp.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.Collections;
 import java.util.List;
@@ -10,13 +11,14 @@ public class AppUser {
     @ElementCollection
     @CollectionTable(name = "friend_requests", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "request")
-    private List<AppUser> requests;
+    @JsonManagedReference
+    private List<Long> requests;
 
-    public List<AppUser> getRequests() {
+    public List<Long> getRequests() {
         return requests;
     }
 
-    public void setRequests(List<AppUser> requests) {
+    public void setRequests(List<Long> requests) {
         this.requests = requests;
     }
 
@@ -62,24 +64,23 @@ public class AppUser {
     private String password;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Post> posts;
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Message> messages;
 
 
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_friends",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id")
-    )
-    private List<AppUser> friends;
+    @ElementCollection
+    @CollectionTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "friend_id")
+    private List<Long> friends;
 
 
-    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<AppUser> friends, String password, List<AppUser> requests) {
+    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<Long> friends, String password, List<Long> requests) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -159,11 +160,11 @@ public class AppUser {
         this.messages = messages;
     }
 
-    public List<AppUser> getFriends() {
+    public List<Long> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<AppUser> friends) {
+    public void setFriends(List<Long> friends) {
         this.friends = friends;
     }
 

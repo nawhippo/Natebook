@@ -10,7 +10,6 @@ const Login = () => {
   const { user, setUser } = useUserContext();
   const history = useHistory();
 
-  // Check if the user is already logged in, and redirect to the home page
   useEffect(() => {
     if (user) {
       history.push('/home');
