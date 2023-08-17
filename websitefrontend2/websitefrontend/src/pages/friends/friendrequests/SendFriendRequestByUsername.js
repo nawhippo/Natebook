@@ -12,7 +12,7 @@ const SendFriendRequestByUsername = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/${user.appUserID}/sendFriendRequestByUsername/${targetUsername}`, {
+      const response = await fetch(`/api/friendreqs/${user.appUserID}/sendFriendRequestByUsername/${targetUsername}`, {
       method: 'PUT',
     });
 

@@ -1,12 +1,28 @@
 package SoloProject.SocialMediaApp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "messages")
 public class Message {
+    public Message(String content, AppUser sender, List<AppUser> recipients, Date dateTime) {
+        this.content = content;
+        this.sender = sender;
+        this.recipients = recipients;
+        this.dateTime = dateTime;
+    }
+
+    public Message() {
+        this.dateTime = new Date();
+        this.recipients = new ArrayList<>();
+    }
+
+    //message id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -15,32 +31,33 @@ public class Message {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "sender_id")
+    @JsonBackReference
     private AppUser sender;
 
     @ManyToMany
     @JoinTable(
             name = "message_recipients",
             joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+            inverseJoinColumns = @JoinColumn(name = "recipient_id")
     )
     private List<AppUser> recipients;
 
-    @Column
-    private Date dateTime; // New field for date/time
+    @Column(name = "date_time")
+    private Date dateTime;
 
-    public Message(Long id, String content, AppUser sender, List<AppUser> recipients) {
-        this.id = id;
+    public Message(String content, AppUser sender) {
         this.content = content;
         this.sender = sender;
-        this.recipients = recipients;
-    }
-
-    public Message() {
+        this.recipients = new ArrayList<>();
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getContent() {
@@ -73,5 +90,13 @@ public class Message {
 
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public void addRecipient(AppUser recipient) {
+        recipients.add(recipient);
+    }
+
+    public void removeRecipient(AppUser recipient){
+        recipients.remove(recipient);
     }
 }

@@ -1,34 +1,32 @@
-import { useEffect, useState } from "react";
-import {react} from React;
+import React, { useEffect, useState } from "react";
 import { useUserContext } from "../login/UserContext";
 
-const getAccount =() =>{
-    const { user } = useUserContext();
-    const [accountData, setaccountData] = useState(null);
-    cosnt [Error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+const GetAccount = () => {
+  const { user } = useUserContext();
+  const [accountData, setAccountData] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
+  useEffect(() => {
     console.log(user);
-    setaccountData(user);
-    if (user){
-    fetch(`/api/${user.appUserId}}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setUsers(data);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        setError(error.message);
-        setIsLoading(false);
-      });
-  } 
-}, [user]);
+    if (user) {
+      fetch(`/api/account/${user.appUserId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setAccountData(data); // Fix variable name here
+          setIsLoading(false);
+        })
+        .catch(error => {
+          setError(error.message);
+          setIsLoading(false);
+        });
+    }
+  }, [user]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -38,14 +36,15 @@ const getAccount =() =>{
     return <div>Error: {error}</div>;
   }
 
-
   return (
-    <div>Account Details
-    <p>id : ${user.appUserId}</p>
-    <p>First Name : ${user.firstname}</p>
-    <p>Last Name : ${user.lastname}</p>
-    <p>Email : ${user.email}</p>
+    <div>
+      <h2>Account Details</h2>
+      <p>ID: {accountData.appUserId}</p>
+      <p>First Name: {accountData.firstname}</p>
+      <p>Last Name: {accountData.lastname}</p>
+      <p>Email: {accountData.email}</p>
     </div>
   );
-} 
-export default getAccount;
+};
+
+export default GetAccount;

@@ -4,29 +4,12 @@ import java.util.List;
 
 //DTO TO REMOVE RECUSRION LOOP FROM APPUSER
 public class UserDTO {
-    public UserDTO(Long id, String username, String firstname, String lastname, List<Post> posts, List<Message> messages) {
+    public UserDTO(Long id, String username, String firstname, String lastname, String email) {
         this.id = id;
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.posts = posts;
-        this.messages = messages;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
+        this.email = email;
     }
 
     public Long getId() {
@@ -44,10 +27,12 @@ public class UserDTO {
     public void setUsername(String username) {
         this.username = username;
     }
+    public void setEmail(String email) {this.email = email;}
 
     public String getFirstname() {
         return firstname;
     }
+    public String getEmail() {return email;}
 
     public void setFirstname(String firstname) {
         this.firstname = firstname;
@@ -65,8 +50,5 @@ public class UserDTO {
     private String username;
     private String firstname;
     private String lastname;
-
-    List<Post> posts;
-
-    List<Message> messages;
+    private String email;
 }

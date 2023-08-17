@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { useUserContext } from '../login/UserContext';
 
 const Home = () => {
-  const [homeData, setHomeData] = useState(null);
+  const [homeData, setHomeData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { user } = useUserContext(); 
+  const { user } = useUserContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +38,6 @@ const Home = () => {
 
   return (
     <div>
-      <h2>TEST TEST</h2>
       <h1>Home Page</h1>
       {/* Display username if logged in, otherwise display nothing */}
       {user && <p>Logged in as: {user.username}</p>}
@@ -47,7 +46,22 @@ const Home = () => {
       {/* Add links to the specific endpoints with the user ID */}
       {user && (
         <>
-    
+          {/* Your existing links */}
+          <Link to={`/account/${user.appUserID}/accountDetails`}>View Your Profile</Link>
+
+          {/* Display data from the /api/home endpoint */}
+          <h2>Website Users</h2>
+          {homeData && homeData.length > 0 ? (
+            <ul>
+              {homeData.map(user => (
+                <li key={user.appUserID}>
+                  {user.username} - {user.firstname} {user.lastname}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No website users found.</p>
+          )}
         </>
       )}
     </div>

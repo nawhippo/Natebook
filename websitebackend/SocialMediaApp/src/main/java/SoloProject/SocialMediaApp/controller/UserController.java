@@ -7,6 +7,7 @@ import SoloProject.SocialMediaApp.models.UserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +17,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api") // The base path for all endpoints in this controller
 public class UserController {
-
-    @GetMapping
-    public String helloWorld(){
-        return "Hello, user!";
-    }
     private AppUserServiceImpl userserviceimpl;
     @Autowired
     public UserController(AppUserServiceImpl userserviceimpl) {
@@ -28,32 +24,48 @@ public class UserController {
     }
     private AppUserRepository appUserRepository;
 
-    @GetMapping("/{userId}/allFriends")
-    public ResponseEntity<List<UserDTO>> getAllFriends(@PathVariable Long userId){
+    // Miscellaneous Endpoints
+    @GetMapping
+    public String helloWorld() {
+        return "Hello, user!";
+    }
+
+    // Friend-related Endpoints
+    @GetMapping("/friends/{userId}/allFriends")
+    public ResponseEntity<List<UserDTO>> getAllFriends(@PathVariable Long userId) {
         return userserviceimpl.getAllFriendsDTOS(userId);
     }
 
-
-
-    @GetMapping("/{userId}/friends/{friendId}")
+    @GetMapping("/friends/{userId}/{friendId}")
     public ResponseEntity<AppUser> getFriendById(@PathVariable Long userId, @PathVariable Long friendId) {
         return userserviceimpl.getFriend(userId, friendId);
     }
 
-    @GetMapping("/{userId}/friends/{friendUsername}")
+    @GetMapping("/friends/{userId}/{friendUsername}")
     public ResponseEntity<AppUser> getFriendByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
         return userserviceimpl.getFriend(userId, friendUsername);
     }
 
-
-
-
-    @GetMapping("/{userId}/accountDetails")
-    public ResponseEntity<AppUser> getAccountDetails(@PathVariable Long userId){
+    @GetMapping("/account/{userId}/accountDetails")
+    public ResponseEntity<AppUser> getAccountDetails(@PathVariable Long userId) {
         return userserviceimpl.getAccountDetails(userId);
     }
 
-    @PutMapping("/{userId}/updateAccountDetails")
+    @PostMapping("account/createAccount")
+    public void createAccount(@RequestBody Map<String, String> formData) {
+        String firstName = formData.get("firstname");
+        String lastName = formData.get("lastname");
+        String email = formData.get("email");
+        String password = formData.get("password");
+        String username = formData.get("username");
+
+        AppUser appUser = new AppUser(firstName, lastName, email, password, username);
+        userserviceimpl.saveUser(appUser);
+    }
+
+
+
+    @PutMapping("/account/{userId}/updateAccountDetails")
     public ResponseEntity<AppUser> updateAccountDetails(
             @PathVariable Long userId,
             @RequestParam(required = false) String newFirstName,
@@ -63,8 +75,7 @@ public class UserController {
         return userserviceimpl.updateAccountDetails(userId, newFirstName, newLastName, newEmail);
     }
 
-
-    //TODO: try to figure this out
+    // User-related Endpoints
     @GetMapping("/user")
     public ResponseEntity<AppUser> getUserData() {
         // Simulate login and fetch user data based on user ID (e.g., 1)
@@ -80,71 +91,55 @@ public class UserController {
         }
     }
 
-
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId){
-
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId) {
         return userserviceimpl.findByAppUserID(userId);
     }
 
-    @GetMapping("/{userId}/allMessages")
-    public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId){
+    // Message-related Endpoints
+    @GetMapping("/message/{userId}/allMessages")
+    public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId) {
         return userserviceimpl.getAllMessages(userId);
     }
 
-    @GetMapping("/{userId}/{messageId}")
+    @GetMapping("/message/{userId}/{messageId}")
     public ResponseEntity<Message> getMessageById(@PathVariable Long userId, @PathVariable Long messageId) {
         return userserviceimpl.getMessageById(userId, messageId);
     }
 
+    @PostMapping("/message/{userId}/sendMessage")
+    public ResponseEntity<Message> sendMessage(
+            @PathVariable Long userId,
+            @RequestBody Map<String, Object> requestBody
+    ) {
+        String content = (String) requestBody.get("content");
+        List<String> recipientNames = (List<String>) requestBody.get("recipientNames");
 
-    @GetMapping("/{userId}/{postId}")
+        ResponseEntity<Message> response = userserviceimpl.sendMessage(userId, content, recipientNames);
+
+        if (response.getStatusCode() == HttpStatus.CREATED) {
+            Message message = response.getBody();
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .header("Location", "/message/" + message.getId()) // Assuming you want to include the message ID in the Location header
+                    .body(message);
+        } else {
+            return ResponseEntity.status(response.getStatusCode()).build();
+        }
+    }
+
+    @GetMapping("/message/{userId}/messagesByUsername/{username}")
+    public ResponseEntity<List<Message>> getMessageByUser(@PathVariable Long userId, @PathVariable String username) {
+        return userserviceimpl.getMessagesByUsername(userId, username);
+    }
+
+    // Post-related Endpoints
+    @GetMapping("/post/{userId}/{postId}")
     public ResponseEntity<Post> getPostById(@PathVariable Long userId, @PathVariable Long postId) {
         return userserviceimpl.getPostById(userId, postId);
     }
 
-    @PostMapping("/createAccount")
-    public void createAccount(@RequestBody Map<String, String> formData) {
-
-        String firstName = formData.get("firstname");
-        String lastName = formData.get("lastname");
-        String email = formData.get("email");
-        String password = formData.get("password");
-        String username = formData.get("username");
-
-        AppUser appUser = new AppUser(firstName, lastName, email, password, username);
-        userserviceimpl.saveUser(appUser);
-    }
-
-    @PostMapping("/{userId}/sendMessage")
-    public ResponseEntity<Message> sendMessage(
-            @PathVariable Long userId,
-            @RequestParam String content,
-            @RequestParam List<Long> recipientIds
-    ) {
-        return userserviceimpl.sendMessage(userId, content, recipientIds);
-    }
-
-//    @GetMapping("/{userId}/postsByUsername/{username}")
-//    public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long userId, @PathVariable String username) {
-//        return userserviceimpl.getPostsByUsername(userId, username);
-//    }
-//
-
-
-    @GetMapping("/{userId}/messagesByUsername/{username}")
-    public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId, @PathVariable String username) {
-        return userserviceimpl.getMessagesByUsername(userId, username);
-    }
-
-    @GetMapping("/{userId}/getFriendRequests/")
-    public ResponseEntity<List<UserDTO>> getAllFriendRequests(@PathVariable Long userId) {
-        return userserviceimpl.getAllFriendRequestsDTOS(userId);
-    }
-
-
-    @PostMapping("/{userId}/createPost")
+    @PostMapping("/post/{userId}/createPost")
     public ResponseEntity<Post> createPost(
             @PathVariable Long userId,
             @RequestBody Post post
@@ -152,39 +147,46 @@ public class UserController {
         return userserviceimpl.createPost(userId, post);
     }
 
-    @PutMapping("/{userId}/sendFriendRequestById/{friendId}")
-    public ResponseEntity<AppUser> sendFriendRequestById(@PathVariable Long userId, @PathVariable Long friendRequestRecipient){
+    @GetMapping("/post/{userId}/posts/{targetUserId}")
+    public ResponseEntity<List<Post>> getAllPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {
+        return userserviceimpl.getPostsByUserId(userId, targetUserId);
+    }
+
+    @GetMapping("/post/{userId}/postsByUsername/{friendUsername}")
+    public ResponseEntity<List<Post>> getAllPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
+        return userserviceimpl.getPostsByUsername(userId, friendUsername);
+    }
+
+    // Friend Request-related Endpoints
+    @GetMapping("/friendreqs/{userId}/getFriendRequests")
+    public ResponseEntity<List<UserDTO>> getAllFriendRequests(@PathVariable Long userId) {
+        System.out.println("REQUEST SENT!!!:" + userId);
+        return userserviceimpl.getAllFriendRequestsDTOS(userId);
+    }
+
+    @PutMapping("/friendreqs/{userId}/sendFriendRequestById/{friendId}")
+    public ResponseEntity<AppUser> sendFriendRequestById(@PathVariable Long userId, @PathVariable Long friendRequestRecipient) {
         return userserviceimpl.sendFriendRequest(userId, friendRequestRecipient);
     }
 
-    @PutMapping("/{userId}/sendFriendRequestByUsername/{friendUsername}")
+    @PutMapping("/friendreqs/{userId}/sendFriendRequestByUsername/{friendUsername}")
     public ResponseEntity<AppUser> sendFriendRequestByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
         return userserviceimpl.sendFriendRequest(userId, friendUsername);
     }
 
-    @PutMapping("/{userId}/acceptFriendRequest/{potentialFriendId}")
+    @PutMapping("/friendreqs/{userId}/acceptFriendRequest/{potentialFriendId}")
     public ResponseEntity<AppUser> acceptFriendRequest(@PathVariable Long userId, @PathVariable Long potentialFriendId) {
         return userserviceimpl.acceptFriendRequest(userId, potentialFriendId);
     }
 
-    @PutMapping("/{userId}/declineFriendRequest/{potentialFriendId}")
+    @PutMapping("/friendreqs/{userId}/declineFriendRequest/{potentialFriendId}")
     public ResponseEntity<AppUser> declineFriendRequest(@PathVariable Long userId, @PathVariable Long potentialFriendId) {
         return userserviceimpl.declineFriendRequest(userId, potentialFriendId);
     }
 
-
-    @GetMapping("/{userId}/posts/{targetUserId}")
-    public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {
-        return userserviceimpl.getPostsByUserId(userId, targetUserId);
-    }
-
-    @GetMapping("/{userId}/postsByUsername/{friendUsername}")
-    public ResponseEntity<List<Post>> getPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
-        return userserviceimpl.getPostsByUsername(userId, friendUsername);
-    }
-
+    // Miscellaneous Endpoints
     @GetMapping("/getAllWebsiteUsers")
     public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() {
-    return userserviceimpl.getAllUsers();
-}
+        return userserviceimpl.getAllUsers();
+    }
 }

@@ -6,7 +6,7 @@ import { useUserContext } from './pages/login/UserContext';
 import Login from './pages/login/Login';
 import Home from './pages/home/Home';
 import createAccount from './pages/account/createAccount';
-import getAllPosts from './pages/posts/allposts/getAllPosts';
+import getAllPostByUsername from './pages/posts/allposts/getAllPostsByUsername';
 import specPost from './pages/posts/specpost/specPost';
 import specFriend from './pages/friends/specfriend/specFriend';
 import getAllFriends from './pages/friends/allfriends/getAllFriends';
@@ -19,7 +19,8 @@ import './universal.css';
 import SendFriendRequestByUsername from './pages/friends/friendrequests/SendFriendRequestByUsername';
 import GetAllFriendRequests from './pages/friends/friendrequests/ViewAllFriendRequests';
 import Logout from './pages/login/Logout';
-
+import getAccount from './pages/account/getAccount';
+import GetAllMessages from './pages/message/getAllMessages/getAllMessages';
 class App extends Component {
   render() {
     return (
@@ -35,18 +36,19 @@ class App extends Component {
 
                 {/* Routes that require authentication */}
                 <Route path="/home" exact component={Home} />
+                <Route path ="/getAccount" exact component={getAccount} />
                 <Route path="/getAllFriends" component={getAllFriends} />
                 <Route path="/specFriend/:userId" component={specFriend} /> 
                 <Route path="/createMessage" component={createMessage} />
-                <Route path="/getAllMessages" component={getAllMessages} />
                 <Route path="/login" component={Login} />
                 <Route path="/specPost/:userId" component={specPost} /> 
-                <Route path="/getAllPosts" component={getAllPosts} />
+                <Route path="/getAllPosts" component={getAllPostByUsername} />
                 <Route path="/createPost" component={createPost} />
                 <Route path="/sendFriendRequestByUsername" component={SendFriendRequestByUsername} />
                 <Route path="/getFriendRequests" component={GetAllFriendRequests} />
                 <Route path="/SendFriendRequest" component={SendFriendRequestByUsername} />
                 <Route path="/logout" component={Logout} />
+                <Route path="/getAllMessages" component={GetAllMessages} /> 
               </Switch>    
             </header>
           </div>

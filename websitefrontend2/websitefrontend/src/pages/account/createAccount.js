@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const CreateAccount = () => { // Changed function name to start with uppercase
+const CreateAccount = () => {
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -17,7 +17,13 @@ const CreateAccount = () => { // Changed function name to start with uppercase
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    fetch("/api/createAccount", {
+    //validate the form data before submitting
+    if (!formData.firstname || !formData.lastname || !formData.username || !formData.email || !formData.password) {
+      console.error("Please fill in all required fields.");
+      return;
+    }
+
+    fetch("/api/account/createAccount", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,25 +33,22 @@ const CreateAccount = () => { // Changed function name to start with uppercase
       .then((response) => {
         if (response.ok) {
           console.log("Account created successfully!");
+          setFormData({
+            firstname: "",
+            lastname: "",
+            username: "",
+            email: "",
+            password: "",
+          });
         } else if (response.status === 409) {
-
           console.error("Username is already taken. Please choose a different username.");
         } else {
-
           console.error("Failed to create account.");
         }
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-
-    setFormData({
-      firstname: "",
-      lastname: "",
-      email: "",
-      password: "",
-      username: "",
-    });
   };
 
   return (
@@ -60,7 +63,7 @@ const CreateAccount = () => { // Changed function name to start with uppercase
               value={formData.firstname}
               onChange={handleChange}
             />
-            <br></br>
+            <br />
           </label>
           <label>
             Last Name:
@@ -70,18 +73,8 @@ const CreateAccount = () => { // Changed function name to start with uppercase
               value={formData.lastname}
               onChange={handleChange}
             />
-              <br></br>
+            <br />
           </label>
-          <label>
-            Email:
-            <input
-              type="text"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </label>
-          <br></br>
           <label>
             User Name:
             <input
@@ -91,11 +84,21 @@ const CreateAccount = () => { // Changed function name to start with uppercase
               onChange={handleChange}
             />
           </label>
-          <br></br>
+          <br />
+          <label>
+            Email:
+            <input
+              type="text"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </label>
+          <br />
           <label>
             Password:
             <input
-              type="text"
+              type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}

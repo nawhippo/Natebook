@@ -15,7 +15,7 @@ const CreatePost = () => {
 
   const handleCreatePost = async () => {
     try {
-      const response = await fetch(`/api/${user.appUserID}/createPost`, {
+      const response = await fetch(`/api/post/${user.appUserID}/createPost`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

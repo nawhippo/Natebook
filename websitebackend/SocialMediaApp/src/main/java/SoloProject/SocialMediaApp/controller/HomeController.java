@@ -1,15 +1,29 @@
 package SoloProject.SocialMediaApp.controller;
 
+import SoloProject.SocialMediaApp.models.AppUser;
+import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api") // The base path for all endpoints in this controller
 public class HomeController {
-    @GetMapping("/home") // The endpoint URL: /api/home
-    public String home() {
-        return "{\"message\": \"hello, welcome to my react app, it is a basic CRUD application.\"}";
+
+    private final AppUserServiceImpl userserviceimpl;
+
+    @Autowired
+    public HomeController(AppUserServiceImpl userserviceimpl) {
+        this.userserviceimpl = userserviceimpl;
+    }
+
+    @GetMapping("/home")
+    public ResponseEntity<List<AppUser>> getHomePageData() {
+        return userserviceimpl.getAllUsers();
     }
 
     @GetMapping("/about") // The endpoint URL: /api/about

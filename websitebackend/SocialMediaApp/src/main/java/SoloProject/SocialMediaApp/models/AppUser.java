@@ -2,16 +2,23 @@ package SoloProject.SocialMediaApp.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Entity
 @Table(name = "app_users")
 public class AppUser {
-    @ElementCollection
-    @CollectionTable(name = "friend_requests", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "request")
-    @JsonManagedReference
+    public List<Message> getOutgoingmessages() {
+        return outgoingmessages;
+    }
+
+    public void setOutgoingmessages(List<Message> outgoingmessages) {
+        this.outgoingmessages = outgoingmessages;
+    }
+
+    @Column
     private List<Long> requests;
 
     public List<Long> getRequests() {
@@ -67,9 +74,16 @@ public class AppUser {
     @JsonManagedReference
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @Column
+    @OneToMany(mappedBy = "sender")
+    private List<Message> incomingmessages;
+
+
+
+    @Column
+    @OneToMany(mappedBy = "sender")
     @JsonManagedReference
-    private List<Message> messages;
+    private List<Message> outgoingmessages;
 
 
 
@@ -86,26 +100,34 @@ public class AppUser {
         this.email = email;
         this.username = username;
         this.posts = posts;
-        this.messages = messages;
+        this.incomingmessages = messages;
         this.friends = friends;
         this.password = password;
         this.requests = requests;
+        this.role = "USER";
     }
 
-    public AppUser(String firstname, String lastname, String email, String username, String password) {
+    public AppUser(String firstname, String lastname, String username, String email, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
-        this.email = email;
         this.username = username;
+        this.email = email;
         this.password = password;
         this.posts = Collections.emptyList();
-        this.messages = Collections.emptyList();
+        this.incomingmessages = Collections.emptyList();
+        this.outgoingmessages = Collections.emptyList();
         this.friends = Collections.emptyList();
         this.requests = Collections.emptyList();
         this.role = "USER";
     }
 
     public AppUser() {
+        this.posts = new ArrayList<>();
+        this.incomingmessages = new ArrayList<>();
+        this.outgoingmessages = new ArrayList<>();
+        this.friends = new ArrayList<>();
+        this.requests = new ArrayList<>();
+        this.role = "USER";
     }
 
     public Long getAppUserID() {
@@ -152,12 +174,12 @@ public class AppUser {
         this.posts = posts;
     }
 
-    public List<Message> getMessages() {
-        return messages;
+    public List<Message> getIncomingmessages() {
+        return incomingmessages;
     }
 
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
+    public void setIncomingmessages(List<Message> incomingmessages) {
+        this.incomingmessages = incomingmessages;
     }
 
     public List<Long> getFriends() {
@@ -168,23 +190,12 @@ public class AppUser {
         this.friends = friends;
     }
 
-
-
-
-    //has to be implemented in appuser service, we have to be able to access the repository
-    public void sendFriendRequest(AppUser receiver){
+    public void addSentMessage(Message message){
+        outgoingmessages.add(message);
     }
-
-    public void acceptFriendRequest(AppUser receiver){
-
+    public void addReceivedMessage(Message message){
+        incomingmessages.add(message);
     }
-
-    public void declineFriendRequest(AppUser receiver){
-
-    }
-
-
-
 
     @Override
     public String toString() {

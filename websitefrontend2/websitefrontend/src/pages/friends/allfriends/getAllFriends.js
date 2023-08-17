@@ -10,7 +10,7 @@ const GetAllFriends = () => {
   useEffect(() => {
     console.log(user);
     if (user) {
-      fetch(`/api/${user.appUserID}/allFriends`)
+      fetch(`/api/friends/${user.appUserID}/allFriends`)
         .then(response => {
           console.log('API Response:', response); 
           return response.json();
@@ -44,7 +44,8 @@ const GetAllFriends = () => {
         <ul>
           {allFriendsData.map(friend => (
             <li key={friend.id}>
-              <h2>{friend.name}</h2>
+              <h2>{friend.firstname}</h2>
+              <h2>{friend.lastname}</h2>
               <p>{friend.email}</p>
             </li>
           ))}

@@ -5,10 +5,13 @@ import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.models.UserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.AuthenticationException;
 import java.util.ArrayList;
@@ -20,11 +23,15 @@ import java.util.List;
 public class AppUserServiceImpl implements AppUserService {
 
     private final AppUserRepository repository;
+
+    @PersistenceContext
+    private final EntityManager entityManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AppUserServiceImpl(AppUserRepository repository, PasswordEncoder passwordEncoder) {
+    public AppUserServiceImpl(AppUserRepository repository, PasswordEncoder passwordEncoder, EntityManager entityManager) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.entityManager = entityManager;
     }
 
 
@@ -81,21 +88,6 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
-//    @Override
-//    public ResponseEntity<AppUser> addFriend(Long userId, String username) {
-//        AppUser appUser = repository.findByAppUserID(userId);
-//        AppUser friend = repository.findByUsername(username);
-//
-//        if(friend.equals(null)){
-//            return ResponseEntity.notFound().build();
-//        } else {
-//            List<AppUser> friends = appUser.getFriends();
-//            friends.add(friend);
-//            appUser.setFriends(friends);
-//            AppUser updatedUser = repository.save(appUser);
-//            return ResponseEntity.ok(updatedUser);
-//        }
-//    }
 
     @Override
     public ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname) {
@@ -108,8 +100,6 @@ public class AppUserServiceImpl implements AppUserService {
         } else if (lastname != null) {
             appUsers = repository.findByLastname(lastname);
         } else {
-            // No search criteria provided
-            // You may choose to return an empty list or an error response here
             return ResponseEntity.badRequest().build();
         }
 
@@ -136,7 +126,7 @@ public class AppUserServiceImpl implements AppUserService {
     public ResponseEntity<Message> getMessageById(Long userId, Long messageId){
         AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
-            for (Message message : appUser.getMessages()) {
+            for (Message message : appUser.getIncomingmessages()) {
                 if (message.getId().equals(messageId)) {
                     return ResponseEntity.ok(message);
                 }
@@ -145,7 +135,6 @@ public class AppUserServiceImpl implements AppUserService {
         }
         return ResponseEntity.notFound().build();
     }
-
 
 
 
@@ -167,14 +156,40 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public ResponseEntity<List<Message>> getAllMessages(Long userId) {
         AppUser appUser = findByAppUserID(userId).getBody();
-        if (appUser != null) {
-            return (ResponseEntity<List<Message>>) appUser.getMessages();
-        } else {
-
+        if (appUser == null) {
             return ResponseEntity.notFound().build();
         }
+
+        List<Message> messages = appUser.getIncomingmessages();
+
+        return ResponseEntity.ok(messages);
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<Message> sendMessage(Long senderId, String content, List<String> recipientNames) {
+        AppUser sender = repository.findByAppUserID(senderId);
+        if (sender == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Message message = new Message(content, sender);
+
+        for (String recipientName : recipientNames) {
+            AppUser recipient = repository.findByUsername(recipientName);
+            if (recipient == null) {
+                System.out.println("Recipient: " + recipientName + " not found.");
+            } else {
+                message.addRecipient(recipient);
+                repository.save(recipient);
+            }
+        }
+
+        sender.addSentMessage(message);
+        repository.save(sender);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+    }
 
     @Override
     public ResponseEntity<List<Long>> getFriends(Long userId) {
@@ -220,35 +235,6 @@ public class AppUserServiceImpl implements AppUserService {
 
 
 
-    @Override
-    public ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds) {
-        // Find the sender user
-        AppUser senderUser = findByAppUserID(senderId).getBody();
-        if (senderUser == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Find the recipient users
-        List<AppUser> recipients = new ArrayList<>();
-        for (Long recipientId : recipientIds) {
-            AppUser recipient = findByAppUserID(recipientId).getBody();
-            if (recipient != null) {
-                recipients.add(recipient);
-            }
-        }
-
-        // Create the message
-        Message message = new Message();
-        message.setContent(content);
-        message.setSender(senderUser);
-        message.setRecipients(recipients);
-
-        // Save the message to the sender's messages list
-        senderUser.getMessages().add(message);
-        saveUser(senderUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
-    }
 
 
     @Override
@@ -269,6 +255,7 @@ public class AppUserServiceImpl implements AppUserService {
         return ResponseEntity.ok(DTOList);
     }
 
+
     private List<UserDTO> convertToDTOList(List<Long> ids) {
         List<UserDTO> result = new ArrayList<>();
         for (long id : ids){
@@ -280,7 +267,7 @@ public class AppUserServiceImpl implements AppUserService {
     private UserDTO convertToDTO(Long id){
         AppUser user = repository.findByAppUserID(id);
         return new UserDTO(
-                id, user.getUsername(), user.getFirstname(), user.getLastname(), user.getPosts(), user.getMessages()
+                id, user.getUsername(), user.getFirstname(), user.getLastname(), user.getEmail()
         );
     }
 
@@ -307,13 +294,19 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, String recipientUsername) {
         AppUser recipient = repository.findByUsername(recipientUsername);
+
+        if (recipient.getRequests() == null) {
+            recipient.setRequests(new ArrayList<>());
+        }
+
         List<Long> newRequests = recipient.getRequests();
         newRequests.add(senderId);
         recipient.setRequests(newRequests);
+
         repository.save(recipient);
+
         return new ResponseEntity<>(recipient, HttpStatus.OK);
     }
-
 
     @Override
     public ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, Long senderId) {
@@ -466,8 +459,17 @@ public class AppUserServiceImpl implements AppUserService {
         if (!isFriend && !isSelf) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+        List<Message> messages = new ArrayList<>();
+        List<Message> incoming = appUser.getIncomingmessages();
 
-        return ResponseEntity.ok(targetUser.getMessages());
+        //filter through messages
+        for(Message message : incoming){
+            if(message.getSender().getUsername().equals(targetUsername)){
+                messages.add(message);
+            }
+        }
+
+        return ResponseEntity.ok(messages);
     }
 
 
@@ -548,8 +550,7 @@ public class AppUserServiceImpl implements AppUserService {
                 appUser.getUsername(),
                 appUser.getFirstname(),
                 appUser.getLastname(),
-                appUser.getPosts(),
-                appUser.getMessages()
+                appUser.getEmail()
         );
     }
 

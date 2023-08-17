@@ -10,7 +10,7 @@ const GetAllFriendRequests = () => {
   useEffect(() => {
     console.log(user);
     if (user) {
-      fetch(`/api/${user.appUserID}/getFriendRequests`)
+      fetch(`/api/friendreqs/${user.appUserID}/getFriendRequests`)
         .then(response => {
           console.log('API Response:', response);
           return response.json();
@@ -29,12 +29,16 @@ const GetAllFriendRequests = () => {
     }
   }, [user]);
 
-  const handleClick = (friendUsername) => {
-    fetch(`/api/${user.appUserID}/acceptFriendRequest/${friendUsername}`);
-  };
+  const handleClick = (friendId) => {
+    fetch(`/api/friendreqs/${user.appUserID}/acceptFriendRequest/${friendId}`,{
+      method: 'PUT',
+  });
+};
 
-  const handleClickTwo = (friendUsername) => {
-    fetch(`/api/${user.appUserID}/declineFriendRequest/${friendUsername}`);
+  const handleClickTwo = (friendId) => {
+    fetch(`/api/friendreqs/${user.appUserID}/declineFriendRequest/${friendId}`,{
+      method: 'PUT',
+  });
   };
 
   if (isLoading) {
@@ -55,8 +59,8 @@ const GetAllFriendRequests = () => {
               <h2>{friend.firstname}</h2>
               <p>{friend.lastname}</p>
               <p>{friend.email}</p>
-              <button onClick={() => handleClick(friend.username)}>Add Friend</button>
-              <button onClick={() => handleClickTwo(friend.username)}>Decline Friend</button>
+              <button onClick={() => handleClick(friend.id)}>Add Friend</button>
+              <button onClick={() => handleClickTwo(friend.id)}>Decline Friend</button>
             </li>
           ))}
         </ul>
@@ -66,5 +70,4 @@ const GetAllFriendRequests = () => {
     </div>
   );
 };
-
 export default GetAllFriendRequests;

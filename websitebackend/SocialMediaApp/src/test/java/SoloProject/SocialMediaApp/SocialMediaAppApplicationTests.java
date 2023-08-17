@@ -28,7 +28,7 @@ private TestEntityManager entityManager;
 		test.setEmail("NateWip@Cooledudes.com");
 		test.setUsername("LarryLoffa");
 		test.setPosts(Collections.emptyList());
-		test.setMessages(Collections.emptyList());
+		test.setIncomingmessages(Collections.emptyList());
 		test.setFriends(Collections.emptyList());
 		AppUser savedAppUser = appUserRepository.save(test);
 

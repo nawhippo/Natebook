@@ -9,7 +9,7 @@ const SpecFriend = ({ friendId }) => {
   useEffect(() => {
     const fetchFriendData = async () => {
       try {
-        const response = await fetch(`/api/${userId}/friends/${friendId}`);
+        const response = await fetch(`/api/friends/${userId}/${friendId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

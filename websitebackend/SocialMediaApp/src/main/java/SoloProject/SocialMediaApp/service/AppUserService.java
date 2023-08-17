@@ -13,6 +13,11 @@ public interface AppUserService {
     AppUser createUser(String firstName, String lastName, String username, String email, String password);
 
 
+
+    ResponseEntity<List<Message>> getAllMessages(Long userId);
+
+    ResponseEntity<Message> sendMessage(Long senderId, String content, List<String> recipientNames);
+
     ResponseEntity<List<Long>> getFriends(Long userId);
     ResponseEntity<AppUser> getFriend(Long userId, Long friendId);
 
@@ -35,7 +40,7 @@ public interface AppUserService {
     ResponseEntity<List<Post>> getAllPosts(Long userId);
 
     ResponseEntity<Message> getMessageById(Long userId, Long messageId);
-    ResponseEntity<List<Message>> getAllMessages(Long userId);
+
 
     ResponseEntity<List<Long>> getAllFriendRequests(Long UserId);
 
@@ -46,8 +51,6 @@ public interface AppUserService {
     ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId);
 
     ResponseEntity<AppUser> sendFriendRequest(Long senderId, String username);
-
-    ResponseEntity<Message> sendMessage(Long senderId, String content, List<Long> recipientIds);
 
     ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, Long senderId);
 

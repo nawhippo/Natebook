@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useUserContext } from "../../login/UserContext";
 
 const CreateMessage = () => {
-  const { userId } = useUserContext();
+  const { user } = useUserContext();
   const [formData, setFormData] = useState({
-    recipients: [],
+    recipients: "",
     content: "",
   });
 
@@ -16,31 +16,41 @@ const CreateMessage = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     const { recipients, content } = formData;
-    fetch(`/users/${userId}/sendMessage`, { 
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ recipients, content }),
-    })
-      .then((response) => {
-        if (response.ok) {
-      
-          console.log("Message created successfully!");
-        } else {
-        
-          console.error("Failed to send message.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+    const recipientNamesList = recipients.split(',').map(recipient => recipient.trim());
+  
+    // Check for missing or empty fields
+    if (recipientNamesList.length === 0 || content.trim() === "") {
+      console.error("Recipient names and content are required.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`/api/message/${user.appUserID}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          senderUsername: user,
+          recipientNames: recipientNamesList, 
+          content }),
       });
+  
+      if (response.ok) {
+        console.log("Message created successfully!");
+      } else {
+        console.error("Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  
     setFormData({
-      recipients: [],
+      recipients: "",
       content: "",
     });
   };
@@ -58,6 +68,8 @@ const CreateMessage = () => {
               onChange={handleChange}
             />
           </label>
+        </div>
+        <div>
           <label>
             Content:
             <textarea

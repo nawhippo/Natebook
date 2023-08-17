@@ -29,7 +29,7 @@ const UpdateAccount = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/${user.appUserId}/updateAccount`, {
+      const response = await fetch(`/api/account/${user.appUserId}/updateAccount`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
