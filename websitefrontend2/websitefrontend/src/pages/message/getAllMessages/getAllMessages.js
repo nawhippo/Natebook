@@ -51,7 +51,7 @@ const GetAllMessages = () => {
     {displayedMessages.map((message) => (
       <li key={message.id}>
         <p>{message.content}</p>
-        {message.sender && <p>Sender: {message.sender}</p>}
+        {message.sender && <p>Sender: {message.sender.username}</p>}
         {message.recipients && message.recipients.length > 0 && (
           <p>
             Recipients: {message.recipients.map((recipient) => recipient.username).join(', ')}
