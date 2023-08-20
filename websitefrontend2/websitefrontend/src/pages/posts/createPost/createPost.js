@@ -9,33 +9,50 @@ const CreatePost = () => {
 
   useEffect(() => {
     const currentDate = new Date();
-    const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()}`;
-    setDateTime(formattedDate);
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const hours = currentDate.getHours().toString().padStart(2, '0');
+    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+    const milliseconds = currentDate.getMilliseconds().toString().padStart(3, '0');
+
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
+    setDateTime(formattedDateTime);
   }, []);
+  
 
-  const handleCreatePost = async () => {
-    try {
-      const response = await fetch(`/api/post/${user.appUserID}/createPost`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: title,
-          description: description,
-          dateTime: dateTime, // Include the date/time in the request body
-        }),
-      });
+const handleCreatePost = async () => {
+  try {
+    const parsedDateTime = new Date(dateTime);
+    const formattedDateTime = `${(parsedDateTime.getMonth() + 1).toString().padStart(2, '0')}-${parsedDateTime.getDate().toString().padStart(2, '0')}-${parsedDateTime.getFullYear()} at ${parsedDateTime.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    })}`;
 
-      if (response.ok) {
-        alert('Post created successfully!');
-      } else {
-        alert('Failed to create post.');
-      }
-    } catch (error) {
-      console.error('Error creating post:', error);
+    const response = await fetch(`/api/post/${user.appUserID}/createPost`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: title,
+        description: description,
+        dateTime: formattedDateTime,
+      }),
+    });
+
+    if (response.ok) {
+      alert('Post created successfully!');
+    } else {
+      alert('Failed to create post.');
     }
-  };
+  } catch (error) {
+    console.error('Error creating post:', error);
+  }
+};
 
   return (
     <div>
@@ -53,13 +70,6 @@ const CreatePost = () => {
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-        />
-      </div>
-      <div>
-        <input
-          type="datetime-local"
-          value={dateTime}
-          onChange={(e) => setDateTime(e.target.value)}
         />
       </div>
       <div>
