@@ -1,45 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
-
+import '../posts.css'
 const GetAllPostsByUsername = () => {
   const { user } = useUserContext();
   const [targetUsername, setTargetUsername] = useState('');
   const [allPostsData, setAllPostsData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [delayTimer, setDelayTimer] = useState(null);
+  const [inputValue, setInputValue] = useState('');
 
-  useEffect(() => {
-    // Delay API call until typing stops
-    if (delayTimer) clearTimeout(delayTimer);
-    if (targetUsername) {
-      const timer = setTimeout(() => {
-        fetchData();
-      }, 500);
-      setDelayTimer(timer);
-    } else {
-      setAllPostsData(null);
-    }
-  }, [targetUsername]);
-
-  const fetchData = async () => {
+  const fetchData = (username) => {
     setIsLoading(true);
-    try {
-      const response = await fetch(`/api/post/${user.appUserID}/postsByUsername/${targetUsername}`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setAllPostsData(data);
-      setIsLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setIsLoading(false);
-    }
+    fetch(`/api/post/${user.appUserID}/postsByUsername/${username}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setAllPostsData(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
   };
 
-  const handleUsernameChange = (event) => {
-    setTargetUsername(event.target.value);
+
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    setInputValue(value);
+    console.log('Input Value: ', value);
+  };
+
+  const handleSearchClick = () => {
+    setTargetUsername(inputValue);
+    fetchData(inputValue);
   };
 
   if (isLoading) {
@@ -55,20 +53,20 @@ const GetAllPostsByUsername = () => {
       <h1>All Posts</h1>
       <input
         type="text"
-        value={targetUsername}
-        onChange={handleUsernameChange}
+        value={inputValue}
         placeholder="Enter username"
+        onChange={handleInputChange}
       />
-
+      <button onClick={handleSearchClick}>Search</button>
       {allPostsData && allPostsData.length > 0 ? (
         allPostsData.map((post) => (
           <div key={post.id} className="post-card">
             <h2>{post.title}</h2>
             <p>{post.description}</p>
-            <p>{post.likes}</p>
-            <p>{post.dislikes}</p>
+            <p>Likes : {post.likes} Dislikes: {post.dislikes}</p>
             <p>{post.email}</p>
             <p>{post.dateTime}</p>
+            <p>{post.appUser.username}</p>
           </div>
         ))
       ) : (

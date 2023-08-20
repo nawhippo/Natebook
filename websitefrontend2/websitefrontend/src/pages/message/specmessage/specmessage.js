@@ -15,7 +15,7 @@ const specMessage = ({ messageId }) => {
       })
       .then(data => setMessage(data))
       .catch(error => console.error('Error fetching message:', error));
-  }, [userId, messageId]); //Include userId and messageId in the dependency array
+  }, [userId, messageId]);
 
   return (
     <div>

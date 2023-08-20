@@ -10,7 +10,7 @@ const GetAccount = () => {
   useEffect(() => {
     console.log(user);
     if (user) {
-      fetch(`/api/account/${user.appUserId}`)
+      fetch(`/api/account/${user.appUserId}/accountDetails`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -18,7 +18,7 @@ const GetAccount = () => {
           return response.json();
         })
         .then(data => {
-          setAccountData(data); // Fix variable name here
+          setAccountData(data);
           setIsLoading(false);
         })
         .catch(error => {

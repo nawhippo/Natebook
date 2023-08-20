@@ -39,17 +39,11 @@ const Home = () => {
   return (
     <div>
       <h1>Home Page</h1>
-      {/* Display username if logged in, otherwise display nothing */}
       {user && <p>Logged in as: {user.username}</p>}
       <p>{homeData && homeData.message}</p>
-
-      {/* Add links to the specific endpoints with the user ID */}
       {user && (
         <>
-          {/* Your existing links */}
           <Link to={`/account/${user.appUserID}/accountDetails`}>View Your Profile</Link>
-
-          {/* Display data from the /api/home endpoint */}
           <h2>Website Users</h2>
           {homeData && homeData.length > 0 ? (
             <ul>

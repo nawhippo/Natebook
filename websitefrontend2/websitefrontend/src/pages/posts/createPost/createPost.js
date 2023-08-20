@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
 
 const CreatePost = () => {
-  const { user } = useUserContext(); // Access the userId from the UserContext
+  const { user } = useUserContext(); 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dateTime, setDateTime] = useState('');
 
   useEffect(() => {
-    // Set the date/time to the current date and time when the component mounts
     const currentDate = new Date();
-    setDateTime(currentDate.toISOString().slice(0, 16));
+    const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()}`;
+    setDateTime(formattedDate);
   }, []);
 
   const handleCreatePost = async () => {
