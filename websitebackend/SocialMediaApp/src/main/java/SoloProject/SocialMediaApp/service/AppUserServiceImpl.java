@@ -1,12 +1,10 @@
 package SoloProject.SocialMediaApp.service;
 
-import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.Message;
-import SoloProject.SocialMediaApp.models.Post;
-import SoloProject.SocialMediaApp.models.UserDTO;
+import SoloProject.SocialMediaApp.models.*;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.naming.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 //intermediary between model and database (SoloProject.SocialMediaApp.repository)
@@ -33,7 +32,6 @@ public class AppUserServiceImpl implements AppUserService {
         this.passwordEncoder = passwordEncoder;
         this.entityManager = entityManager;
     }
-
 
 
     @Override
@@ -108,7 +106,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     //Post functions
     @Override
-    public ResponseEntity<Post> getPostById(Long userId, Long postId){
+    public ResponseEntity<Post> getPostById(Long userId, Long postId) {
         AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
             for (Post post : appUser.getPosts()) {
@@ -122,7 +120,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ResponseEntity<Message> getMessageById(Long userId, Long messageId){
+    public ResponseEntity<Message> getMessageById(Long userId, Long messageId) {
         AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
             for (Message message : appUser.getMessages()) {
@@ -134,7 +132,6 @@ public class AppUserServiceImpl implements AppUserService {
         }
         return ResponseEntity.notFound().build();
     }
-
 
 
     @Override
@@ -164,11 +161,11 @@ public class AppUserServiceImpl implements AppUserService {
         AppUser sender = repository.findByAppUserID(senderId);
         Message message = new Message(content, sender, false);
 
-        for(String recipientName : recipientNames){
+        for (String recipientName : recipientNames) {
             message.addRecipient(recipientName);
         }
 
-        for(String recipientName : recipientNames) {
+        for (String recipientName : recipientNames) {
             AppUser recipient = repository.findByUsername(recipientName);
             recipient.getMessages().add(message);
             repository.save(recipient);
@@ -193,7 +190,6 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
-
     @Override
     public ResponseEntity<AppUser> getFriend(Long userId, Long friendId) {
         AppUser appUser = findByAppUserID(userId).getBody();
@@ -211,17 +207,17 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public ResponseEntity<AppUser> getFriend(Long userId, String friendUsername) {
-    AppUser user = repository.findByAppUserID(userId);
-    for(Long friend : user.getFriends()){
-        if(repository.findByAppUserID(friend).getUsername().equals(friendUsername)){
-            return ResponseEntity.ok(repository.findByUsername(friendUsername));
+        AppUser user = repository.findByAppUserID(userId);
+        for (Long friend : user.getFriends()) {
+            if (repository.findByAppUserID(friend).getUsername().equals(friendUsername)) {
+                return ResponseEntity.ok(repository.findByUsername(friendUsername));
+            }
         }
-    }
-    return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build();
     }
 
     @Override
-    public ResponseEntity<List<Long>> getAllFriendRequests(Long UserId){
+    public ResponseEntity<List<Long>> getAllFriendRequests(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -243,7 +239,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     private List<UserDTO> convertToDTOList(List<Long> ids) {
         List<UserDTO> result = new ArrayList<>();
-        if(ids != null) {
+        if (ids != null) {
             for (long id : ids) {
                 result.add(convertToDTO(id));
             }
@@ -263,11 +259,11 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     @Override
-    public ResponseEntity<List<UserDTO>> getAllFriendRequestsDTOS(Long UserId){
+    public ResponseEntity<List<UserDTO>> getAllFriendRequestsDTOS(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
         List<Long> friendreqs = user.getRequests();
         List<UserDTO> DTOList = convertToDTOList(friendreqs);
-        for(UserDTO dto : DTOList){
+        for (UserDTO dto : DTOList) {
             System.out.println(dto);
         }
         return ResponseEntity.ok(DTOList);
@@ -334,30 +330,20 @@ public class AppUserServiceImpl implements AppUserService {
         AppUser appUser = repository.findByAppUserID(userId);
 
         if (appUser == null) {
-            // If user not found, return a 404 Not Found response
             return ResponseEntity.notFound().build();
         }
-
-        // Set the user for the post
+        String username = appUser.getUsername();
         post.setAppUser(appUser);
-
-        // Save the post to the user's list of posts
+        post.setPosterusername(username);
         List<Post> userPosts = appUser.getPosts();
         userPosts.add(post);
         appUser.setPosts(userPosts);
-
-        // Save the updated user to the database
         repository.save(appUser);
-
-        // Return the created post with a 201 Created response
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
 
-
-    //POINTLESS WITH FRONTEND
     @Override
-    //to get other people's posts
     public ResponseEntity<List<Post>> getPostsByUserId(Long userId, Long friendId) {
         AppUser appUser = repository.findByAppUserID(userId);
         if (appUser == null) {
@@ -382,7 +368,6 @@ public class AppUserServiceImpl implements AppUserService {
         }
         return ResponseEntity.ok(targetUser.getPosts());
     }
-
 
 
     @Override
@@ -445,7 +430,7 @@ public class AppUserServiceImpl implements AppUserService {
         boolean isSelf = false;
 
 
-        if(targetUser.getAppUserID() == appUser.getAppUserID()){
+        if (targetUser.getAppUserID() == appUser.getAppUserID()) {
             isSelf = true;
         }
 
@@ -456,8 +441,8 @@ public class AppUserServiceImpl implements AppUserService {
         List<Message> incoming = appUser.getMessages();
 
 
-        for(Message message : incoming){
-            if(message.getSender().equals(targetUsername)){
+        for (Message message : incoming) {
+            if (message.getSender().equals(targetUsername)) {
                 messages.add(message);
             }
         }
@@ -467,13 +452,13 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     @Override
-    public ResponseEntity<List<AppUser>> getAllUsers(){
+    public ResponseEntity<List<AppUser>> getAllUsers() {
         List<AppUser> allUsers = repository.findAll();
         return ResponseEntity.ok(allUsers);
     }
 
     @Override
-    public ResponseEntity<AppUser> getAccountDetails(Long userid){
+    public ResponseEntity<AppUser> getAccountDetails(Long userid) {
         AppUser user = repository.findByAppUserID(userid);
         return ResponseEntity.ok(user);
     }
@@ -496,10 +481,9 @@ public class AppUserServiceImpl implements AppUserService {
             user.setEmail(newEmail);
         }
 
-        if (newPassword != null){
+        if (newPassword != null) {
             user.setPassword(newPassword);
         }
-
         repository.save(user);
 
         return ResponseEntity.ok(user);
@@ -517,7 +501,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
-    public ResponseEntity<AppUser> removeFriend(Long userId, String username){
+    public ResponseEntity<AppUser> removeFriend(Long userId, String username) {
         AppUser user = repository.findByAppUserID(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -526,7 +510,7 @@ public class AppUserServiceImpl implements AppUserService {
         List<Long> friends = user.getFriends();
         AppUser friend = repository.findByUsername(username);
 
-        if(friend == null){
+        if (friend == null) {
             return ResponseEntity.notFound().build();
         }
         friends.remove(friend);
@@ -534,7 +518,6 @@ public class AppUserServiceImpl implements AppUserService {
         repository.save(user);
         return ResponseEntity.ok(user);
     }
-
 
 
     //to display user data extrapolated from longs.
@@ -548,6 +531,99 @@ public class AppUserServiceImpl implements AppUserService {
                 appUser.getEmail()
         );
     }
+
+
+    public ResponseEntity<?> createComment(Long userId, Long postId, Comment comment) {
+        AppUser appUser = repository.findByAppUserID(userId);
+
+        if (appUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Post> postOptional = appUser.getPosts().stream()
+                .filter(post -> post.getId().equals(postId))
+                .findFirst();
+
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            comment.setCommenterusername(appUser.getUsername());
+            post.addComment(comment);
+            return ResponseEntity.status(HttpStatus.CREATED).body(post);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    //how to get specific post, without poster's userid?
+    public ResponseEntity<Post> likePost(Long userId, Post post) {
+        if(!post.getLikes().contains(userId) && !post.getDislikes().contains(userId)){
+            post.addLike(userId);
+            return ResponseEntity.ok(post);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    public ResponseEntity<Post> dislikePost(Long userId, Post post) {
+        if(!post.getLikes().contains(userId) && !post.getDislikes().contains(userId)){
+            post.addDislike(userId);
+            return ResponseEntity.ok(post);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+
+    public ResponseEntity<Post> removeLikePost(Long userId, Post post) {
+        if(post.getLikes().contains(userId)){
+            post.removeLike(userId);
+            return ResponseEntity.ok(post);
+        }
+        return (ResponseEntity<Post>) ResponseEntity.notFound();
+    }
+
+    public ResponseEntity<Post> removeDislikePost(Long userId, Post post) {
+        if(post.getDislikes().contains(userId)){
+            post.removeDislike(userId);
+            return ResponseEntity.ok(post);
+        }
+        return (ResponseEntity<Post>) ResponseEntity.notFound();
+    }
+
+
+
+    public ResponseEntity<Comment> likecomment(Long userId, Comment comment) {
+        if(!comment.getLikes().contains(userId) && !comment.getDislikes().contains(userId)){
+            comment.addLike(userId);
+            return ResponseEntity.ok(comment);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+        public ResponseEntity<Comment> dislikeComment(Long userId, Comment comment) {
+        if(!comment.getLikes().contains(userId) && !comment.getDislikes().contains(userId)){
+            comment.addDislike(userId);
+            return ResponseEntity.ok(comment);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+
+    public ResponseEntity<Comment> removeLikeComment(Long userId, Comment comment) {
+        if(comment.getLikes().contains(userId)){
+            comment.removeLike(userId);
+            return ResponseEntity.ok(comment);
+        }
+        return (ResponseEntity<Comment>) ResponseEntity.notFound();
+    }
+
+    public ResponseEntity<Comment> removeDislikeComment(Long userId, Comment comment) {
+        if(comment.getDislikes().contains(userId)){
+            comment.removeDislike(userId);
+            return ResponseEntity.ok(comment);
+        }
+        return (ResponseEntity<Comment>) ResponseEntity.notFound();
+    }
+
+
 
 
 
