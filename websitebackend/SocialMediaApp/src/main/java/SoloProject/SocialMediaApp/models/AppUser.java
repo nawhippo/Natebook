@@ -1,5 +1,6 @@
 package SoloProject.SocialMediaApp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
@@ -81,14 +82,14 @@ public class AppUser {
     @Column
     private String email;
 
-    @Column
+    @Column(unique = true)
     private String username;
 
     @Column
     private String password;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Post> posts;
 
 
