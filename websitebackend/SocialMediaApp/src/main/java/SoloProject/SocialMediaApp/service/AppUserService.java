@@ -14,6 +14,8 @@ public interface AppUserService {
 
 
 
+//    ResponseEntity<List<Message>> getAllMessages(Long userId);
+
     ResponseEntity<List<Message>> getAllMessages(Long userId);
 
     ResponseEntity<Message> sendMessage(Long senderId, String content, List<String> recipientNames);
@@ -69,5 +71,5 @@ public interface AppUserService {
     ResponseEntity<AppUser> getAccountDetails(Long userid);
 
 
-    ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail);
+    ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String password);
 }

@@ -10,14 +10,21 @@ import java.util.List;
 @Entity
 @Table(name = "messages")
 public class Message {
-    public Message(String content, AppUser sender, List<AppUser> recipients, Date dateTime) {
+    public Message() {
+    this.dateTime = new Date();
+    this.recipients = new ArrayList<>();
+    }
+
+    public Message(String content, AppUser sender, boolean isIncoming, List<String> recipients, Date dateTime) {
         this.content = content;
         this.sender = sender;
+        this.isIncoming = isIncoming;
         this.recipients = recipients;
         this.dateTime = dateTime;
     }
 
-    public Message() {
+    public Message(boolean isIncoming) {
+        this.isIncoming = isIncoming;
         this.dateTime = new Date();
         this.recipients = new ArrayList<>();
     }
@@ -30,25 +37,25 @@ public class Message {
     @Column
     private String content;
 
+
     @ManyToOne
-    @JoinColumn(name = "sender_id")
     @JsonBackReference
     private AppUser sender;
 
-    @ManyToMany
-    @JoinTable(
-            name = "message_recipients",
-            joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "recipient_id")
-    )
-    private List<AppUser> recipients;
+    @Column(name = "is_incoming")
+    private boolean isIncoming;
+
+   @Column(name = "recipients")
+   @ElementCollection
+    private List<String> recipients;
 
     @Column(name = "date_time")
     private Date dateTime;
 
-    public Message(String content, AppUser sender) {
+    public Message(String content, AppUser sender, boolean isIncoming) {
         this.content = content;
         this.sender = sender;
+        this.isIncoming = isIncoming;
         this.recipients = new ArrayList<>();
     }
 
@@ -76,11 +83,11 @@ public class Message {
         this.sender = sender;
     }
 
-    public List<AppUser> getRecipients() {
+    public List<String> getRecipients() {
         return recipients;
     }
 
-    public void setRecipients(List<AppUser> recipients) {
+    public void setRecipients(List<String> recipients) {
         this.recipients = recipients;
     }
 
@@ -92,11 +99,19 @@ public class Message {
         this.dateTime = dateTime;
     }
 
-    public void addRecipient(AppUser recipient) {
+    public void addRecipient(String recipient) {
         recipients.add(recipient);
     }
 
-    public void removeRecipient(AppUser recipient){
+    public void removeRecipient(AppUser recipient) {
         recipients.remove(recipient);
+    }
+
+    public void setIncoming(boolean incoming) {
+        isIncoming = incoming;
+    }
+
+    public boolean isIncoming() {
+        return isIncoming;
     }
 }

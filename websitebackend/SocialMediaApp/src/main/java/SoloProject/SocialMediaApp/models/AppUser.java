@@ -2,6 +2,7 @@ package SoloProject.SocialMediaApp.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,16 +11,18 @@ import java.util.List;
 @Entity
 @Table(name = "app_users")
 public class AppUser {
-    public List<Message> getOutgoingmessages() {
-        return outgoingmessages;
-    }
 
-    public void setOutgoingmessages(List<Message> outgoingmessages) {
-        this.outgoingmessages = outgoingmessages;
-    }
 
     @Column
     private List<Long> requests;
+
+    public AppUser(String firstName, String lastName, String email, String password, String username) {
+        this.firstname = firstName;
+        this.lastname = lastName;
+        this.email=  email;
+        this.password = password;
+        this.username = username;
+    }
 
     public List<Long> getRequests() {
         return requests;
@@ -31,6 +34,7 @@ public class AppUser {
 
     @Column
     private String role;
+
     public String getRole() {
         return role;
     }
@@ -55,6 +59,19 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long appUserID;
 
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sender")
+    @JsonManagedReference
+    private List<Message> messages;
+
     @Column
     private String firstname;
 
@@ -74,19 +91,6 @@ public class AppUser {
     @JsonManagedReference
     private List<Post> posts;
 
-    @Column
-    @OneToMany(mappedBy = "sender")
-    private List<Message> incomingmessages;
-
-
-
-    @Column
-    @OneToMany(mappedBy = "sender")
-    @JsonManagedReference
-    private List<Message> outgoingmessages;
-
-
-
 
     @ElementCollection
     @CollectionTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_id"))
@@ -94,37 +98,35 @@ public class AppUser {
     private List<Long> friends;
 
 
-    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<Long> friends, String password, List<Long> requests) {
+    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<Long> friends, String password, List<Long> requests, List<Message> messages1) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.username = username;
         this.posts = posts;
-        this.incomingmessages = messages;
         this.friends = friends;
         this.password = password;
         this.requests = requests;
+        this.messages = messages1;
         this.role = "USER";
     }
 
-    public AppUser(String firstname, String lastname, String username, String email, String password) {
+    public AppUser(List<Message> messages, String firstname, String lastname, String username, String email, String password) {
+        this.messages = messages;
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.posts = Collections.emptyList();
-        this.incomingmessages = Collections.emptyList();
-        this.outgoingmessages = Collections.emptyList();
-        this.friends = Collections.emptyList();
-        this.requests = Collections.emptyList();
+        this.posts = new ArrayList<>();
+        this.friends = new ArrayList<>();
+        this.requests = new ArrayList<>();
         this.role = "USER";
     }
 
     public AppUser() {
+        this.messages = new ArrayList<>();
         this.posts = new ArrayList<>();
-        this.incomingmessages = new ArrayList<>();
-        this.outgoingmessages = new ArrayList<>();
         this.friends = new ArrayList<>();
         this.requests = new ArrayList<>();
         this.role = "USER";
@@ -174,13 +176,6 @@ public class AppUser {
         this.posts = posts;
     }
 
-    public List<Message> getIncomingmessages() {
-        return incomingmessages;
-    }
-
-    public void setIncomingmessages(List<Message> incomingmessages) {
-        this.incomingmessages = incomingmessages;
-    }
 
     public List<Long> getFriends() {
         return friends;
@@ -190,12 +185,6 @@ public class AppUser {
         this.friends = friends;
     }
 
-    public void addSentMessage(Message message){
-        outgoingmessages.add(message);
-    }
-    public void addReceivedMessage(Message message){
-        incomingmessages.add(message);
-    }
 
     @Override
     public String toString() {

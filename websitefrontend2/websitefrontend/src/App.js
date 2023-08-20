@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import About from './pages/about/About';
 import { UserProvider } from './pages/login/UserContext';
 import { useUserContext } from './pages/login/UserContext';
@@ -9,7 +9,7 @@ import createAccount from './pages/account/createAccount';
 import getAllPostByUsername from './pages/posts/allposts/getAllPostsByUsername';
 import specPost from './pages/posts/specpost/specPost';
 import specFriend from './pages/friends/specfriend/specFriend';
-import getAllFriends from './pages/friends/allfriends/getAllFriends';
+import GetAllFriends from './pages/friends/allfriends/getAllFriends';
 import createMessage from './pages/message/createMessage/createMessage';
 import getAllMessages from './pages/message/getAllMessages/getAllMessages';
 import createPost from './pages/posts/createPost/createPost';
@@ -19,7 +19,7 @@ import './universal.css';
 import SendFriendRequestByUsername from './pages/friends/friendrequests/SendFriendRequestByUsername';
 import GetAllFriendRequests from './pages/friends/friendrequests/ViewAllFriendRequests';
 import Logout from './pages/login/Logout';
-import getAccount from './pages/account/getAccount';
+import GetAccount from './pages/account/getAccount';
 import GetAllMessages from './pages/message/getAllMessages/getAllMessages';
 class App extends Component {
   render() {
@@ -35,20 +35,23 @@ class App extends Component {
                 <Route path="/createAccount" component={createAccount} />
 
                 {/* Routes that require authentication */}
-                <Route path="/home" exact component={Home} />
-                <Route path ="/getAccount" exact component={getAccount} />
-                <Route path="/getAllFriends" component={getAllFriends} />
-                <Route path="/specFriend/:userId" component={specFriend} /> 
-                <Route path="/createMessage" component={createMessage} />
-                <Route path="/login" component={Login} />
-                <Route path="/specPost/:userId" component={specPost} /> 
-                <Route path="/getAllPosts" component={getAllPostByUsername} />
-                <Route path="/createPost" component={createPost} />
-                <Route path="/sendFriendRequestByUsername" component={SendFriendRequestByUsername} />
-                <Route path="/getFriendRequests" component={GetAllFriendRequests} />
-                <Route path="/SendFriendRequest" component={SendFriendRequestByUsername} />
-                <Route path="/logout" component={Logout} />
-                <Route path="/getAllMessages" component={GetAllMessages} /> 
+                <PrivateRoute path="/home" exact component={Home} />
+                <PrivateRoute path ="/accountDetails" exact component={GetAccount} />
+                <PrivateRoute path="/getAllFriends" component={GetAllFriends} />
+                <PrivateRoute path="/specFriend/:userId" component={specFriend} /> 
+                <PrivateRoute path="/createMessage" component={createMessage} />
+                <PrivateRoute path="/login" component={Login} />
+                <PrivateRoute path="/specPost/:userId" component={specPost} /> 
+                <PrivateRoute path="/getAllPosts" component={getAllPostByUsername} />
+                <PrivateRoute path="/createPost" component={createPost} />
+                <PrivateRoute path="/sendFriendRequestByUsername" component={SendFriendRequestByUsername} />
+                <PrivateRoute path="/getFriendRequests" component={GetAllFriendRequests} />
+                <PrivateRoute path="/SendFriendRequest" component={SendFriendRequestByUsername} />
+                <PrivateRoute path="/logout" component={Logout} />
+                <PrivateRoute path="/getAllMessages" component={GetAllMessages} /> 
+
+                 {/* Fallback route */}
+                 <Route path="*" component={() => <Redirect to="/login" />} />
               </Switch>    
             </header>
           </div>
@@ -56,5 +59,18 @@ class App extends Component {
       </UserProvider>
     );
   }
+}
+
+class PrivateRoute extends Component {
+  render() {
+    const { component: Component, ...rest } = this.props;
+    const user = user.appUserID;
+
+    if (!user) {
+      return <Redirect to="/login" />;
+    }
+
+    return <Route {...rest} render={props => <Component {...props} />} />;
+}
 }
 export default App;

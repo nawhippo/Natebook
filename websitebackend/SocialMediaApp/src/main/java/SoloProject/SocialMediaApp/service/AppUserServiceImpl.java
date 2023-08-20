@@ -41,9 +41,8 @@ public class AppUserServiceImpl implements AppUserService {
         if (repository.findByUsername(username) != null) {
             throw new IllegalArgumentException("Username is already taken. Please choose a different username.");
         }
-
-
-        AppUser newuser = new AppUser(firstName, lastName, username, email, password);
+        List<Message> messages = new ArrayList<>();
+        AppUser newuser = new AppUser(messages, firstName, lastName, username, email, password);
         repository.save(newuser);
         return newuser;
     }
@@ -126,7 +125,7 @@ public class AppUserServiceImpl implements AppUserService {
     public ResponseEntity<Message> getMessageById(Long userId, Long messageId){
         AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
-            for (Message message : appUser.getIncomingmessages()) {
+            for (Message message : appUser.getMessages()) {
                 if (message.getId().equals(messageId)) {
                     return ResponseEntity.ok(message);
                 }
@@ -149,19 +148,13 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
-
-
-    //your own message
-
     @Override
     public ResponseEntity<List<Message>> getAllMessages(Long userId) {
         AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser == null) {
             return ResponseEntity.notFound().build();
         }
-
-        List<Message> messages = appUser.getIncomingmessages();
-
+        List<Message> messages = appUser.getMessages();
         return ResponseEntity.ok(messages);
     }
 
@@ -169,26 +162,22 @@ public class AppUserServiceImpl implements AppUserService {
     @Transactional
     public ResponseEntity<Message> sendMessage(Long senderId, String content, List<String> recipientNames) {
         AppUser sender = repository.findByAppUserID(senderId);
-        if (sender == null) {
-            return ResponseEntity.notFound().build();
+        Message message = new Message(content, sender, false);
+
+        for(String recipientName : recipientNames){
+            message.addRecipient(recipientName);
         }
 
-        Message message = new Message(content, sender);
-
-        for (String recipientName : recipientNames) {
+        for(String recipientName : recipientNames) {
             AppUser recipient = repository.findByUsername(recipientName);
-            if (recipient == null) {
-                System.out.println("Recipient: " + recipientName + " not found.");
-            } else {
-                message.addRecipient(recipient);
-                repository.save(recipient);
-            }
+            recipient.getMessages().add(message);
+            repository.save(recipient);
         }
-
-        sender.addSentMessage(message);
+        message.setIncoming(true);
+        sender.getMessages().add(message);
         repository.save(sender);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+        return ResponseEntity.ok(message);
     }
 
     @Override
@@ -208,7 +197,6 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public ResponseEntity<AppUser> getFriend(Long userId, Long friendId) {
         AppUser appUser = findByAppUserID(userId).getBody();
-        //find user, but with validation step
         if (appUser == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -232,11 +220,6 @@ public class AppUserServiceImpl implements AppUserService {
     return ResponseEntity.notFound().build();
     }
 
-
-
-
-
-
     @Override
     public ResponseEntity<List<Long>> getAllFriendRequests(Long UserId){
         AppUser user = repository.findByAppUserID(UserId);
@@ -248,27 +231,34 @@ public class AppUserServiceImpl implements AppUserService {
 
 
     @Override
-    public ResponseEntity<List<UserDTO>> getAllFriendsDTOS(Long UserId){
+    public ResponseEntity<List<UserDTO>> getAllFriendsDTOS(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
-        List<Long> friends = user.getFriends();
-        List<UserDTO> DTOList = convertToDTOList(friends);
-        return ResponseEntity.ok(DTOList);
+        if (user != null && user.getFriends() != null) {
+            List<Long> friends = user.getFriends();
+            List<UserDTO> DTOList = convertToDTOList(friends);
+            return ResponseEntity.ok(DTOList);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
-
 
     private List<UserDTO> convertToDTOList(List<Long> ids) {
         List<UserDTO> result = new ArrayList<>();
-        for (long id : ids){
-        result.add(convertToDTO(id));
+        if(ids != null) {
+            for (long id : ids) {
+                result.add(convertToDTO(id));
+            }
         }
         return result;
     }
 
-    private UserDTO convertToDTO(Long id){
+    private UserDTO convertToDTO(Long id) {
         AppUser user = repository.findByAppUserID(id);
-        return new UserDTO(
-                id, user.getUsername(), user.getFirstname(), user.getLastname(), user.getEmail()
-        );
+        if (user != null) {
+            return new UserDTO(
+                    id, user.getUsername(), user.getFirstname(), user.getLastname(), user.getEmail()
+            );
+        }
+        return null;
     }
 
 
@@ -277,6 +267,9 @@ public class AppUserServiceImpl implements AppUserService {
         AppUser user = repository.findByAppUserID(UserId);
         List<Long> friendreqs = user.getRequests();
         List<UserDTO> DTOList = convertToDTOList(friendreqs);
+        for(UserDTO dto : DTOList){
+            System.out.println(dto);
+        }
         return ResponseEntity.ok(DTOList);
     }
 
@@ -451,7 +444,7 @@ public class AppUserServiceImpl implements AppUserService {
         }
         boolean isSelf = false;
 
-        //check the database to see if it is yourself
+
         if(targetUser.getAppUserID() == appUser.getAppUserID()){
             isSelf = true;
         }
@@ -460,11 +453,11 @@ public class AppUserServiceImpl implements AppUserService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<Message> messages = new ArrayList<>();
-        List<Message> incoming = appUser.getIncomingmessages();
+        List<Message> incoming = appUser.getMessages();
 
-        //filter through messages
+
         for(Message message : incoming){
-            if(message.getSender().getUsername().equals(targetUsername)){
+            if(message.getSender().equals(targetUsername)){
                 messages.add(message);
             }
         }
@@ -486,14 +479,13 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail) {
+    public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String newPassword) {
         AppUser user = repository.findByAppUserID(userId);
 
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
 
-        // Update the user's account details if the new values are provided
         if (newFirstName != null) {
             user.setFirstname(newFirstName);
         }
@@ -504,7 +496,10 @@ public class AppUserServiceImpl implements AppUserService {
             user.setEmail(newEmail);
         }
 
-        //save the updated user to the database
+        if (newPassword != null){
+            user.setPassword(newPassword);
+        }
+
         repository.save(user);
 
         return ResponseEntity.ok(user);

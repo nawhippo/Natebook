@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api") // The base path for all endpoints in this controller
+@RequestMapping("/api")
 public class UserController {
     private AppUserServiceImpl userserviceimpl;
     @Autowired
@@ -24,14 +24,12 @@ public class UserController {
     }
     private AppUserRepository appUserRepository;
 
-    // Miscellaneous Endpoints
     @GetMapping
     public String helloWorld() {
         return "Hello, user!";
     }
 
-    // Friend-related Endpoints
-    @GetMapping("/friends/{userId}/allFriends")
+    @GetMapping("/friends/{userId}/getAllFriends")
     public ResponseEntity<List<UserDTO>> getAllFriends(@PathVariable Long userId) {
         return userserviceimpl.getAllFriendsDTOS(userId);
     }
@@ -70,23 +68,20 @@ public class UserController {
             @PathVariable Long userId,
             @RequestParam(required = false) String newFirstName,
             @RequestParam(required = false) String newLastName,
-            @RequestParam(required = false) String newEmail
+            @RequestParam(required = false) String newEmail,
+            @RequestParam(required = false) String password
     ) {
-        return userserviceimpl.updateAccountDetails(userId, newFirstName, newLastName, newEmail);
+        return userserviceimpl.updateAccountDetails(userId, newFirstName, newLastName, newEmail, password);
     }
 
-    // User-related Endpoints
     @GetMapping("/user")
     public ResponseEntity<AppUser> getUserData() {
-        // Simulate login and fetch user data based on user ID (e.g., 1)
         Long userId = 1L;
         AppUser user = appUserRepository.findById(userId).orElse(null);
 
         if (user != null) {
-            // If the user is found, return the user data with a 200 OK response
             return ResponseEntity.ok(user);
         } else {
-            // If the user is not found, return a 404 Not Found response
             return ResponseEntity.notFound().build();
         }
     }
@@ -96,7 +91,6 @@ public class UserController {
         return userserviceimpl.findByAppUserID(userId);
     }
 
-    // Message-related Endpoints
     @GetMapping("/message/{userId}/allMessages")
     public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId) {
         return userserviceimpl.getAllMessages(userId);
@@ -117,11 +111,11 @@ public class UserController {
 
         ResponseEntity<Message> response = userserviceimpl.sendMessage(userId, content, recipientNames);
 
-        if (response.getStatusCode() == HttpStatus.CREATED) {
+        if (response.getStatusCode() == HttpStatus.OK) {
             Message message = response.getBody();
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .header("Location", "/message/" + message.getId()) // Assuming you want to include the message ID in the Location header
+                    .header("Location", "/message/" + message.getId())
                     .body(message);
         } else {
             return ResponseEntity.status(response.getStatusCode()).build();
@@ -133,7 +127,6 @@ public class UserController {
         return userserviceimpl.getMessagesByUsername(userId, username);
     }
 
-    // Post-related Endpoints
     @GetMapping("/post/{userId}/{postId}")
     public ResponseEntity<Post> getPostById(@PathVariable Long userId, @PathVariable Long postId) {
         return userserviceimpl.getPostById(userId, postId);
@@ -157,7 +150,6 @@ public class UserController {
         return userserviceimpl.getPostsByUsername(userId, friendUsername);
     }
 
-    // Friend Request-related Endpoints
     @GetMapping("/friendreqs/{userId}/getFriendRequests")
     public ResponseEntity<List<UserDTO>> getAllFriendRequests(@PathVariable Long userId) {
         System.out.println("REQUEST SENT!!!:" + userId);
@@ -184,7 +176,6 @@ public class UserController {
         return userserviceimpl.declineFriendRequest(userId, potentialFriendId);
     }
 
-    // Miscellaneous Endpoints
     @GetMapping("/getAllWebsiteUsers")
     public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() {
         return userserviceimpl.getAllUsers();

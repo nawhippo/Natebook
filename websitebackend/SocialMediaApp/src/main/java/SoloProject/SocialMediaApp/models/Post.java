@@ -31,7 +31,7 @@ public class Post {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "MM-dd-yyyy 'at' hh:mm:ss a")
     private Date dateTime;
 
     public Long getId() {

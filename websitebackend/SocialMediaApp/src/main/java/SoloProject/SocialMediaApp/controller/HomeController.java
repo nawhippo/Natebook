@@ -28,6 +28,7 @@ public class HomeController {
 
     @GetMapping("/about") // The endpoint URL: /api/about
     public String about() {
-        return "{\"message\": \"Welcome to my about page\"}";
+        return "{\"message\": \"Welcome to my about page, it is a react/java application. It is a simple CRUD application, " +
+                "where users are able to post, comment, friend, and message each other.\"}";
     }
 }

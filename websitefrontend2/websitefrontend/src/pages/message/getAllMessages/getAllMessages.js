@@ -22,12 +22,7 @@ const GetAllMessages = () => {
 
   useEffect(() => {
     fetch(`/api/message/${user.appUserID}/allMessages`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
         setAllMessages(data);
         setDisplayedMessages(data);
@@ -42,27 +37,27 @@ const GetAllMessages = () => {
         type="text"
         value={searchText}
         onChange={handleSearchTextChange}
-        placeholder="Search messages"
+        placeholder="Search Messages"
       />
       <div>
         <h2>All Messages:</h2>
         {displayedMessages.length > 0 ? (
-  <ul>
-    {displayedMessages.map((message) => (
-      <li key={message.id}>
-        <p>{message.content}</p>
-        {message.sender && <p>Sender: {message.sender.username}</p>}
-        {message.recipients && message.recipients.length > 0 && (
-          <p>
-            Recipients: {message.recipients.map((recipient) => recipient.username).join(', ')}
-          </p>
+          <ul>
+            {displayedMessages.map((message) => (
+              <li key={message.id}>
+                <p>{message.content}</p>
+                {message.incoming ? <p>Sender: {user.username}</p> : <p>Sender: You</p>}
+                {message.recipients && message.recipients.length > 0 && (
+                  <p>
+                    Recipients: {message.recipients.join(', ')}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No messages found.</p>
         )}
-      </li>
-    ))}
-  </ul>
-) : (
-  <p>No messages found.</p>
-)}
       </div>
     </div>
   );

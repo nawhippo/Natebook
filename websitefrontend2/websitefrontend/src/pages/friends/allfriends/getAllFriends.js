@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
+import { useHistory } from 'react-router-dom'
 
 const GetAllFriends = () => {
   const { user } = useUserContext();
   const [allFriendsData, setAllFriendsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const history = useHistory();
+
+   const handleButtonClick = (recipientUsername) =>{
+     history.push({
+       pathname: '/createMessage',
+       state: { recipient: recipientUsername }
+     });
+   };
+
+
 
   useEffect(() => {
-    console.log(user);
     if (user) {
-      fetch(`/api/friends/${user.appUserID}/allFriends`)
-        .then(response => {
-          console.log('API Response:', response); 
-          return response.json();
-        })
-        .then(data => {
-          console.log('API Data:', data);
-          setAllFriendsData(data); 
-        })
+      fetch(`/api/friends/${user.appUserID}/getAllFriends`)
+        .then(response => response.json())
+        .then(data => setAllFriendsData(data))
         .catch(error => {
-          console.error("JSON PARSING ERROR or FETCH ERROR:", error);
+          console.error("Error:", error);
           setError(error.message);
         })
         .finally(() => {
@@ -44,9 +48,9 @@ const GetAllFriends = () => {
         <ul>
           {allFriendsData.map(friend => (
             <li key={friend.id}>
-              <h2>{friend.firstname}</h2>
-              <h2>{friend.lastname}</h2>
+              <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
               <p>{friend.email}</p>
+              <button onClick={()=> handleButtonClick(friend.username)}>Message User</button>
             </li>
           ))}
         </ul>
