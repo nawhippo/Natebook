@@ -29,7 +29,7 @@ public class PostController {
         return userserviceimpl.getPostById(userId, postId);
     }
 
-    @GetMapping("/post/{userId}/{postId}/createComment")
+    @PostMapping("/post/{userId}/{postId}/createComment")
     public ResponseEntity<?> createComment(
             @PathVariable Long userId,
             @PathVariable Long postId,

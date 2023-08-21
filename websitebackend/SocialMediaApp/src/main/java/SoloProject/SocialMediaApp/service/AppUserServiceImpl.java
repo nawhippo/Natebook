@@ -548,6 +548,8 @@ public class AppUserServiceImpl implements AppUserService {
             Post post = postOptional.get();
             comment.setCommenterusername(appUser.getUsername());
             post.addComment(comment);
+            repository.save(appUser);
+            //have to attach the new post to the user.
             return ResponseEntity.status(HttpStatus.CREATED).body(post);
         } else {
             return ResponseEntity.notFound().build();

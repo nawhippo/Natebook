@@ -26,6 +26,10 @@ public class Post {
         this.dateTime =  getDateTimeAsString();
     }
 
+    public Post() {
+
+    }
+
     public List<Long> addLike(Long userId){
         likes.add(userId);
         return likes;
@@ -74,16 +78,16 @@ public class Post {
 
 
     //return the length of this to get number of.
-    @Column
     private List<Long> likes;
 
-    @Column
+
     private List<Long> dislikes;
 
 
 
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Comment> commentList;
 
     public void addComment(Comment comment) {
