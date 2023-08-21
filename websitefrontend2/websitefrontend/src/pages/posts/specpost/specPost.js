@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
-//we can't use a context provider for this. as we can look at other people's posts.
 const SpecPost = ({ userId, postId }) => {
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +44,7 @@ const SpecPost = ({ userId, postId }) => {
         <p>{post.likes}</p>
         <p>{post.dislikes}</p>
         <p>{post.dateTime}</p>
+        <p>{post.comments}</p>
       </div>
     </div>
   );
