@@ -2,7 +2,6 @@ package SoloProject.SocialMediaApp.models;
 
 import java.util.List;
 
-//DTO TO REMOVE Recursion LOOP FROM APPUSER
 public class UserDTO {
     @Override
     public String toString() {
