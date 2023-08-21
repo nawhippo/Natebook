@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../login/UserContext';
-import '../posts.css'
+import { Link } from 'react-router-dom'; 
+import CommentForm from '../comment/createComment';
+import '../posts.css';
+
 const GetAllPostsByUsername = () => {
   const { user } = useUserContext();
   const [targetUsername, setTargetUsername] = useState('');
@@ -8,6 +11,7 @@ const GetAllPostsByUsername = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [inputValue, setInputValue] = useState('');
+  const [currentPostId, setCurrentPostId] = useState(null); // State to store current post ID
 
   const fetchData = (username) => {
     setIsLoading(true);
@@ -28,16 +32,19 @@ const GetAllPostsByUsername = () => {
       });
   };
 
-
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
-    console.log('Input Value: ', value);
   };
 
   const handleSearchClick = () => {
     setTargetUsername(inputValue);
     fetchData(inputValue);
+  };
+
+  // Set the current post ID when clicking the "Comment" button
+  const handleCommentClick = (postId) => {
+    setCurrentPostId(postId);
   };
 
   if (isLoading) {
@@ -63,10 +70,22 @@ const GetAllPostsByUsername = () => {
           <div key={post.id} className="post-card">
             <h2>{post.title}</h2>
             <p>{post.description}</p>
-            <p>Likes : {post.likes} Dislikes: {post.dislikes}</p>
+            <p>Likes: {post.likes} Dislikes: {post.dislikes}</p>
             <p>{post.email}</p>
             <p>{post.dateTime}</p>
-            <p>{post.appUser.username}</p>
+            <p>By: {post.posterusername}</p>
+            <p>Comments:</p>
+            {/* Use a callback function to pass the postId to the handler */}
+            <button onClick={() => handleCommentClick(post.id)}>Comment</button>
+            {/* Render the CommentForm only for the current post */}
+            {currentPostId === post.id && <CommentForm postId={post.id} />}
+            {post.commentList.map((comment) => (
+              <div key={comment.id} className='comment'>
+                <p>{comment.content}</p>
+                <p>Likes: {comment.likes} Dislikes: {comment.dislikes}</p>
+                <p>By: {comment.commenterusername}</p>
+              </div>
+            ))}
           </div>
         ))
       ) : (
