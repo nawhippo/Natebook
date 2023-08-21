@@ -1,14 +1,26 @@
 package SoloProject.SocialMediaApp.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
 public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+
     public Post getPost() {
         return post;
     }
@@ -62,15 +74,16 @@ public class Comment {
     private Post post;
 
 
+
     @OneToOne
     @JoinColumn(name ="user_id")
     @JsonIgnore
     private AppUser appUser;
     @Column
     private String content;
-    @Column
+    @ElementCollection
     private List<Long> likes;
-    @Column
+    @ElementCollection
     private List<Long> dislikes;
     @Column
     private String commenterusername;
