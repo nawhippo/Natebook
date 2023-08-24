@@ -22,6 +22,7 @@ import Logout from './pages/login/Logout';
 import GetAccount from './pages/account/getAccount';
 import GetAllMessages from './pages/message/getAllMessages/getAllMessages';
 import CommentForm from './pages/posts/comment/createComment';
+import UpdateAccount from './pages/account/updateAccount';
 class App extends Component {
   render() {
     return (
@@ -34,7 +35,6 @@ class App extends Component {
                 {/* Routes that don't require authentication */}
                 <Route path="/about" component={About} />
                 <Route path="/createAccount" component={createAccount} />
-
                 {/* Routes that require authentication */}
                 <Route path="/home" exact component={Home} />
                 <Route path ="/accountDetails" exact component={GetAccount} />
@@ -51,6 +51,7 @@ class App extends Component {
                 <Route path="/logout" component={Logout} />
                 <Route path="/getAllMessages" component={GetAllMessages} />
                 <Route path="/createComment" component={CommentForm}/>
+                <Route path="/updateAccount" component={UpdateAccount}/>
               </Switch>    
             </header>
           </div>
