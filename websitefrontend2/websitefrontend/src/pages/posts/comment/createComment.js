@@ -17,6 +17,7 @@ const CommentForm = ({ userId, postId }) => {
 
     if (response.ok) {
       console.log('Comment created successfully');
+      window.location.reload(true);
     } else {
       console.error('Failed to create comment');
     }
