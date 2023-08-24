@@ -22,12 +22,60 @@ public class PostController {
         this.appUserRepository = appUserRepository;
     }
 
-    @GetMapping("/post/{userId}/{postId}")
+    @PostMapping("/post/{userId}/createPost")
+    public ResponseEntity<Post> createPost(
+            @PathVariable Long userId,
+            @RequestBody Post post
+    ) {
+        return userserviceimpl.createPost(userId, post);
+    }
+
+    @GetMapping("/post/{userId}/{posterId}/{postId}")
     public ResponseEntity<Post> getPostById(
             @PathVariable Long userId,
+            @PathVariable Long posterId,
             @PathVariable Long postId) {
-        return userserviceimpl.getPostById(userId, postId);
+        return userserviceimpl.getPostById(userId, posterId, postId);
     }
+
+    @PutMapping("/post/{userId}/{posterId}/{postId}/addLike")
+    public ResponseEntity<Post> addLikePost(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId
+            ) {
+        return userserviceimpl.addLikePost(userId, posterId, postId);
+    }
+
+
+    @PutMapping("/post/{userId}/{posterId}/{postId}/addDislike")
+    public ResponseEntity<Post> addDislikePost(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId
+           ) {
+        return userserviceimpl.addDislikePost(userId, posterId, postId);
+    }
+
+
+
+    @PutMapping("/post/{userId}/{posterId}/{postId}/removeLike")
+    public ResponseEntity<Post> RemoveLikePost(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId
+           ) {
+        return userserviceimpl.removeLikePost(userId, posterId, postId);
+    }
+
+    @PutMapping("/post/{userId}/{posterId}/{postId}/removeDislike")
+    public ResponseEntity<Post> RemoveDislikePost(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId) {
+        return userserviceimpl.removeDislikePost(userId, posterId, postId);
+    }
+
 
     @PostMapping("/post/{userId}/{postId}/createComment")
     public ResponseEntity<?> createComment(
@@ -38,13 +86,49 @@ public class PostController {
         return userserviceimpl.createComment(userId, postId, comment);
     }
 
-    @PostMapping("/post/{userId}/createPost")
-    public ResponseEntity<Post> createPost(
+    @PutMapping("/post/{userId}/{posterId}/{postId}/addLikeComment")
+    public ResponseEntity<Comment> addLikeComment(
             @PathVariable Long userId,
-            @RequestBody Post post
+            @PathVariable Long posterId,
+            @PathVariable Long postId,
+            @PathVariable Long commentId
     ) {
-        return userserviceimpl.createPost(userId, post);
+        return userserviceimpl.addLikeComment(userId, posterId, postId, commentId);
     }
+
+
+    @PutMapping("/post/{userId}/{posterId}/{postId}/addDislikeComment")
+    public ResponseEntity<Comment> addDislikeComment(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId,
+            @PathVariable Long commentId
+    ) {
+        return userserviceimpl.addDislikeComment(userId, posterId, postId, commentId);
+    }
+
+
+
+    @PutMapping("/post/{userId}/{posterId}/{postId}/removeLikeComment")
+    public ResponseEntity<Comment> RemoveLikeComment(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId,
+            @PathVariable Long commentId
+
+    ) {
+        return userserviceimpl.removeLikeComment(userId, posterId, postId, commentId);
+    }
+
+    @PutMapping("/post/{userId}/{posterId}/{postId}/removeDislikeComment")
+    public ResponseEntity<Comment> RemoveDislikeComment(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId,
+            @PathVariable Long commentId) {
+        return userserviceimpl.removeDislikeComment(userId, posterId, postId, commentId);
+    }
+
 
     @GetMapping("/post/{userId}/posts/{targetUserId}")
     public ResponseEntity<List<Post>> getAllPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {

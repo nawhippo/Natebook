@@ -11,8 +11,12 @@ const GetAllPostsByUsername = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [inputValue, setInputValue] = useState('');
-  const [currentPostId, setCurrentPostId] = useState(null); // State to store current post ID
+  const [currentPostId, setCurrentPostId] = useState(null); 
+  const [currentPosterId, setCurrentPosterId] = useState(null);
 
+
+
+  
   const fetchData = (username) => {
     setIsLoading(true);
     fetch(`/api/post/${user.appUserID}/postsByUsername/${username}`)
@@ -42,10 +46,26 @@ const GetAllPostsByUsername = () => {
     fetchData(inputValue);
   };
 
-  // Set the current post ID when clicking the "Comment" button
+  //set the current post ID when clicking the "Comment" button
   const handleCommentClick = (postId) => {
     setCurrentPostId(postId);
   };
+
+   const handleLikeClickPost = (posterid,postid) => {
+     fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/addLike`);
+   }
+
+  const handleDislikeClickPost = (posterid,postid) => {
+     fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/addDislike`);
+   }
+
+   const handleLikeClickComment = (posterid,postid,commentid) => {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addLike`);
+  }
+
+  const handleDislikeClickComment = (posterid,postid, commentid) => {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addDislike`);
+  }
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -70,10 +90,12 @@ const GetAllPostsByUsername = () => {
           <div key={post.id} className="post-card">
             <h2>{post.title}</h2>
             <p>{post.description}</p>
-            <p>Likes: {post.likes} Dislikes: {post.dislikes}</p>
+            <p>Likes: {post.likes} <button onClick={handleLikeClickPost(post.posterid, post.id)}>Like</button>
+            Dislikes: {post.dislikes} <button onClick={handleDislikeClickPost(post.posterid, post.id)}>Dislike</button></p>
             <p>{post.email}</p>
             <p>{post.dateTime}</p>
             <p>By: {post.posterusername}</p>
+            
             <p>Comments:</p>
             {/* Use a callback function to pass the postId to the handler */}
             <button onClick={() => handleCommentClick(post.id)}>Comment</button>
@@ -82,8 +104,11 @@ const GetAllPostsByUsername = () => {
             {post.commentList.map((comment) => (
               <div key={comment.id} className='comment'>
                 <p>{comment.content}</p>
-                <p>Likes: {comment.likes} Dislikes: {comment.dislikes}</p>
-                <p>By: {comment.commenterusername}</p>
+               <p> Likes: {comment.likes}
+               <button onClick={() => handleLikeClickComment(post.posterid, post.id, comment.id)}>like</button>
+                Dislikes: {comment.dislikes}
+               <button onClick={() => handleDislikeClickComment(post.posterid, post.id, comment.id)}>dislike</button> 
+                </p>
               </div>
             ))}
           </div>

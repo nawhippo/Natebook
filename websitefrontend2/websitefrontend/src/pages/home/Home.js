@@ -43,7 +43,6 @@ const Home = () => {
       <p>{homeData && homeData.message}</p>
       {user && (
         <>
-          <Link to={`/account/${user.appUserID}/accountDetails`}>View Your Profile</Link>
           <h2>Website Users</h2>
           {homeData && homeData.length > 0 ? (
             <ul>

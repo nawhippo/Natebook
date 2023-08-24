@@ -14,7 +14,15 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 public class Post {
-    public Post(Long id, AppUser appUser, String posterusername, String title, String description, List<Long> likes, List<Long> dislikes, List<Comment> commentList) {
+    public Long getPosterid() {
+        return posterid;
+    }
+
+    public void setPosterid(Long posterid) {
+        this.posterid = posterid;
+    }
+
+    public Post(Long id, AppUser appUser, String posterusername, String title, String description, List<Long> likes, List<Long> dislikes, List<Comment> commentList, Long posterid) {
         this.id = id;
         this.appUser = appUser;
         this.posterusername = posterusername;
@@ -24,6 +32,7 @@ public class Post {
         this.dislikes = new ArrayList<>();
         this.commentList = new ArrayList<>();
         this.dateTime =  getDateTimeAsString();
+        this.posterid = posterid;
     }
 
     public Post() {
@@ -59,6 +68,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
+
     @ManyToOne
     @JoinColumn(name ="user_id")
     @JsonIgnore
@@ -70,6 +82,9 @@ public class Post {
 
     //for display purposes
    private String posterusername;
+
+    //for display purposes
+    private Long posterid;
     @Column
     private String title;
 
@@ -78,12 +93,35 @@ public class Post {
 
 
     //return the length of this to get number of.
+
+    @ElementCollection
     private List<Long> likes;
 
 
+    //for display
+    private int likesCount;
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+
+    @ElementCollection
     private List<Long> dislikes;
 
+    private int dislikesCount;
 
+    public int getDislikesCount() {
+        return dislikesCount;
+    }
+
+    public void setDislikesCount(int dislikesCount) {
+        this.dislikesCount = dislikesCount;
+    }
 
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

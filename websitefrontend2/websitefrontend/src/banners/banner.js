@@ -24,6 +24,7 @@ const Banner = () => {
       <button onClick={() => handleLinkClick('/login')}>Login</button>
       <button onClick={() => handleLinkClick('/logout')}>Log Out</button>
       <button onClick={() => handleLinkClick('/createAccount')}>Create Account</button>
+      <button onClick={() => handleLinkClick('/accountDetails')}>Account Details</button>
       <button onClick={() => handleLinkClick('/createPost')}>Create Post</button>
       <button onClick={() => handleLinkClick('/createMessage')}>Send Message</button>
       <br></br>

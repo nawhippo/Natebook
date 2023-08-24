@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUserContext } from "../login/UserContext";
-
+import { Link, useHistory} from "react-router-dom";
 const UpdateAccount = () => {
   const { user } = useUserContext();
   
@@ -9,7 +9,7 @@ const UpdateAccount = () => {
     lastname: user.lastname,
     email: user.email,
     username: user.username,
-    password: "", // We should not populate the password field
+    password: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);

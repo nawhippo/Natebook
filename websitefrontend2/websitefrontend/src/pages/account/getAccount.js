@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../login/UserContext";
-
+import { Link, useHistory} from "react-router-dom";
 const GetAccount = () => {
   const { user } = useUserContext();
   const [accountData, setAccountData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const history = useHistory();
+  const handleLinkClick = (url) => {
+    //navigate to the specified URL, causing a page refresh in a stupid-roundabout way. 
+    history.push(url);
+  };
+
 
   useEffect(() => {
     console.log(user);
     if (user) {
-      fetch(`/api/account/${user.appUserId}/accountDetails`)
+      fetch(`/api/account/${user.appUserID}/accountDetails`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -43,6 +49,7 @@ const GetAccount = () => {
       <p>First Name: {accountData.firstname}</p>
       <p>Last Name: {accountData.lastname}</p>
       <p>Email: {accountData.email}</p>
+      <button onClick={() => handleLinkClick('/updateAccount')}>Update Account</button>
     </div>
   );
 };

@@ -12,6 +12,17 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //for display purposes
+    Long commenterid;
+
+    public Long getCommenterid() {
+        return commenterid;
+    }
+
+    public void setCommenterid(Long commenterid) {
+        this.commenterid = commenterid;
+    }
+
     public Long getId() {
         return id;
     }
@@ -85,8 +96,29 @@ public class Comment {
     private String content;
     @ElementCollection
     private List<Long> likes;
+
+    private int likesCount;
     @ElementCollection
     private List<Long> dislikes;
+
+    private int dislikesCount;
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public int getDislikesCount() {
+        return dislikesCount;
+    }
+
+    public void setDislikesCount(int dislikesCount) {
+        this.dislikesCount = dislikesCount;
+    }
+
     @Column
     private String commenterusername;
 

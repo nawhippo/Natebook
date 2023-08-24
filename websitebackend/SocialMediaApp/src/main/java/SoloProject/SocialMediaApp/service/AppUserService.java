@@ -38,7 +38,7 @@ public interface AppUserService {
 
     ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname);
 
-    ResponseEntity<Post> getPostById(Long userId, Long postId);
+    ResponseEntity<Post> getPostById(Long userId, Long postId, Long id);
     ResponseEntity<List<Post>> getAllPosts(Long userId);
 
     ResponseEntity<Message> getMessageById(Long userId, Long messageId);

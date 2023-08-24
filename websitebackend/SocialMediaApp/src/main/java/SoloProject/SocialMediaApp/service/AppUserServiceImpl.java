@@ -4,7 +4,6 @@ import SoloProject.SocialMediaApp.models.*;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -106,7 +105,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     //Post functions
     @Override
-    public ResponseEntity<Post> getPostById(Long userId, Long postId) {
+    public ResponseEntity<Post> getPostById(Long userId, Long postId, Long id) {
         AppUser appUser = findByAppUserID(userId).getBody();
         if (appUser != null) {
             for (Post post : appUser.getPosts()) {
@@ -556,73 +555,190 @@ public class AppUserServiceImpl implements AppUserService {
         }
     }
 
-    //how to get specific post, without poster's userid?
-    public ResponseEntity<Post> likePost(Long userId, Post post) {
-        if(!post.getLikes().contains(userId) && !post.getDislikes().contains(userId)){
-            post.addLike(userId);
-            return ResponseEntity.ok(post);
+    //how to get specific post, without poster's userid? add posterid parameter
+    public ResponseEntity<Post> addLikePost(Long userId, Long posterId, Long postId) {
+        //find by user
+        AppUser poster = repository.findByAppUserID(posterId);
+        if (poster != null) {
+            for (Post post : poster.getPosts()) {
+                //post found
+                if (postId == post.getId()) {
+                    if (!post.getLikes().contains(userId) && !post.getDislikes().contains(userId)) {
+                        post.addLike(userId);
+                        post.setLikesCount(post.getLikes().size());
+                        return ResponseEntity.ok(post);
+                    }
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    public ResponseEntity<Post> dislikePost(Long userId, Post post) {
-        if(!post.getLikes().contains(userId) && !post.getDislikes().contains(userId)){
-            post.addDislike(userId);
-            return ResponseEntity.ok(post);
+    public ResponseEntity<Post> addDislikePost(Long userId, Long posterId, Long postId) {
+        //find by user
+        AppUser poster = repository.findByAppUserID(posterId);
+        if (poster != null) {
+            for (Post post : poster.getPosts()) {
+                //post found
+                if (postId == post.getId()) {
+                    if (!post.getLikes().contains(userId) && !post.getDislikes().contains(userId)) {
+                        post.addDislike(userId);
+                        post.setDislikesCount(post.getDislikes().size());
+                        return ResponseEntity.ok(post);
+                    }
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
-
-
-    public ResponseEntity<Post> removeLikePost(Long userId, Post post) {
-        if(post.getLikes().contains(userId)){
-            post.removeLike(userId);
-            return ResponseEntity.ok(post);
-        }
-        return (ResponseEntity<Post>) ResponseEntity.notFound();
-    }
-
-    public ResponseEntity<Post> removeDislikePost(Long userId, Post post) {
-        if(post.getDislikes().contains(userId)){
-            post.removeDislike(userId);
-            return ResponseEntity.ok(post);
-        }
-        return (ResponseEntity<Post>) ResponseEntity.notFound();
-    }
-
-
-
-    public ResponseEntity<Comment> likecomment(Long userId, Comment comment) {
-        if(!comment.getLikes().contains(userId) && !comment.getDislikes().contains(userId)){
-            comment.addLike(userId);
-            return ResponseEntity.ok(comment);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
-
-        public ResponseEntity<Comment> dislikeComment(Long userId, Comment comment) {
-        if(!comment.getLikes().contains(userId) && !comment.getDislikes().contains(userId)){
-            comment.addDislike(userId);
-            return ResponseEntity.ok(comment);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 
-    public ResponseEntity<Comment> removeLikeComment(Long userId, Comment comment) {
-        if(comment.getLikes().contains(userId)){
-            comment.removeLike(userId);
-            return ResponseEntity.ok(comment);
+    public ResponseEntity<Post> removeLikePost(Long userId, Long posterId, Long postId) {
+        //find by user
+        AppUser poster = repository.findByAppUserID(posterId);
+        if (poster != null) {
+            for (Post post : poster.getPosts()) {
+                //post found
+                if (postId == post.getId()) {
+                    if (post.getLikes().contains(userId)) {
+                        post.removeLike(userId);
+                        post.setLikesCount(post.getLikes().size());
+                        return ResponseEntity.ok(post);
+                    }
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return (ResponseEntity<Comment>) ResponseEntity.notFound();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    public ResponseEntity<Comment> removeDislikeComment(Long userId, Comment comment) {
-        if(comment.getDislikes().contains(userId)){
-            comment.removeDislike(userId);
-            return ResponseEntity.ok(comment);
+    public ResponseEntity<Post> removeDislikePost(Long userId, Long posterId, Long postId) {
+        //find by user
+        AppUser poster = repository.findByAppUserID(posterId);
+        if (poster != null) {
+            for (Post post : poster.getPosts()) {
+                //post found
+                if (postId == post.getId()) {
+                    if (post.getDislikes().contains(userId)) {
+                        post.removeDislike(userId);
+                        post.setDislikesCount(post.getDislikes().size());
+                        return ResponseEntity.ok(post);
+                    }
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return (ResponseEntity<Comment>) ResponseEntity.notFound();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+
+
+    public ResponseEntity<Comment> addLikeComment(Long userId, Long posterId, Long postId, Long commentId) {
+        //find by user
+        AppUser poster = repository.findByAppUserID(posterId);
+        if (poster != null) {
+            for (Post post : poster.getPosts()) {
+                //post found
+                if (postId == post.getId()) {
+                    for (Comment comment : post.getCommentList()) {
+                        if (comment.getId() == commentId) {
+                            if (!comment.getLikes().contains(userId) && comment.getDislikes().contains(userId)) {
+                                comment.addLike(userId);
+                                return ResponseEntity.ok(comment);
+                            }
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                        }
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                    }
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+
+
+
+        public ResponseEntity<Comment> addDislikeComment(Long userId, Long posterId, Long postId, Long commentId)  {
+            //find by user
+            AppUser poster = repository.findByAppUserID(posterId);
+            if (poster != null) {
+                for (Post post : poster.getPosts()) {
+                    //post found
+                    if (postId == post.getId()) {
+                        for (Comment comment : post.getCommentList()) {
+                            if (comment.getId() == commentId) {
+                                if (!comment.getLikes().contains(userId) && comment.getDislikes().contains(userId)) {
+                                    comment.addDislike(userId);
+                                    return ResponseEntity.ok(comment);
+                                }
+                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                            }
+                            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                        }
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                    }
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+
+    public ResponseEntity<Comment> removeLikeComment(Long userId, Long posterId, Long postId, Long commentId)  {
+        //find by user
+        AppUser poster = repository.findByAppUserID(posterId);
+        if (poster != null) {
+            for (Post post : poster.getPosts()) {
+                //post found
+                if (postId == post.getId()) {
+                    for (Comment comment : post.getCommentList()) {
+                        if (comment.getId() == commentId) {
+                            if (!comment.getLikes().contains(userId)) {
+                                comment.removeLike(userId);
+                            }
+                        }
+                    }
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    public ResponseEntity<Comment> removeDislikeComment(Long userId, Long posterId, Long postId, Long commentId)  {
+        //find by user
+        AppUser poster = repository.findByAppUserID(posterId);
+        if (poster != null) {
+            for (Post post : poster.getPosts()) {
+                //post found
+                if (postId == post.getId()) {
+                    for (Comment comment : post.getCommentList()) {
+                        if (comment.getId() == commentId) {
+                            if (!comment.getDislikes().contains(userId)) {
+                                comment.removeDislike(userId);
+                            }
+                        }
+                    }
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 
