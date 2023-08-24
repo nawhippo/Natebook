@@ -74,11 +74,11 @@ public class Comment {
     }
 
     public String getCommenterusername() {
-        return commenterusername;
+        return commenterUsername;
     }
 
     public void setCommenterusername(String commenterusername) {
-        this.commenterusername = commenterusername;
+        this.commenterUsername = commenterusername;
     }
 
     @ManyToOne
@@ -120,7 +120,7 @@ public class Comment {
     }
 
     @Column
-    private String commenterusername;
+    private String commenterUsername;
 
     public void addLike(Long userId) {
         this.likes.add(userId);
