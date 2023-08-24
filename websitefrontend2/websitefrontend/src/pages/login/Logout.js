@@ -1,13 +1,14 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useUserContext } from './UserContext';
-
+import Cookies from 'js-cookie';
 const Logout = () => {
   const { clearUserContext } = useUserContext();
   const history = useHistory();
 
   const handleLogout = () => {
     clearUserContext(); 
+    Cookies.remove('userData');
     history.push('/login'); 
   };
 
