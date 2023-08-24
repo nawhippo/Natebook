@@ -4,20 +4,20 @@ import { Link } from 'react-router-dom';
 import CommentForm from '../comment/createComment';
 import '../posts.css';
 
-const GetAllPostsByUsername = () => {
+const PostsPage = () => {
   const { user } = useUserContext();
   const [targetUsername, setTargetUsername] = useState('');
-  const [allPostsData, setAllPostsData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [currentPostId, setCurrentPostId] = useState(null); 
   const [currentPosterId, setCurrentPosterId] = useState(null);
-
+  const [allPostsData, setAllPostsData] = useState(null);
 
 
   
   const fetchData = (username) => {
+    if(username){
     setIsLoading(true);
     fetch(`/api/post/${user.appUserID}/postsByUsername/${username}`)
       .then((response) => {
@@ -34,7 +34,24 @@ const GetAllPostsByUsername = () => {
         setError(error.message);
         setIsLoading(false);
       });
-  };
+  } else {
+    setIsLoading(true);
+    fetch(`/api/post/${user.appUserID}/posts`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setAllPostsData(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsLoading(false);
+      });
+  }
 
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -51,21 +68,60 @@ const GetAllPostsByUsername = () => {
     setCurrentPostId(postId);
   };
 
-   const handleLikeClickPost = (posterid,postid) => {
-     fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/addLike`);
-   }
-
-  const handleDislikeClickPost = (posterid,postid) => {
-     fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/addDislike`);
-   }
-
-   const handleLikeClickComment = (posterid,postid,commentid) => {
-    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addLike`);
-  }
-
-  const handleDislikeClickComment = (posterid,postid, commentid) => {
-    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addDislike`);
-  }
+  const handleLikeClickPost = (posterid, postid) => {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/addLike`, {
+      method: "PUT",
+    })
+      
+  };
+  
+  const handleDislikeClickPost = (posterid, postid) => {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/addDislike`, {
+      method: "PUT",
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.reload(false);
+        } else {
+          console.log("error disliking comment");
+        }
+      })
+      .catch((error) => {
+        
+      });
+  };
+  
+  const handleLikeClickComment = (posterid, postid, commentid) => {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addLike`, {
+      method: "PUT",
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.reload(false);
+        } else {
+         console.log("error liking comment");
+        }
+      })
+      .catch((error) => {
+        // Handle fetch error
+      });
+  };
+  
+  const handleDislikeClickComment = (posterid, postid, commentid) => {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addDislike`, {
+      method: "PUT",
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.reload(false);
+        } else {
+          console.log("error disliking comment");
+        }
+      })
+      .catch((error) => {
+        // Handle fetch error
+      });
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -90,20 +146,22 @@ const GetAllPostsByUsername = () => {
           <div key={post.id} className="post-card">
             <h2>{post.title}</h2>
             <p>{post.description}</p>
-            <p>Likes: {post.likes} <button onClick={handleLikeClickPost(post.posterid, post.id)}>Like</button>
-            Dislikes: {post.dislikes} <button onClick={handleDislikeClickPost(post.posterid, post.id)}>Dislike</button></p>
+            <p>Likes: {post.likes}      <button onClick={handleLikeClickPost(post.posterid, post.id)}>Like</button>
+               Dislikes: {post.dislikes}   <button onClick={handleDislikeClickPost(post.posterid, post.id)}>Dislike</button></p>
             <p>{post.email}</p>
             <p>{post.dateTime}</p>
             <p>By: {post.posterusername}</p>
-            
             <p>Comments:</p>
             {/* Use a callback function to pass the postId to the handler */}
+
+            
             <button onClick={() => handleCommentClick(post.id)}>Comment</button>
             {/* Render the CommentForm only for the current post */}
             {currentPostId === post.id && <CommentForm postId={post.id} />}
             {post.commentList.map((comment) => (
               <div key={comment.id} className='comment'>
                 <p>{comment.content}</p>
+                <p>By: {comment.commenterUsername}</p>
                <p> Likes: {comment.likes}
                <button onClick={() => handleLikeClickComment(post.posterid, post.id, comment.id)}>like</button>
                 Dislikes: {comment.dislikes}
@@ -119,5 +177,6 @@ const GetAllPostsByUsername = () => {
     </div>
   );
 };
+}
 
-export default GetAllPostsByUsername;
+export default PostsPage;
