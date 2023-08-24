@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useUserContext } from './UserContext';
-
+import Cookies from 'js-cookie';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -51,6 +51,7 @@ const Login = () => {
       })
       .then((data) => {
         setUser(data);
+        Cookies.set('userData', JSON.stringify(data));
         history.push('/home');
       })
       .catch((error) => {
