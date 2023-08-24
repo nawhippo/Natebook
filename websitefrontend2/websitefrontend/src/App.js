@@ -32,7 +32,8 @@ class App extends Component {
             <Banner />
             <header className="App-header">
               <Switch>
-                {/* Routes that don't require authentication */}
+                {/* Routes that don't require authentication */}'
+                {/* */}
                 <Route path="/about" component={About} />
                 <Route path="/createAccount" component={createAccount} />
                 {/* Routes that require authentication */}
