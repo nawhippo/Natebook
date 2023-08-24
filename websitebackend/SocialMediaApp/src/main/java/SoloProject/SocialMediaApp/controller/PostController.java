@@ -130,10 +130,17 @@ public class PostController {
     }
 
 
+    @GetMapping("/post/{userId}/posts")
+    public ResponseEntity<List<Post>> getAllFriendPosts(@PathVariable Long userId) {
+        return userserviceimpl.getAllFriendPosts(userId);
+    }
+
+
     @GetMapping("/post/{userId}/posts/{targetUserId}")
     public ResponseEntity<List<Post>> getAllPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {
         return userserviceimpl.getPostsByUserId(userId, targetUserId);
     }
+
 
     @GetMapping("/post/{userId}/postsByUsername/{friendUsername}")
     public ResponseEntity<List<Post>> getAllPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
