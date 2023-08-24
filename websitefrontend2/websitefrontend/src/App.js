@@ -23,6 +23,7 @@ import GetAccount from './pages/account/getAccount';
 import GetAllMessages from './pages/message/getAllMessages/getAllMessages';
 import CommentForm from './pages/posts/comment/createComment';
 import UpdateAccount from './pages/account/updateAccount';
+import PostsPage from './pages/posts/allposts/getAllPostsByUsername';
 class App extends Component {
   render() {
     return (
@@ -32,11 +33,11 @@ class App extends Component {
             <Banner />
             <header className="App-header">
               <Switch>
-                {/* Routes that don't require authentication */}'
-                {/* */}
+                {/* Routes that don't require authentication */}
                 <Route path="/about" component={About} />
                 <Route path="/createAccount" component={createAccount} />
                 {/* Routes that require authentication */}
+          
                 <Route path="/home" exact component={Home} />
                 <Route path ="/accountDetails" exact component={GetAccount} />
                 <Route path="/getAllFriends" component={GetAllFriends} />
@@ -44,7 +45,7 @@ class App extends Component {
                 <Route path="/createMessage" component={createMessage} />
                 <Route path="/login" component={Login} />
                 <Route path="/specPost/:userId" component={specPost} /> 
-                <Route path="/getAllPosts" component={getAllPostByUsername} />
+                <Route path="/getAllPosts" component={PostsPage} />
                 <Route path="/createPost" component={createPost} />
                 <Route path="/sendFriendRequestByUsername" component={SendFriendRequestByUsername} />
                 <Route path="/getFriendRequests" component={GetAllFriendRequests} />
@@ -53,6 +54,8 @@ class App extends Component {
                 <Route path="/getAllMessages" component={GetAllMessages} />
                 <Route path="/createComment" component={CommentForm}/>
                 <Route path="/updateAccount" component={UpdateAccount}/>
+      
+              
               </Switch>    
             </header>
           </div>
