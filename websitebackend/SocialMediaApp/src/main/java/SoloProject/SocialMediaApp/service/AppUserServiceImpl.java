@@ -742,7 +742,16 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
-
-
-
+    public ResponseEntity<List<Post>> getAllFriendPosts(Long userId) {
+        AppUser appUser = repository.findByAppUserID(userId);
+        List<Post> list = new ArrayList<>();
+        if(appUser == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        for(Long friendid : appUser.getFriends()){
+            AppUser friend = repository.findByAppUserID(friendid);
+            list.addAll(friend.getPosts());
+        }
+        return ResponseEntity.ok(list);
+    }
 }
