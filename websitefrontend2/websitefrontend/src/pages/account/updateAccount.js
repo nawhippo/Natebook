@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUserContext } from "../login/UserContext";
-import { Link, useHistory} from "react-router-dom";
+
 const UpdateAccount = () => {
   const { user } = useUserContext();
   
@@ -29,7 +29,7 @@ const UpdateAccount = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/account/${user.appUserId}/updateAccount`, {
+      const response = await fetch(`/api/account/${user.appUserID}/updateAccountDetails`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -85,11 +85,11 @@ const UpdateAccount = () => {
           </label>
           <br />
           <label>
-            User Name:
+            Password:
             <input
               type="text"
-              name="username"
-              value={formData.username}
+              name="password"
+              value={formData.password}
               onChange={handleChange}
             />
           </label>
