@@ -107,6 +107,7 @@ const PostsPage = () => {
     })
       .then((response) => {
         if (response.ok) {
+          {/*cool */}
           window.location.reload(false);
         } else {
          console.log("error liking comment");
