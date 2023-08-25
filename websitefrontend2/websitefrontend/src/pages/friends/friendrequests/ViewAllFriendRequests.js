@@ -33,12 +33,14 @@ const GetAllFriendRequests = () => {
     fetch(`/api/friendreqs/${user.appUserID}/acceptFriendRequest/${friendId}`,{
       method: 'PUT',
   });
+  window.location.reload();
 };
 
   const handleClickTwo = (friendId) => {
     fetch(`/api/friendreqs/${user.appUserID}/declineFriendRequest/${friendId}`,{
       method: 'PUT',
   });
+  window.location.reload();
   };
 
   if (isLoading) {
