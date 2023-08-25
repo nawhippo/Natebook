@@ -52,6 +52,7 @@ const PostsPage = () => {
         setIsLoading(false);
       });
   }
+}
 
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -72,7 +73,16 @@ const PostsPage = () => {
     fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/addLike`, {
       method: "PUT",
     })
+    .then((response) => {
+      if (response.ok) {
+        window.location.reload(false);
+      } else {
+        console.log("error disliking comment");
+      }
+    })
+    .catch((error) => {
       
+    });
   };
   
   const handleDislikeClickPost = (posterid, postid) => {
@@ -177,6 +187,4 @@ const PostsPage = () => {
     </div>
   );
 };
-}
-
 export default PostsPage;
