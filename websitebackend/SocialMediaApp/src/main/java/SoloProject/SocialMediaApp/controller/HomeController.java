@@ -1,7 +1,7 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
+import SoloProject.SocialMediaApp.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +14,10 @@ import java.util.List;
 @RequestMapping("/api") // The base path for all endpoints in this controller
 public class HomeController {
 
-    private final AppUserServiceImpl userserviceimpl;
+    private final AppUserService userserviceimpl;
 
     @Autowired
-    public HomeController(AppUserServiceImpl userserviceimpl) {
+    public HomeController(AppUserService userserviceimpl) {
         this.userserviceimpl = userserviceimpl;
     }
 

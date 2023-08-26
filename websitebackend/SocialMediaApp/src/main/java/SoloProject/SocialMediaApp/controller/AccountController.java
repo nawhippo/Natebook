@@ -2,8 +2,10 @@ package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
-import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
+import SoloProject.SocialMediaApp.service.AccountService;
+import SoloProject.SocialMediaApp.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,18 +16,18 @@ import java.util.Map;
 @RequestMapping("/api")
 public class AccountController {
 
-    private final AppUserServiceImpl userserviceimpl;
+    private final AccountService accountservice;
     private final AppUserRepository appUserRepository;
 
     @Autowired
-    public AccountController(AppUserServiceImpl userserviceimpl, AppUserRepository appUserRepository) {
-        this.userserviceimpl = userserviceimpl;
+    public AccountController(AccountService userserviceimpl, AppUserRepository appUserRepository) {
+        this.accountservice = userserviceimpl;
         this.appUserRepository = appUserRepository;
     }
 
     @GetMapping("/account/{userId}/accountDetails")
     public ResponseEntity<AppUser> getAccountDetails(@PathVariable Long userId) {
-        return userserviceimpl.getAccountDetails(userId);
+        return accountservice.getAccountDetails(userId);
     }
 
     @PostMapping("/account/createAccount")
@@ -37,7 +39,7 @@ public class AccountController {
         String username = formData.get("username");
 
         AppUser appUser = new AppUser(firstName, lastName, email, password, username);
-        userserviceimpl.saveUser(appUser);
+        accountservice.saveUser(appUser);
     }
 
 
@@ -50,7 +52,7 @@ public class AccountController {
             @RequestParam(required = false) String newEmail,
             @RequestParam(required = false) String password
     ) {
-        return userserviceimpl.updateAccountDetails(userId, newFirstName, newLastName, newEmail, password);
+        return accountservice.updateAccountDetails(userId, newFirstName, newLastName, newEmail, password);
     }
 
 }

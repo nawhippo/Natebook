@@ -3,7 +3,8 @@ package SoloProject.SocialMediaApp.controller;
 import SoloProject.SocialMediaApp.models.Comment;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
-import SoloProject.SocialMediaApp.service.AppUserServiceImpl;
+import SoloProject.SocialMediaApp.service.AppUserService;
+import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +14,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class PostController {
-    private final AppUserServiceImpl userserviceimpl;
+    private final PostService postService;
     private final AppUserRepository appUserRepository;
 
     @Autowired
-    public PostController(AppUserServiceImpl userserviceimpl, AppUserRepository appUserRepository) {
-        this.userserviceimpl = userserviceimpl;
+    public PostController(PostService postService, AppUserRepository appUserRepository) {
+        this.postService = postService;
         this.appUserRepository = appUserRepository;
     }
 
@@ -27,7 +28,7 @@ public class PostController {
             @PathVariable Long userId,
             @RequestBody Post post
     ) {
-        return userserviceimpl.createPost(userId, post);
+        return postService.createPost(userId, post);
     }
 
     @GetMapping("/post/{userId}/{posterId}/{postId}")
@@ -35,7 +36,7 @@ public class PostController {
             @PathVariable Long userId,
             @PathVariable Long posterId,
             @PathVariable Long postId) {
-        return userserviceimpl.getPostById(userId, posterId, postId);
+        return postService.getPostById(userId, posterId, postId);
     }
 
     @PutMapping("/post/{userId}/{posterId}/{postId}/addLike")
@@ -44,7 +45,7 @@ public class PostController {
             @PathVariable Long posterId,
             @PathVariable Long postId
             ) {
-        return userserviceimpl.addLikePost(userId, posterId, postId);
+        return postService.addLikePost(userId, posterId, postId);
     }
 
 
@@ -54,7 +55,7 @@ public class PostController {
             @PathVariable Long posterId,
             @PathVariable Long postId
            ) {
-        return userserviceimpl.addDislikePost(userId, posterId, postId);
+        return postService.addDislikePost(userId, posterId, postId);
     }
 
 
@@ -65,7 +66,7 @@ public class PostController {
             @PathVariable Long posterId,
             @PathVariable Long postId
            ) {
-        return userserviceimpl.removeLikePost(userId, posterId, postId);
+        return postService.removeLikePost(userId, posterId, postId);
     }
 
     @PutMapping("/post/{userId}/{posterId}/{postId}/removeDislike")
@@ -73,7 +74,7 @@ public class PostController {
             @PathVariable Long userId,
             @PathVariable Long posterId,
             @PathVariable Long postId) {
-        return userserviceimpl.removeDislikePost(userId, posterId, postId);
+        return postService.removeDislikePost(userId, posterId, postId);
     }
 
 
@@ -83,7 +84,7 @@ public class PostController {
             @PathVariable Long postId,
             @RequestBody Comment comment
     ) {
-        return userserviceimpl.createComment(userId, postId, comment);
+        return postService.createComment(userId, postId, comment);
     }
 
     @PutMapping("/post/{userId}/{posterId}/{postId}/addLikeComment")
@@ -93,7 +94,7 @@ public class PostController {
             @PathVariable Long postId,
             @PathVariable Long commentId
     ) {
-        return userserviceimpl.addLikeComment(userId, posterId, postId, commentId);
+        return postService.addLikeComment(userId, posterId, postId, commentId);
     }
 
 
@@ -104,7 +105,7 @@ public class PostController {
             @PathVariable Long postId,
             @PathVariable Long commentId
     ) {
-        return userserviceimpl.addDislikeComment(userId, posterId, postId, commentId);
+        return postService.addDislikeComment(userId, posterId, postId, commentId);
     }
 
 
@@ -117,7 +118,7 @@ public class PostController {
             @PathVariable Long commentId
 
     ) {
-        return userserviceimpl.removeLikeComment(userId, posterId, postId, commentId);
+        return postService.removeLikeComment(userId, posterId, postId, commentId);
     }
 
     @PutMapping("/post/{userId}/{posterId}/{postId}/removeDislikeComment")
@@ -126,24 +127,24 @@ public class PostController {
             @PathVariable Long posterId,
             @PathVariable Long postId,
             @PathVariable Long commentId) {
-        return userserviceimpl.removeDislikeComment(userId, posterId, postId, commentId);
+        return postService.removeDislikeComment(userId, posterId, postId, commentId);
     }
 
 
     @GetMapping("/post/{userId}/posts")
     public ResponseEntity<List<Post>> getAllFriendPosts(@PathVariable Long userId) {
-        return userserviceimpl.getAllFriendPosts(userId);
+        return postService.getAllFriendPosts(userId);
     }
 
 
     @GetMapping("/post/{userId}/posts/{targetUserId}")
     public ResponseEntity<List<Post>> getAllPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {
-        return userserviceimpl.getPostsByUserId(userId, targetUserId);
+        return postService.getPostsByUserId(userId, targetUserId);
     }
 
 
     @GetMapping("/post/{userId}/postsByUsername/{friendUsername}")
     public ResponseEntity<List<Post>> getAllPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
-        return userserviceimpl.getPostsByUsername(userId, friendUsername);
+        return postService.getPostsByUsername(userId, friendUsername);
     }
 }

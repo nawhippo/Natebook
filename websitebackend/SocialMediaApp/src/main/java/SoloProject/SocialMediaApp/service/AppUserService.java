@@ -1,75 +1,144 @@
 package SoloProject.SocialMediaApp.service;
 
-import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.Message;
-import SoloProject.SocialMediaApp.models.Post;
-import SoloProject.SocialMediaApp.models.UserDTO;
+import SoloProject.SocialMediaApp.models.*;
+import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import jakarta.persistence.EntityManager;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
+import java.util.ArrayList;
 import java.util.List;
 
-public interface AppUserService {
-
-    AppUser createUser(String firstName, String lastName, String username, String email, String password);
 
 
+@Service
+public class AppUserService {
 
-//    ResponseEntity<List<Message>> getAllMessages(Long userId);
-
-    ResponseEntity<List<Message>> getAllMessages(Long userId);
-
-    ResponseEntity<Message> sendMessage(Long senderId, String content, List<String> recipientNames);
-
-    ResponseEntity<List<Long>> getFriends(Long userId);
-    ResponseEntity<AppUser> getFriend(Long userId, Long friendId);
-
-    ResponseEntity<AppUser> getFriend(Long userId, String username);
+    private final AppUserRepository repository;
 
 
 
-
-    ResponseEntity<AppUser> findUser(Long id);
-
-    ResponseEntity<AppUser> findUser(String username);
-
-    ResponseEntity<AppUser> findByAppUserID(Long id);
-
-    ResponseEntity<AppUser> saveUser (AppUser appUser);
-
-    ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname);
-
-    ResponseEntity<Post> getPostById(Long userId, Long postId, Long id);
-    ResponseEntity<List<Post>> getAllPosts(Long userId);
-
-    ResponseEntity<Message> getMessageById(Long userId, Long messageId);
+    public AppUserService(AppUserRepository repository, PasswordEncoder passwordEncoder, EntityManager entityManager) {
+        this.repository = repository;
+    }
 
 
-    ResponseEntity<List<Long>> getAllFriendRequests(Long UserId);
 
-    ResponseEntity<List<UserDTO>> getAllFriendsDTOS(Long UserId);
-
-    ResponseEntity<List<UserDTO>> getAllFriendRequestsDTOS(Long UserId);
-
-    ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId);
-
-    ResponseEntity<AppUser> sendFriendRequest(Long senderId, String username);
-
-    ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, Long senderId);
-
-    ResponseEntity<AppUser> declineFriendRequest(Long recipientId, Long senderId);
-
-    ResponseEntity<Post> createPost(Long userId, Post post);
-
-    ResponseEntity<List<Post>> getPostsByUserId(Long userId, Long targetUserId);
-
-    ResponseEntity<List<Post>> getPostsByUsername(Long userId, String targetUsername);
-
-    ResponseEntity<List<Message>> getMessagesByUsername(Long userId, String targetUsername);
-
-    ResponseEntity<List<AppUser>> getAllUsers();
-
-    ResponseEntity<AppUser> getAccountDetails(Long userid);
+    public AppUser createUser(String firstName, String lastName, String username, String email, String password) {
+        if (repository.findByUsername(username) != null) {
+            throw new IllegalArgumentException("Username is already taken. Please choose a different username.");
+        }
+        List<Message> messages = new ArrayList<>();
+        AppUser newuser = new AppUser(messages, firstName, lastName, username, email, password);
+        repository.save(newuser);
+        return newuser;
+    }
 
 
-    ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String password);
+    public ResponseEntity<AppUser> findByAppUserID(Long id) {
+        AppUser appUser = repository.findByAppUserID(id);
+        if (appUser != null) {
+            return ResponseEntity.ok(appUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
+
+    //should only return 1 user
+
+    public ResponseEntity<AppUser> findUser(Long id) {
+        AppUser appUser = repository.findByAppUserID(id);
+        if (appUser != null) {
+            return ResponseEntity.ok(appUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    //should only return 1 user
+
+    public ResponseEntity<AppUser> findUser(String username) {
+        AppUser appUser = repository.findByUsername(username);
+        if (appUser != null) {
+            return ResponseEntity.ok(appUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    public ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname) {
+        List<AppUser> appUsers;
+
+        if (firstname != null && lastname != null) {
+            appUsers = repository.findByFirstnameAndLastname(firstname, lastname);
+        } else if (firstname != null) {
+            appUsers = repository.findByFirstname(firstname);
+        } else if (lastname != null) {
+            appUsers = repository.findByLastname(lastname);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(appUsers);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ResponseEntity<List<Long>> getAllFriendRequests(Long UserId) {
+        AppUser user = repository.findByAppUserID(UserId);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user.getRequests());
+    }
+
+
+
+
+
+    public ResponseEntity<List<AppUser>> getAllUsers() {
+        List<AppUser> allUsers = repository.findAll();
+        return ResponseEntity.ok(allUsers);
+    }
+
+
+
+
+
+    //to display user data extrapolated from longs.
+    private UserDTO convertToUserDTO(Long userId) {
+        AppUser appUser = repository.findByAppUserID(userId);
+        return new UserDTO(
+                appUser.getAppUserID(),
+                appUser.getUsername(),
+                appUser.getFirstname(),
+                appUser.getLastname(),
+                appUser.getEmail()
+        );
+    }
+
+    public ResponseEntity<AppUser> saveUser(AppUser appUser) {
+        repository.save(appUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
+    }
+
+
 }
