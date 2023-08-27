@@ -75,7 +75,6 @@ const PostsPage = () => {
     })
     .then((response) => {
       if (response.ok) {
-        window.location.reload(false);
       } else {
         console.log("error disliking comment");
       }
@@ -91,7 +90,6 @@ const PostsPage = () => {
     })
       .then((response) => {
         if (response.ok) {
-          window.location.reload(false);
         } else {
           console.log("error disliking comment");
         }
@@ -102,35 +100,30 @@ const PostsPage = () => {
   };
   
   const handleLikeClickComment = (posterid, postid, commentid) => {
-    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addLike`, {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addLikeComment`, {
       method: "PUT",
     })
       .then((response) => {
         if (response.ok) {
-          {/*cool */}
-          window.location.reload(false);
         } else {
          console.log("error liking comment");
         }
       })
       .catch((error) => {
-        // Handle fetch error
       });
   };
   
   const handleDislikeClickComment = (posterid, postid, commentid) => {
-    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addDislike`, {
+    fetch(`/api/post/${user.appUserID}/${posterid}/${postid}/${commentid}/addDislikeComment`, {
       method: "PUT",
     })
       .then((response) => {
         if (response.ok) {
-          window.location.reload(false);
         } else {
           console.log("error disliking comment");
         }
       })
       .catch((error) => {
-        // Handle fetch error
       });
   };
 
@@ -157,26 +150,26 @@ const PostsPage = () => {
           <div key={post.id} className="post-card">
             <h2>{post.title}</h2>
             <p>{post.description}</p>
-            <p>Likes: {post.likes}      <button onClick={handleLikeClickPost(post.posterid, post.id)}>Like</button>
-               Dislikes: {post.dislikes}   <button onClick={handleDislikeClickPost(post.posterid, post.id)}>Dislike</button></p>
+            <p>Likes: {post.likesCount}      <button onClick={handleLikeClickPost(post.posterid, post.id)}>Like</button>
+               Dislikes: {post.dislikesCount}   <button onClick={handleDislikeClickPost(post.posterid, post.id)}>Dislike</button></p>
             <p>{post.email}</p>
             <p>{post.dateTime}</p>
             <p>By: {post.posterusername}</p>
             <p>Comments:</p>
-            {/* Use a callback function to pass the postId to the handler */}
+
 
             
             <button onClick={() => handleCommentClick(post.id)}>Comment</button>
-            {/* Render the CommentForm only for the current post */}
+
             {currentPostId === post.id && <CommentForm postId={post.id} />}
             {post.commentList.map((comment) => (
               <div key={comment.id} className='comment'>
                 <p>{comment.content}</p>
-                <p>By: {comment.commenterUsername}</p>
-               <p> Likes: {comment.likes}
-               <button onClick={() => handleLikeClickComment(post.posterid, post.id, comment.id)}>like</button>
-                Dislikes: {comment.dislikes}
-               <button onClick={() => handleDislikeClickComment(post.posterid, post.id, comment.id)}>dislike</button> 
+                <p>By: {comment.commenterusername}</p>
+               <p> Likes: {comment.likesCount}
+               <button onClick={() => handleLikeClickComment(post.posterid, post.id, comment.id)}>Like</button>
+                Dislikes: {comment.dislikesCount}
+               <button onClick={() => handleDislikeClickComment(post.posterid, post.id, comment.id)}>Dislike</button> 
                 </p>
               </div>
             ))}
