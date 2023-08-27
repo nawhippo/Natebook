@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AccountService {
@@ -21,9 +22,9 @@ public class AccountService {
     }
 
 
+    @Transactional
     public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String newPassword) {
         AppUser user = repository.findByAppUserID(userId);
-
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
@@ -42,7 +43,6 @@ public class AccountService {
             user.setPassword(newPassword);
         }
         repository.save(user);
-
         return ResponseEntity.ok(user);
     }
 
