@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
+  const [displayedUsers, setDisplayedUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch('/api/users/getAllWebsiteUsers')
@@ -15,6 +17,7 @@ const UserList = () => {
       })
       .then(data => {
         setUsers(data);
+        setDisplayedUsers(data); 
         setIsLoading(false);
       })
       .catch(error => {
@@ -22,6 +25,17 @@ const UserList = () => {
         setIsLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    //add search bar for users
+    const filteredUsers = users.filter(user => 
+      user.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setDisplayedUsers(filteredUsers);
+  }, [searchTerm, users]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -34,9 +48,15 @@ const UserList = () => {
   return (
     <div>
       <h1>User List</h1>
-      {users.length > 0 ? (
+      <input 
+        type="text"
+        placeholder="Search for users..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      {displayedUsers.length > 0 ? (
         <ul>
-          {users.map(user => (
+          {displayedUsers.map(user => (
             <li key={user.appUserID}>
               <h2>{user.firstname} {user.lastname}</h2>
               <p>Email: {user.email}</p>
