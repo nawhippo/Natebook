@@ -5,10 +5,13 @@ import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
+@Service
 public class MessageService {
 
     private final AppUserRepository repository;
