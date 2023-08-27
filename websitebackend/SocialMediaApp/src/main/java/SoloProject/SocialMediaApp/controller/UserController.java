@@ -38,6 +38,6 @@ public class UserController {
     }
     @GetMapping("/user/{userId}")
     public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId) {
-        return postService.findByAppUserID(userId);
+        return appUserService.findByAppUserID(userId);
     }
-@GetMapping("/getAllWebsiteUsers") public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() { return userserviceimpl.getAllUsers(); } }
+@GetMapping("/getAllWebsiteUsers") public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() { return appUserService.getAllUsers(); } }
