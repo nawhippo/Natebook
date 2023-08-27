@@ -9,15 +9,35 @@ const GetAllFriends = () => {
   const [error, setError] = useState(null);
   const history = useHistory();
 
+   
+
    const handleButtonClick = (recipientUsername) =>{
-     history.push({
-       pathname: '/createMessage',
-       state: { recipient: recipientUsername }
-     });
-   };
+    history.push({
+      pathname: '/createMessage',
+      state: { recipient: recipientUsername }
+    });
+  };
 
-
-
+  const handleButtonClick2 = (recipientUsername) => {
+    fetch(`/api/friends/${user.appUserID}/${recipientUsername}/removeFriend`, {
+      method: 'DELETE',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setAllFriendsData(prevFriends => prevFriends.filter(friend => friend.username !== recipientUsername));
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      setError(error.message);
+    });
+}
+  
+  
   useEffect(() => {
     if (user) {
       fetch(`/api/friends/${user.appUserID}/getAllFriends`)
@@ -50,7 +70,8 @@ const GetAllFriends = () => {
             <li key={friend.id}>
               <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
               <p>{friend.email}</p>
-              <button onClick={()=> handleButtonClick(friend.username)}>Message User</button>
+              <button onClick={()=> handleButtonClick(friend.username)}>Message Friend</button>
+              <button onClick={()=> handleButtonClick2(friend.username)}>Remove Friend</button>
             </li>
           ))}
         </ul>
