@@ -45,14 +45,23 @@ public class AccountController {
 
 
     @PutMapping("/account/{userId}/updateAccountDetails")
-    public ResponseEntity<AppUser> updateAccountDetails(
-            @PathVariable Long userId,
-            @RequestParam(required = false) String newFirstName,
-            @RequestParam(required = false) String newLastName,
-            @RequestParam(required = false) String newEmail,
-            @RequestParam(required = false) String password
-    ) {
-        return accountservice.updateAccountDetails(userId, newFirstName, newLastName, newEmail, password);
+    public ResponseEntity<AppUser> updateAccountDetails(@PathVariable Long userId, @RequestBody Map<String, String> formData) {
+        String newFirstName = formData.get("firstname");
+        String newLastName = formData.get("lastname");
+        String newEmail = formData.get("email");
+        String newPassword = formData.get("password");
+        return accountservice.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword);
     }
 
+    @DeleteMapping("/account/{userId}/deleteAccount")
+    public ResponseEntity<AppUser> deleteAccount(@PathVariable Long userId){
+        AppUser user = appUserRepository.findByAppUserID(userId);
+        for(Long friend : user.getFriends()){
+            AppUser frienduser = appUserRepository.findByAppUserID(friend);
+            frienduser.getFriends().remove(userId);
+            appUserRepository.save(frienduser);
+        }
+        appUserRepository.delete(user);
+        return ResponseEntity.ok(user);
+    }
 }
