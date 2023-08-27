@@ -4,17 +4,32 @@ import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Comment;
 import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.models.Post;
+import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class PostService {
 
+    private final AppUserRepository repository;
+
+
+
+    public PostService(AppUserRepository repository) {
+        this.repository = repository;
+    }
+
+
+
     public ResponseEntity<Post> getPostById(Long userId, Long postId, Long id) {
-        AppUser appUser = findByAppUserID(userId).getBody();
+        AppUser appUser = repository.findByAppUserID(userId);
         if (appUser != null) {
             for (Post post : appUser.getPosts()) {
                 if (post.getId().equals(postId)) {
@@ -137,6 +152,7 @@ public class PostService {
         String username = appUser.getUsername();
         post.setAppUser(appUser);
         post.setPosterusername(username);
+        post.setPosterid(appUser.getAppUserID());
         List<Post> userPosts = appUser.getPosts();
         userPosts.add(post);
         appUser.setPosts(userPosts);
@@ -146,7 +162,7 @@ public class PostService {
 
 
     public ResponseEntity<List<Post>> getAllPosts(Long userId) {
-        AppUser appUser = findByAppUserID(userId).getBody();
+        AppUser appUser = repository.findByAppUserID(userId);
         if (appUser != null) {
             return (ResponseEntity<List<Post>>) appUser.getPosts();
         } else {
@@ -381,4 +397,6 @@ public class PostService {
         }
         return ResponseEntity.ok(list);
     }
+
+
 }
