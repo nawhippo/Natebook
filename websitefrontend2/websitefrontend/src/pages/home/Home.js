@@ -6,6 +6,7 @@ const Home = () => {
   const [homeData, setHomeData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); 
 
   const { user } = useUserContext();
 
@@ -28,6 +29,12 @@ const Home = () => {
     fetchData();
   }, []);
 
+  const filteredUsers = searchTerm
+    ? homeData.filter(user =>
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : homeData;
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -44,9 +51,15 @@ const Home = () => {
       {user && (
         <>
           <h2>Website Users</h2>
-          {homeData && homeData.length > 0 ? (
+          <input
+            type="text"
+            placeholder="Search by username"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+          {filteredUsers && filteredUsers.length > 0 ? (
             <ul>
-              {homeData.map(user => (
+              {filteredUsers.map(user => ( 
                 <li key={user.appUserID}>
                   {user.username} - {user.firstname} {user.lastname}
                 </li>
