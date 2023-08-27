@@ -8,13 +8,12 @@ const UpdateAccount = () => {
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
-    username: user.username,
+    //username cannot be changed.
     password: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
