@@ -85,6 +85,7 @@ public class Post {
 
     //for display purposes
     private Long posterid;
+
     @Column
     private String title;
 
