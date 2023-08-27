@@ -18,7 +18,6 @@ public class FriendRequestController {
     private final AppUserRepository appUserRepository;
 
     @Autowired
-
     public FriendRequestController(FriendRequestService friendRequestService, AppUserRepository appUserRepository){
         this.friendRequestService = friendRequestService;
         this.appUserRepository = appUserRepository;

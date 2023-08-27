@@ -7,9 +7,14 @@ import jakarta.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
+
+@Service
 
 public class FriendRequestService {
 
@@ -32,21 +37,49 @@ public class FriendRequestService {
         }
         return ResponseEntity.ok(DTOList);
     }
+    private List<UserDTO> convertToDTOList(List<Long> ids) {
+        List<UserDTO> result = new ArrayList<>();
+        if (ids != null) {
+            for (long id : ids) {
+                result.add(convertToDTO(id));
+            }
+        }
+        return result;
+    }
+
+    private UserDTO convertToDTO(Long id) {
+        AppUser user = repository.findByAppUserID(id);
+        if (user != null) {
+            return new UserDTO(
+                    id, user.getUsername(), user.getFirstname(), user.getLastname(), user.getEmail()
+            );
+        }
+        return null;
+    }
+
+
+
+
 
     //strings are usernames
 
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId) {
-        AppUser friend = repository.findByAppUserID(friendId);
-        List<Long> newRequests = friend.getRequests();
+        AppUser recipient = repository.findByAppUserID(friendId);
+        List<Long> newRequests = recipient.getRequests();
+        if(newRequests.contains(senderId)){
+            return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
+        }
         newRequests.add(senderId);
-        friend.setRequests(newRequests);
-        repository.save(friend);
-        return new ResponseEntity<>(friend, HttpStatus.OK);
+        recipient.setRequests(newRequests);
+        repository.save(recipient);
+        return new ResponseEntity<>(recipient, HttpStatus.OK);
     }
 
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, String recipientUsername) {
         AppUser recipient = repository.findByUsername(recipientUsername);
-
+        if (recipient.getFriends().contains(senderId)) {
+            return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
+        }
         if (recipient.getRequests() == null) {
             recipient.setRequests(new ArrayList<>());
         }
@@ -63,6 +96,9 @@ public class FriendRequestService {
 
     public ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, Long senderId) {
         AppUser recipient = repository.findByAppUserID(recipientId);
+        if(recipient.getFriends().contains(senderId)){
+            return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
+        }
         AppUser sender = repository.findByAppUserID(senderId);
         List<Long> newRequests = recipient.getRequests();
         newRequests.remove(senderId);
