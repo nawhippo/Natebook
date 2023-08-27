@@ -8,7 +8,6 @@ const GetAccount = () => {
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
   const handleLinkClick = (url) => {
-    //navigate to the specified URL, causing a page refresh in a stupid-roundabout way. 
     history.push(url);
   };
 
@@ -45,11 +44,13 @@ const GetAccount = () => {
   return (
     <div>
       <h2>Account Details</h2>
-      <p>ID: {accountData.appUserId}</p>
+      <p>ID: {accountData.appUserID}</p>
       <p>First Name: {accountData.firstname}</p>
       <p>Last Name: {accountData.lastname}</p>
       <p>Email: {accountData.email}</p>
+      <p>Password: {accountData.password}</p>
       <button onClick={() => handleLinkClick('/updateAccount')}>Update Account</button>
+      <button onClick={() => handleLinkClick('/deleteAccount')}>Delete Account</button>
     </div>
   );
 };
