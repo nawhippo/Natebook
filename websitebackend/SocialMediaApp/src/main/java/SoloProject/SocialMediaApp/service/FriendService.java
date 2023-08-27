@@ -5,10 +5,13 @@ import SoloProject.SocialMediaApp.models.UserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Service
 public class FriendService {
     private final AppUserRepository repository;
 
@@ -24,6 +27,28 @@ public class FriendService {
 
         List<Long> friends = user.getFriends();
         AppUser friend = repository.findByUsername(username);
+        List<Long> friends2 = friend.getFriends();
+        if (friend == null) {
+            return ResponseEntity.notFound().build();
+        }
+        friends.remove(friend.getAppUserID());
+        friends2.remove(userId);
+        user.setFriends(friends);
+        friend.setFriends(friends2);
+        repository.save(user);
+        repository.save(friend);
+        return ResponseEntity.ok(user);
+    }
+
+
+    public ResponseEntity<AppUser> removeFriend(Long userId, Long friendId) {
+        AppUser user = repository.findByAppUserID(userId);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Long> friends = user.getFriends();
+        AppUser friend = repository.findByAppUserID(friendId);
 
         if (friend == null) {
             return ResponseEntity.notFound().build();
@@ -35,10 +60,8 @@ public class FriendService {
     }
 
     public ResponseEntity<List<Long>> getFriends(Long userId) {
-        ResponseEntity<AppUser> response = findByAppUserID(userId);
-
-        if (response != null && response.getBody() != null) {
-            AppUser appUser = response.getBody();
+        AppUser appUser = repository.findByAppUserID(userId);
+        if(appUser != null){
             return ResponseEntity.ok(appUser.getFriends());
         } else {
             return ResponseEntity.notFound().build();
@@ -46,17 +69,18 @@ public class FriendService {
     }
 
     public ResponseEntity<AppUser> getFriend(Long userId, Long friendId) {
-        AppUser appUser = findByAppUserID(userId).getBody();
-        if (appUser == null) {
-            return ResponseEntity.notFound().build();
-        } else {
-            for (Long friend : appUser.getFriends()) {
-                if (friend == friendId) {
-                    return findByAppUserID(friend);
-                }
-            }
-            return ResponseEntity.notFound().build();
+        AppUser appUser = repository.findByAppUserID(userId);
+        if(appUser != null){
+           List<Long> friends = appUser.getFriends();
+            //check the user's friendlist.
+           for(Long friend : friends) {
+               if (friend == friendId) {
+                   AppUser returnfriend = repository.findByAppUserID(friend);
+                   return ResponseEntity.ok(returnfriend);
+               }
+           }
         }
+        return ResponseEntity.notFound().build();
     }
 
 
