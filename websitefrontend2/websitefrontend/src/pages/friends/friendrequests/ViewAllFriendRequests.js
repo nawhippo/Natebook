@@ -32,16 +32,27 @@ const GetAllFriendRequests = () => {
   const handleClick = (friendId) => {
     fetch(`/api/friendreqs/${user.appUserID}/acceptFriendRequest/${friendId}`,{
       method: 'PUT',
-  });
-  window.location.reload();
+  })
+  .then (response => {
+    if(!response.ok){
+      throw new Error("API call failed");
+    }
+    window.location.reload();
+  })
 };
 
   const handleClickTwo = (friendId) => {
     fetch(`/api/friendreqs/${user.appUserID}/declineFriendRequest/${friendId}`,{
       method: 'PUT',
-  });
-  window.location.reload();
-  };
+  })
+  .then (response => {
+    if(!response.ok){
+      throw new Error("API call failed");
+    }
+    window.location.reload();
+  })
+};
+
 
   if (isLoading) {
     return <div>Loading...</div>;
