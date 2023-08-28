@@ -30,6 +30,8 @@ public class AccountController {
         return accountservice.getAccountDetails(userId);
     }
 
+
+
     @PostMapping("/account/createAccount")
     public void createAccount(@RequestBody Map<String, String> formData) {
         String firstName = formData.get("firstname");
