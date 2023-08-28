@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { useUserContext } from "../login/UserContext";
+import { useHistory } from "react-router-dom";
+
 
 const DeleteAccount = () => {
-  const { user, clearUser } = useUserContext();  
+  const { user, setUser } = useUserContext();  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const history = useHistory(); 
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     setIsLoading(true);
     try {
-      const response = fetch(`/api/account/${user.appUserID}/deleteAccount`, {
+      const response = await fetch(`/api/account/${user.appUserID}/deleteAccount`, { 
         method: "DELETE"
       });
 
@@ -18,7 +21,8 @@ const DeleteAccount = () => {
       }
 
       console.log("Account Deleted!");
-      clearUser();  
+      setUser(null);
+      history.push("/home");
     } catch (error) {
       console.error("Error:", error);
       setError(error.message);
@@ -29,7 +33,7 @@ const DeleteAccount = () => {
 
   return (
     <div>
-      <p>Are you sure?</p>
+     <p>Are you sure?</p>
       {error && <p>{error}</p>}
       <button onClick={handleDeleteAccount} disabled={isLoading}>
         {isLoading ? "Deleting..." : "Delete"}
