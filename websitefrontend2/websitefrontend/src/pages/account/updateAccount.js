@@ -8,7 +8,6 @@ const UpdateAccount = () => {
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
-    //username cannot be changed.
     password: "",
   });
 

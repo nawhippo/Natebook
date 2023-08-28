@@ -25,19 +25,15 @@ public class UserController {
         return "Hello, user!";
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<AppUser> getUserData() {
-        Long userId = 1L;
-        AppUser user = appUserRepository.findById(userId).orElse(null);
 
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
     @GetMapping("/user/{userId}")
     public ResponseEntity<AppUser> findUserbyId(@PathVariable Long userId) {
         return appUserService.findByAppUserID(userId);
     }
-@GetMapping("/getAllWebsiteUsers") public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() { return appUserService.getAllUsers(); } }
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<AppUser> findUserbyId(@PathVariable String username) {
+        return appUserService.findUser(username);
+    }
+
+@GetMapping("/user/getAllWebsiteUsers") public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() { return appUserService.getAllUsers(); } }
