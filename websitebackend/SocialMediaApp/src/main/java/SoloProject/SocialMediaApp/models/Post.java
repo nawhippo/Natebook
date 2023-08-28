@@ -14,6 +14,15 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 public class Post {
+    public boolean isFriendsonly() {
+        return friendsonly;
+    }
+
+    public void setFriendsonly(boolean friendsonly) {
+        this.friendsonly = friendsonly;
+    }
+
+    public boolean friendsonly;
     public Long getPosterid() {
         return posterid;
     }
@@ -22,7 +31,7 @@ public class Post {
         this.posterid = posterid;
     }
 
-    public Post(Long id, AppUser appUser, String posterusername, String title, String description, List<Long> likes, List<Long> dislikes, List<Comment> commentList, Long posterid) {
+    public Post(Long id, AppUser appUser, String posterusername, String title, String description, List<Long> likes, List<Long> dislikes, List<Comment> commentList, Long posterid, boolean friendsonly) {
         this.id = id;
         this.appUser = appUser;
         this.posterusername = posterusername;
@@ -33,6 +42,7 @@ public class Post {
         this.commentList = new ArrayList<>();
         this.dateTime =  getDateTimeAsString();
         this.posterid = posterid;
+        this.friendsonly = friendsonly;
     }
 
     public Post() {
