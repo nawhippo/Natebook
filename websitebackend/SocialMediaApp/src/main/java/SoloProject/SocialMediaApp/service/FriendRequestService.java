@@ -65,6 +65,9 @@ public class FriendRequestService {
 
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId) {
         AppUser recipient = repository.findByAppUserID(friendId);
+        if(senderId == friendId){
+            return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
+        }
         List<Long> newRequests = recipient.getRequests();
         if(newRequests.contains(senderId)){
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
@@ -77,6 +80,9 @@ public class FriendRequestService {
 
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, String recipientUsername) {
         AppUser recipient = repository.findByUsername(recipientUsername);
+        if(senderId == recipient.getAppUserID()){
+            return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
+        }
         if (recipient.getFriends().contains(senderId)) {
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
         }
