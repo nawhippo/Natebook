@@ -3,18 +3,20 @@ package SoloProject.SocialMediaApp.controller;
 import SoloProject.SocialMediaApp.models.Comment;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
-import SoloProject.SocialMediaApp.service.AppUserService;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class PostController {
     private final PostService postService;
+
     private final AppUserRepository appUserRepository;
 
     @Autowired
@@ -22,6 +24,8 @@ public class PostController {
         this.postService = postService;
         this.appUserRepository = appUserRepository;
     }
+
+
 
     @PostMapping("/post/{userId}/createPost")
     public ResponseEntity<Post> createPost(
@@ -31,6 +35,7 @@ public class PostController {
         return postService.createPost(userId, post);
     }
 
+
     @GetMapping("/post/{userId}/{posterId}/{postId}")
     public ResponseEntity<Post> getPostById(
             @PathVariable Long userId,
@@ -39,44 +44,27 @@ public class PostController {
         return postService.getPostById(userId, posterId, postId);
     }
 
-    @PutMapping("/post/{userId}/{posterId}/{postId}/addLike")
-    public ResponseEntity<Post> addLikePost(
+    @PutMapping("/post/{userId}/{posterId}/{postId}/updateReactionPost")
+    public ResponseEntity<Post> updatePostReaction(
             @PathVariable Long userId,
             @PathVariable Long posterId,
-            @PathVariable Long postId
-            ) {
-        return postService.addLikePost(userId, posterId, postId);
+            @PathVariable Long postId,
+            @RequestBody Map<String, String> payload
+    ) {
+        String action = payload.get("action");
+
+        if ("Like".equals(action)) {
+            return postService.addLikePost(userId, posterId, postId);
+        } else if ("Dislike".equals(action)) {
+            return postService.addDislikePost(userId, posterId, postId);
+        } else if ("Unlike".equals(action)) {
+            return postService.removeLikePost(userId, posterId, postId);
+        } else if ("Undislike".equals(action)) {
+            return postService.removeDislikePost(userId, posterId, postId);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
-
-
-    @PutMapping("/post/{userId}/{posterId}/{postId}/addDislike")
-    public ResponseEntity<Post> addDislikePost(
-            @PathVariable Long userId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId
-           ) {
-        return postService.addDislikePost(userId, posterId, postId);
-    }
-
-
-
-    @PutMapping("/post/{userId}/{posterId}/{postId}/removeLike")
-    public ResponseEntity<Post> RemoveLikePost(
-            @PathVariable Long userId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId
-           ) {
-        return postService.removeLikePost(userId, posterId, postId);
-    }
-
-    @PutMapping("/post/{userId}/{posterId}/{postId}/removeDislike")
-    public ResponseEntity<Post> RemoveDislikePost(
-            @PathVariable Long userId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId) {
-        return postService.removeDislikePost(userId, posterId, postId);
-    }
-
 
     @PostMapping("/post/{userId}/{postId}/createComment")
     public ResponseEntity<?> createComment(
@@ -87,48 +75,49 @@ public class PostController {
         return postService.createComment(userId, postId, comment);
     }
 
-    @PutMapping("/post/{userId}/{posterId}/{postId}/addLikeComment")
-    public ResponseEntity<Comment> addLikeComment(
+    @PutMapping("/post/{userId}/{posterId}/{postId}/{commentId}/updateReactionComment")
+    public ResponseEntity<Comment> updateCommentReaction(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @RequestBody Map<String, String> payload
+    ) {
+        String action = payload.get("action");
+
+        if ("Like".equals(action)) {
+            return postService.addLikeComment(userId, posterId, postId, commentId);
+        } else if ("Dislike".equals(action)) {
+            return postService.addDislikeComment(userId, posterId, postId, commentId);
+        } else if ("Unlike".equals(action)) {
+            return postService.removeLikeComment(userId, posterId, postId, commentId);
+        } else if ("Undislike".equals(action)) {
+            return postService.removeDislikeComment(userId, posterId, postId, commentId);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/post/{userId}/{posterId}/{postId}/checkReactionPost")
+    public ResponseEntity<String> checkReactionPost(
+            @PathVariable Long userId,
+            @PathVariable Long posterId,
+            @PathVariable Long postId
+    ) {
+        return postService.getReactionPost(userId, posterId, postId);
+    }
+
+
+    @GetMapping("/post/{userId}/{posterId}/{postId}/{commentId}/checkReactionComment")
+    public ResponseEntity<String> checkReactionComment(
             @PathVariable Long userId,
             @PathVariable Long posterId,
             @PathVariable Long postId,
             @PathVariable Long commentId
     ) {
-        return postService.addLikeComment(userId, posterId, postId, commentId);
+        return postService.getReactionComment(userId, posterId, postId, commentId);
     }
 
-
-    @PutMapping("/post/{userId}/{posterId}/{postId}/addDislikeComment")
-    public ResponseEntity<Comment> addDislikeComment(
-            @PathVariable Long userId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId,
-            @PathVariable Long commentId
-    ) {
-        return postService.addDislikeComment(userId, posterId, postId, commentId);
-    }
-
-
-
-    @PutMapping("/post/{userId}/{posterId}/{postId}/removeLikeComment")
-    public ResponseEntity<Comment> RemoveLikeComment(
-            @PathVariable Long userId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId,
-            @PathVariable Long commentId
-
-    ) {
-        return postService.removeLikeComment(userId, posterId, postId, commentId);
-    }
-
-    @PutMapping("/post/{userId}/{posterId}/{postId}/removeDislikeComment")
-    public ResponseEntity<Comment> RemoveDislikeComment(
-            @PathVariable Long userId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId,
-            @PathVariable Long commentId) {
-        return postService.removeDislikeComment(userId, posterId, postId, commentId);
-    }
 
 
     @GetMapping("/post/{userId}/posts")
@@ -147,4 +136,16 @@ public class PostController {
     public ResponseEntity<List<Post>> getAllPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
         return postService.getPostsByUsername(userId, friendUsername);
     }
-}
+
+    @DeleteMapping("/post/{userId}/{postId}/deletePost")
+        public ResponseEntity<Post> deletePost(@PathVariable Long userId, @PathVariable Long postId){
+            return postService.deletePost(userId, postId);
+        }
+
+
+    @DeleteMapping("/post/{userId}/{postId}/{commentId}/deleteComment")
+    public ResponseEntity<Post> deleteComment(@PathVariable Long userId, @PathVariable Long postId, @PathVariable Long commentId){
+        return postService.deleteComment(userId, postId, commentId);
+    }
+    }
+
