@@ -21,12 +21,23 @@ public class PostService {
     private final AppUserRepository repository;
 
 
-
     public PostService(AppUserRepository repository) {
         this.repository = repository;
     }
 
-
+    public ResponseEntity<List<Post>> getWebsitePosts(){
+        List<AppUser> users = repository.findAll();
+        List<Post> websiteposts = new ArrayList<>();
+        for(AppUser user : users){
+            List<Post> userposts = user.getPosts();
+                for(Post post : userposts){
+                    if(!post.isFriendsonly()){
+                        websiteposts.add(post);
+                    }
+                }
+        }
+        return ResponseEntity.ok(websiteposts);
+    }
 
     public ResponseEntity<Post> getPostById(Long userId, Long postId, Long id) {
         AppUser appUser = repository.findByAppUserID(userId);
@@ -40,6 +51,7 @@ public class PostService {
         }
         return ResponseEntity.notFound().build();
     }
+
     public ResponseEntity<List<Post>> getPostsByUserId(Long userId, Long friendId) {
         AppUser appUser = repository.findByAppUserID(userId);
         if (appUser == null) {
@@ -161,6 +173,7 @@ public class PostService {
     }
 
 
+
     public ResponseEntity<List<Post>> getAllPosts(Long userId) {
         AppUser appUser = repository.findByAppUserID(userId);
         if (appUser != null) {
@@ -170,9 +183,6 @@ public class PostService {
             return ResponseEntity.notFound().build();
         }
     }
-
-
-
 
 
     public ResponseEntity<?> createComment(Long userId, Long postId, Comment comment) {
@@ -281,7 +291,6 @@ public class PostService {
     }
 
 
-
     public ResponseEntity<Comment> addLikeComment(Long userId, Long posterId, Long postId, Long commentId) {
         //find by user
         AppUser poster = repository.findByAppUserID(posterId);
@@ -309,9 +318,7 @@ public class PostService {
     }
 
 
-
-
-    public ResponseEntity<Comment> addDislikeComment(Long userId, Long posterId, Long postId, Long commentId)  {
+    public ResponseEntity<Comment> addDislikeComment(Long userId, Long posterId, Long postId, Long commentId) {
         //find by user
         AppUser poster = repository.findByAppUserID(posterId);
         if (poster != null) {
@@ -338,7 +345,7 @@ public class PostService {
     }
 
 
-    public ResponseEntity<Comment> removeLikeComment(Long userId, Long posterId, Long postId, Long commentId)  {
+    public ResponseEntity<Comment> removeLikeComment(Long userId, Long posterId, Long postId, Long commentId) {
         //find by user
         AppUser poster = repository.findByAppUserID(posterId);
         if (poster != null) {
@@ -361,7 +368,7 @@ public class PostService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    public ResponseEntity<Comment> removeDislikeComment(Long userId, Long posterId, Long postId, Long commentId)  {
+    public ResponseEntity<Comment> removeDislikeComment(Long userId, Long posterId, Long postId, Long commentId) {
         //find by user
         AppUser poster = repository.findByAppUserID(posterId);
         if (poster != null) {
@@ -388,10 +395,10 @@ public class PostService {
     public ResponseEntity<List<Post>> getAllFriendPosts(Long userId) {
         AppUser appUser = repository.findByAppUserID(userId);
         List<Post> list = new ArrayList<>();
-        if(appUser == null){
+        if (appUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        for(Long friendid : appUser.getFriends()){
+        for (Long friendid : appUser.getFriends()) {
             AppUser friend = repository.findByAppUserID(friendid);
             list.addAll(friend.getPosts());
         }
@@ -399,4 +406,73 @@ public class PostService {
     }
 
 
+    public ResponseEntity<String> getReactionPost(Long userId, Long posterId, Long postId) {
+        AppUser Poster = repository.findByAppUserID(posterId);
+
+        for (Post post : Poster.getPosts()) {
+            if (post.getId() == postId) {
+                if (post.getLikes().contains(userId)) {
+                    return ResponseEntity.ok("Liked");
+                }
+                if (post.getDislikes().contains(userId)) {
+                    return ResponseEntity.ok("Disliked");
+                } else {
+                    return ResponseEntity.ok("None");
+                }
+            }
+        }
+        return (ResponseEntity<String>) ResponseEntity.notFound();
+    }
+
+    public ResponseEntity<String> getReactionComment(Long userId, Long posterId, Long postId, Long commentId) {
+        AppUser Poster = repository.findByAppUserID(posterId);
+
+        for (Post post : Poster.getPosts()) {
+            if (post.getId() == postId) {
+                for (Comment comment : post.getCommentList()) {
+                    if (commentId == comment.getId()) {
+                        if (comment.getLikes().contains(userId)) {
+                            return ResponseEntity.ok("Liked");
+                        }
+                        if (commentId == comment.getId()) {
+                            if (comment.getDislikes().contains(userId)) {
+                                return ResponseEntity.ok("Disliked");
+                            }
+                        }
+                    }
+                }
+            }
+            return (ResponseEntity<String>) ResponseEntity.notFound();
+        }
+        return (ResponseEntity<String>) ResponseEntity.notFound();
+    }
+
+    public ResponseEntity<Post> deletePost(Long userId, Long postId) {
+        AppUser user = repository.findByAppUserID(userId);
+        for (Post post : user.getPosts()) {
+            if (post.getId() == postId) {
+                user.getPosts().remove(post);
+                repository.save(user);
+                return ResponseEntity.ok(post);
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<Post> deleteComment(Long userId, Long postId, Long commentId) {
+        AppUser user = repository.findByAppUserID(userId);
+        for (Post post : user.getPosts()) {
+            if (post.getId() == postId) {
+                for (Comment comment : post.getCommentList()) {
+                    if (comment.getId() == commentId) {
+                        post.removeComment(comment);
+                        repository.save(user);
+                        return ResponseEntity.ok(post);
+                    }
+                }
+                return ResponseEntity.notFound().build();
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
