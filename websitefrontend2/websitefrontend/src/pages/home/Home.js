@@ -29,6 +29,17 @@ const Home = () => {
     fetchData();
   }, []);
 
+
+
+  const handleViewProfileClick = (username) =>{
+    history.push({
+      pathname: '/userProfile',
+      state: { profileUsername: username }
+    });
+  };
+
+
+
   const filteredUsers = searchTerm
     ? homeData.filter(user =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -62,6 +73,7 @@ const Home = () => {
               {filteredUsers.map(user => ( 
                 <li key={user.appUserID}>
                   {user.username} - {user.firstname} {user.lastname}
+                  <button onClick={handleViewProfileClick}>View Profile</button>
                 </li>
               ))}
             </ul>
