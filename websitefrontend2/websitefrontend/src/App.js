@@ -25,6 +25,7 @@ import CommentForm from './pages/posts/comment/createComment';
 import UpdateAccount from './pages/account/updateAccount';
 import PostsPage from './pages/posts/allposts/getAllPostsByUsername';
 import DeleteAccount from './pages/account/deleteAccount';
+import GetUser from './pages/profiles/UserProfile';
 class App extends Component {
   render() {
     return (
@@ -56,7 +57,7 @@ class App extends Component {
                 <Route path="/createComment" component={CommentForm}/>
                 <Route path="/updateAccount" component={UpdateAccount}/>
                 <Route path="/deleteAccount" component={DeleteAccount}/>
-              
+                <Route path="/userProfile" component={GetUser}/>
               </Switch>    
             </header>
           </div>
