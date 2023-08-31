@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 public class Post {
-    public boolean isFriendsonly() {
+    public boolean isFriendsonly(){
         return friendsonly;
     }
 
