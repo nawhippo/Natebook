@@ -1,9 +1,13 @@
-package SoloProject.SocialMediaApp.controller;
+package SoloProject.SocialMediaApp.models;
 
 import SoloProject.SocialMediaApp.models.Post;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+
+
+@Component
 public class PublicFeed {
     List<Post> Feed;
 
@@ -24,7 +28,7 @@ public class PublicFeed {
     }
 
 
-    void removeFromFeed(Post post){
+    public void removeFromFeed(Post post){
         this.getFeed().remove(post);
     }
 
