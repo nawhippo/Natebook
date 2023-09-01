@@ -1,27 +1,26 @@
 package SoloProject.SocialMediaApp.service;
 
-import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.Comment;
-import SoloProject.SocialMediaApp.models.Message;
-import SoloProject.SocialMediaApp.models.Post;
+import SoloProject.SocialMediaApp.models.*;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
-import jakarta.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import SoloProject.SocialMediaApp.models.PublicFeed;
 @Service
 public class PostService {
+
+    private final PublicFeed publicFeed;
 
     private final AppUserRepository repository;
 
 
-    public PostService(AppUserRepository repository) {
+    @Autowired
+    public PostService(PublicFeed feed, AppUserRepository repository) {
+        this.publicFeed = feed;
         this.repository = repository;
     }
 
@@ -168,6 +167,9 @@ public class PostService {
         List<Post> userPosts = appUser.getPosts();
         userPosts.add(post);
         appUser.setPosts(userPosts);
+        if(!post.isFriendsonly()){
+
+        }
         repository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
@@ -452,6 +454,7 @@ public class PostService {
         for (Post post : user.getPosts()) {
             if (post.getId() == postId) {
                 user.getPosts().remove(post);
+                publicFeed.removeFromFeed(post);
                 repository.save(user);
                 return ResponseEntity.ok(post);
             }
