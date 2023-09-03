@@ -12,7 +12,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      history.push('/home');
+      history.push('/public-feed');
     }
   }, [user, history]);
 
