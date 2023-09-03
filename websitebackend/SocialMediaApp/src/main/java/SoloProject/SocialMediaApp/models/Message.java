@@ -1,6 +1,7 @@
 package SoloProject.SocialMediaApp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ public class Message {
     @Column
     private String content;
 
+    @Column
+    private String title;
 
     @ManyToOne
     @JsonBackReference
@@ -51,6 +54,40 @@ public class Message {
 
     @Column(name = "date_time")
     private Date dateTime;
+
+    //Could potentially be itself.
+    @ManyToOne
+    @JsonBackReference(value = "parent")
+    @JoinColumn(name = "parent_message_id")
+    private Message parentMessage;
+
+    @OneToMany(mappedBy = "parentMessage", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "parent")
+    private List<Message> childMessages = new ArrayList<>();
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Message getParentMessage() {
+        return parentMessage;
+    }
+
+    public void setParentMessage(Message parentMessage) {
+        this.parentMessage = parentMessage;
+    }
+
+    public List<Message> getChildMessages() {
+        return childMessages;
+    }
+
+    public void setChildMessages(List<Message> childMessages) {
+        this.childMessages = childMessages;
+    }
 
     public Message(String content, AppUser sender, boolean isIncoming) {
         this.content = content;
