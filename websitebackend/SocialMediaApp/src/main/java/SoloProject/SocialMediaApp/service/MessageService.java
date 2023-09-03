@@ -34,6 +34,8 @@ public class MessageService {
 
 
 
+
+
     public ResponseEntity<List<Message>> getAllMessages(Long userId) {
         AppUser appUser = repository.findByAppUserID(userId);
         if (appUser == null) {
@@ -72,6 +74,21 @@ public class MessageService {
 
         return ResponseEntity.ok(message);
     }
+
+
+    @Transactional
+    public ResponseEntity<Message> sendReplyMessage(Long senderId, String content, Long parentid) {
+        AppUser sender = repository.findByAppUserID(senderId);
+        Message message = new Message(content, sender, false);
+        for(Message mes : sender.getMessages()){
+            if(mes.getId() == parentid){
+                mes.getChildMessages().add(message);
+            }
+        }
+        repository.save(sender);
+        return ResponseEntity.ok(message);
+    }
+
 
 
 
