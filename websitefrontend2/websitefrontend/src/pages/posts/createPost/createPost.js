@@ -6,7 +6,7 @@ const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dateTime, setDateTime] = useState('');
-
+  const [publicStatus, setPublicStatus] = useState(true);
   useEffect(() => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -41,6 +41,7 @@ const handleCreatePost = async () => {
         title: title,
         description: description,
         dateTime: formattedDateTime,
+        public: publicStatus,
       }),
     });
 
@@ -73,9 +74,18 @@ const handleCreatePost = async () => {
         />
       </div>
       <div>
-        <button onClick={handleCreatePost}>Create Post</button>
+        <label>
+          <input
+          type="checkbox"
+          checked={publicStatus}
+          onChange={handlePublicStatusChange}
+          />
+        </label>
       </div>
+      <div>
+      <button onClick={handleCreatePost}>Create Post</button>
     </div>
+  </div>
   );
 };
 
