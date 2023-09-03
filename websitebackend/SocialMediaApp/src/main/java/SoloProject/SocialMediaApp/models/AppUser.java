@@ -17,6 +17,11 @@ public class AppUser {
     @Column
     private List<Long> requests;
 
+    private List<Long> blockList;
+
+
+
+
     public AppUser(String firstName, String lastName, String email, String password, String username) {
         this.firstname = firstName;
         this.lastname = lastName;
