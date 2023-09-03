@@ -33,7 +33,8 @@ public class AccountController {
 
 
     @PostMapping("/account/createAccount")
-    public void createAccount(@RequestBody Map<String, String> formData) {
+    public ResponseEntity<AppUser> createAccount(@RequestBody Map<String, String> formData) {
+        //no need for checking validity, as that is in the front end
         String firstName = formData.get("firstname");
         String lastName = formData.get("lastname");
         String email = formData.get("email");
@@ -42,6 +43,7 @@ public class AccountController {
 
         AppUser appUser = new AppUser(firstName, lastName, email, password, username);
         accountservice.saveUser(appUser);
+        return ResponseEntity.ok(appUser);
     }
 
 
