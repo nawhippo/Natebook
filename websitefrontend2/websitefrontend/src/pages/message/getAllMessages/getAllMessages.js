@@ -6,6 +6,7 @@ const GetAllMessages = () => {
   const [searchText, setSearchText] = useState('');
   const [allMessages, setAllMessages] = useState([]);
   const [displayedMessages, setDisplayedMessages] = useState([]);
+  const [expandedMessages, setExpandedMessages] = useState({});
 
   const handleSearchTextChange = (event) => {
     const searchText = event.target.value;
@@ -18,6 +19,13 @@ const GetAllMessages = () => {
       message.content.toLowerCase().includes(searchText.toLowerCase())
     );
     setDisplayedMessages(filteredMessages);
+  };
+
+  const toggleChildMessages = (messageId) => {
+    setExpandedMessages({
+      ...expandedMessages,
+      [messageId]: !expandedMessages[messageId],
+    });
   };
 
   useEffect(() => {
@@ -52,11 +60,33 @@ const GetAllMessages = () => {
                     Recipients: {message.recipients.join(', ')}
                   </p>
                 )}
+                {message.childMessages && message.childMessages.length > 0 && (
+                  <div>
+                    <button onClick={() => toggleChildMessages(message.id)}>
+                      {expandedMessages[message.id] ? 'Hide' : 'Show'} Child Messages
+                    </button>
+                    {expandedMessages[message.id] && (
+                      <ul>
+                        {message.childMessages.map((childMessage) => (
+                          <li key={childMessage.id}>
+                            <p>{childMessage.content}</p>
+                            {childMessage.isIncoming ? <p>Sender: {user.username}</p> : <p>Sender: You</p>}
+                            {childMessage.recipients && childMessage.recipients.length > 0 && (
+                              <p>
+                                Recipients: {childMessage.recipients.join(', ')}
+                              </p>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
         ) : (
-          <p>No messages found.</p>
+          <p>No messages to display.</p>
         )}
       </div>
     </div>
