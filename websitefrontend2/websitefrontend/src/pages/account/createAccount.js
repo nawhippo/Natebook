@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-
+import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { useUserContext } from '../login/UserContext';
 const CreateAccount = () => {
   const [formData, setFormData] = useState({
     firstname: "",
@@ -9,6 +11,9 @@ const CreateAccount = () => {
     username: "",
   });
 
+  const { setUser } = useUserContext();
+  const history = useHistory();
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -17,8 +22,8 @@ const CreateAccount = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    //validate the form data before submitting
     if (!formData.firstname || !formData.lastname || !formData.username || !formData.email || !formData.password) {
+     
       console.error("Please fill in all required fields.");
       return;
     }
@@ -30,25 +35,26 @@ const CreateAccount = () => {
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => {
-        if (response.ok) {
-          console.log("Account created successfully!");
-          setFormData({
-            firstname: "",
-            lastname: "",
-            username: "",
-            email: "",
-            password: "",
-          });
-        } else if (response.status === 409) {
-          console.error("Username is already taken. Please choose a different username.");
-        } else {
-          console.error("Failed to create account.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    .then((response) => {
+      if (response.ok) {
+        console.log("Account created successfully!");
+        return response.json();
+      } else if (response.status === 409) {
+        console.error("Username is already taken. Please choose a different username.");
+        throw new Error("Username is already taken.");
+      } else {
+        console.error("Failed to create account.");
+        throw new Error("Failed to create account.");
+      }
+    })
+    .then((userData) => {
+      setUser(userData);
+      Cookies.set('userData', JSON.stringify(userData));
+      history.push('/home');
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
   };
 
   return (
