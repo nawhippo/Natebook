@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useUserContext } from '../login/UserContext';
-
 const Home = () => {
   const [homeData, setHomeData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState(''); 
-
+  const history = useHistory();
   const { user } = useUserContext();
 
   useEffect(() => {
