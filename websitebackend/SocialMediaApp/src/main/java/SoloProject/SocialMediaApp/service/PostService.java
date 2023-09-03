@@ -24,7 +24,7 @@ public class PostService {
         this.repository = repository;
     }
 
-    public ResponseEntity<List<Post>> getWebsitePosts(){
+    public ResponseEntity<List<Post>> getAllPublicPosts(){
         List<AppUser> users = repository.findAll();
         List<Post> websiteposts = new ArrayList<>();
         for(AppUser user : users){
