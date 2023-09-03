@@ -168,11 +168,12 @@ public class PostService {
         userPosts.add(post);
         appUser.setPosts(userPosts);
         if(!post.isFriendsonly()){
-
+        publicFeed.getFeed().add(post);
         }
         repository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
+
 
 
 
@@ -454,7 +455,9 @@ public class PostService {
         for (Post post : user.getPosts()) {
             if (post.getId() == postId) {
                 user.getPosts().remove(post);
-                publicFeed.removeFromFeed(post);
+                if(!post.friendsonly) {
+                    publicFeed.removeFromFeed(post);
+                }
                 repository.save(user);
                 return ResponseEntity.ok(post);
             }
