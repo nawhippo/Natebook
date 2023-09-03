@@ -35,6 +35,7 @@ public class MessageController {
         return messageService.getMessageById(userId, messageId);
     }
 
+
     @PostMapping("/message/{userId}/sendMessage")
     public ResponseEntity<Message> sendMessage(
             @PathVariable Long userId,
@@ -44,6 +45,28 @@ public class MessageController {
         List<String> recipientNames = (List<String>) requestBody.get("recipientNames");
 
         ResponseEntity<Message> response = messageService.sendMessage(userId, content, recipientNames);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            Message message = response.getBody();
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .header("Location", "/message/" + message.getId())
+                    .body(message);
+        } else {
+            return ResponseEntity.status(response.getStatusCode()).build();
+        }
+    }
+
+    @PostMapping("/message/{userId}/{messageId}/replyMessage")
+    public ResponseEntity<Message> replyMessage(
+            @PathVariable Long userId,
+            @PathVariable Long messageId,
+            @RequestBody Map<String, Object> requestBody
+    ) {
+        String content = (String) requestBody.get("content");
+        List<String> recipientNames = (List<String>) requestBody.get("recipientNames");
+
+        ResponseEntity<Message> response = messageService.sendReplyMessage(userId, content, messageId);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Message message = response.getBody();
