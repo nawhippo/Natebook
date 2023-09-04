@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useUserContext } from '../../login/UserContext';
+import { useUserContext } from '../../usercontext/UserContext';
 import CommentForm from '../comment/createComment';
 
 const PostsPage = () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useUserContext } from '../../login/UserContext';
+import { useUserContext } from '../../usercontext/UserContext';
 
 const GetAllMessages = () => {
   const { user } = useUserContext();
@@ -27,6 +27,16 @@ const GetAllMessages = () => {
       [messageId]: !expandedMessages[messageId],
     });
   };
+
+  const onReplyClick = (messageId) => {
+    fetch(`/api/message/${user.appUserID}/${messageId}/replyMessage`)
+    .then((response) => response.json())
+    .then((data) => {
+      setAllMessages(data);
+      setDisplayedMessages(data);
+    })
+    .catch((error) => console.error('Error fetching messages:', error));
+  }
 
   useEffect(() => {
     fetch(`/api/message/${user.appUserID}/allMessages`)
@@ -82,6 +92,7 @@ const GetAllMessages = () => {
                     )}
                   </div>
                 )}
+                <button onClick={onReplyClick}>Reply</button>
               </li>
             ))}
           </ul>

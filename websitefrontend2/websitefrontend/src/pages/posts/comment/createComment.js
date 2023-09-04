@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useUserContext } from '../../login/UserContext';
+import { useUserContext } from '../../usercontext/UserContext';
 const CommentForm = ({ userId, postId }) => {
   const { user } = useUserContext();
   const [commentContent, setCommentContent] = useState('');

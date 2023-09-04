@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useUserContext } from "../login/UserContext";
-import { Link, useHistory } from "react-router-dom";
+import { useUserContext } from "../usercontext/UserContext";
+import { Link, useHistory, useLocation } from "react-router-dom";
 
 const GetUser = () => {
   const { user } = useUserContext();

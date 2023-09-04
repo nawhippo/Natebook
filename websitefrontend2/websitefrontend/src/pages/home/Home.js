@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useUserContext } from '../login/UserContext';
+import { useUserContext } from '../usercontext/UserContext';
 const Home = () => {
   const [homeData, setHomeData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +72,7 @@ const Home = () => {
               {filteredUsers.map(user => ( 
                 <li key={user.appUserID}>
                   {user.username} - {user.firstname} {user.lastname}
-                  <button onClick={handleViewProfileClick}>View Profile</button>
+                  <button onClick={handleViewProfileClick(user.username)}>View Profile</button>
                 </li>
               ))}
             </ul>

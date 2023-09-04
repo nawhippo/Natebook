@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../../login/UserContext';
+import { useUserContext } from '../../usercontext/UserContext';
 
 const CreatePost = () => {
   const { user } = useUserContext(); 
@@ -21,6 +21,12 @@ const CreatePost = () => {
     setDateTime(formattedDateTime);
   }, []);
   
+  const handlePublicStatusChange = (e) => {
+    setPublicStatus(e.target.checked);
+  };
+
+
+
 
 const handleCreatePost = async () => {
   try {

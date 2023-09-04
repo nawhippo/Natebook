@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useUserContext } from '../../login/UserContext'; 
+import { useUserContext } from '../../usercontext/UserContext'; 
 
 
 const SpecFriend = ({ friendId }) => {

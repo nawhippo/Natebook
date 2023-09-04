@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../../login/UserContext';
+import { useUserContext } from '../../usercontext/UserContext';
 import { useHistory } from 'react-router-dom'
 
 const GetAllFriends = () => {
