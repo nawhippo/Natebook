@@ -38,20 +38,28 @@ const GetAllFriends = () => {
 }
   
   
-  useEffect(() => {
+useEffect(() => {
+  const fetchData = async () => {
     if (user) {
-      fetch(`/api/friends/${user.appUserID}/getAllFriends`)
-        .then(response => response.json())
-        .then(data => setAllFriendsData(data))
-        .catch(error => {
-          console.error("Error:", error);
-          setError(error.message);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+      try {
+        const response = await fetch(`/api/friends/${user.appUserID}/getAllFriends`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const text = await response.text();
+        if (text) {
+          const data = JSON.parse(text);
+          setAllFriendsData(data);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
     }
-  }, [user]);
+  };
+  fetchData();
+}, [user]);
 
   if (isLoading) {
     return <div>Loading...</div>;
