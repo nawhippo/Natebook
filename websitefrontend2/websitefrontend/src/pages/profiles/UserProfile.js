@@ -2,24 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useUserContext } from "../usercontext/UserContext";
 import { Link, useHistory, useLocation } from "react-router-dom";
 
-const GetUser = () => {
+const GetUser = ({username}) => {
   const { user } = useUserContext();
   const [accountData, setAccountData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
-  const location = useLocation(); 
-  const profileUsername = location.state?.profileUsername;
-
-
-
 
   const handleLinkClick = (url) => {
     history.push(url);
   };
 
-  const handleAddFriendClick = (friendUsername) => {
-    fetch(`/api/friendreqs/${user.appUserID}/sendFriendRequestByUsername/${friendUsername}`, {
+  const handleAddFriendClick = (username) => {
+    fetch(`/api/friendreqs/${user.appUserID}/sendFriendRequestByUsername/${username}`, {
       method: 'PUT',
     })
     .then(response => {
@@ -35,17 +30,17 @@ const GetUser = () => {
 
 
   
-  const handleButtonClick = (recipientUsername) =>{
+  const handleButtonClick = (username) =>{
     history.push({
       pathname: '/createMessage',
-      state: { recipient: recipientUsername }
+      state: { recipient: username }
     });
   };
 
 
   useEffect(() => {
-    if (profileUsername) {
-      fetch(`/api/user/${profileUsername}/`)
+    if (username) {
+      fetch(`/api/user/${username}/`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -61,7 +56,7 @@ const GetUser = () => {
           setIsLoading(false);
         });
     }
-  }, [profileUsername]);
+  }, [username]);
 
   if (isLoading) {
     return <div>Loading...</div>;
