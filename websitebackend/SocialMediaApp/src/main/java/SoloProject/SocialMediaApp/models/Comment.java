@@ -4,16 +4,36 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
 public class Comment {
+    public HashMap<Long, String> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(HashMap<Long, String> reactions) {
+        this.reactions = reactions;
+    }
+
+    public String getCommenterUsername() {
+        return commenterUsername;
+    }
+
+    public void setCommenterUsername(String commenterUsername) {
+        this.commenterUsername = commenterUsername;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //for display purposes
     Long commenterid;
+
+    @Transient
+    private HashMap<Long, String> reactions;
 
     public Long getCommenterid() {
         return commenterid;
@@ -57,14 +77,6 @@ public class Comment {
         this.content = content;
     }
 
-    public List<Long> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(List<Long> likes) {
-        this.likes = likes;
-    }
-
     public List<Long> getDislikes() {
         return dislikes;
     }
@@ -94,8 +106,6 @@ public class Comment {
     private AppUser appUser;
     @Column
     private String content;
-    @ElementCollection
-    private List<Long> likes;
 
     private int likesCount;
     @ElementCollection
@@ -122,19 +132,33 @@ public class Comment {
     @Column
     private String commenterUsername;
 
-    public void addLike(Long userId) {
-        this.likes.add(userId);
+    public void addReaction(Long userId, String action) {
+        String existingReaction = reactions.put(userId, action);
+
+        if ("Like".equals(action)) {
+            likesCount++;
+        } else if ("Dislike".equals(action)) {
+            dislikesCount++;
+        }
+
+        if (existingReaction != null) {
+            if ("Like".equals(existingReaction)) {
+                likesCount--;
+            } else if ("Dislike".equals(existingReaction)) {
+                dislikesCount--;
+            }
+        }
     }
 
-    public void addDislike(Long userId) {
-        this.dislikes.add(userId);
-    }
+    public void removeReaction(Long userId) {
+        String existingReaction = reactions.remove(userId);
 
-    public void removeLike(Long userId) {
-        this.likes.remove(userId);
-    }
-
-    public void removeDislike(Long userId) {
-        this.dislikes.remove(userId);
+        if (existingReaction != null) {
+            if ("Like".equals(existingReaction)) {
+                likesCount--;
+            } else if ("Dislike".equals(existingReaction)) {
+                dislikesCount--;
+            }
+        }
     }
 }
