@@ -7,9 +7,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "posts")
@@ -18,6 +16,17 @@ public class Post {
         return friendsonly;
     }
 
+    public HashMap<Long, String> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(HashMap<Long, String> reactions) {
+        this.reactions = reactions;
+    }
+
+
+    @Transient
+    public HashMap<Long, String> reactions;
     public void setFriendsonly(boolean friendsonly) {
         this.friendsonly = friendsonly;
     }
@@ -31,14 +40,13 @@ public class Post {
         this.posterid = posterid;
     }
 
-    public Post(Long id, AppUser appUser, String posterusername, String title, String description, List<Long> likes, List<Long> dislikes, List<Comment> commentList, Long posterid, boolean friendsonly) {
+    public Post(Long id, AppUser appUser, String posterusername, String title, String description, List<Comment> commentList, Long posterid, boolean friendsonly) {
         this.id = id;
         this.appUser = appUser;
         this.posterusername = posterusername;
         this.title = title;
         this.description = description;
-        this.likes = new ArrayList<>();
-        this.dislikes = new ArrayList<>();
+
         this.commentList = new ArrayList<>();
         this.dateTime =  getDateTimeAsString();
         this.posterid = posterid;
@@ -47,25 +55,6 @@ public class Post {
 
     public Post() {
 
-    }
-
-    public List<Long> addLike(Long userId){
-        likes.add(userId);
-        return likes;
-    }
-
-    public List<Long> addDislike(Long userId){
-        dislikes.add(userId);
-        return dislikes;
-    }
-    public List<Long> removeLike(Long userId){
-        likes.remove(userId);
-        return likes;
-    }
-
-    public List<Long> removeDislike(Long userId){
-        dislikes.remove(userId);
-        return dislikes;
     }
 
 
@@ -105,10 +94,6 @@ public class Post {
 
     //return the length of this to get number of.
 
-    @ElementCollection
-    private List<Long> likes;
-
-
     //for display
     private int likesCount;
 
@@ -119,10 +104,6 @@ public class Post {
     public void setLikesCount(int likesCount) {
         this.likesCount = likesCount;
     }
-
-
-    @ElementCollection
-    private List<Long> dislikes;
 
     private int dislikesCount;
 
@@ -187,22 +168,6 @@ public class Post {
         this.description = description;
     }
 
-    public List<Long> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(List<Long> likes) {
-        this.likes = likes;
-    }
-
-    public List<Long> getDislikes() {
-        return dislikes;
-    }
-
-    public void setDislikes(List<Long> dislikes) {
-        this.dislikes = dislikes;
-    }
-
     public String getDateTime() {
         return dateTime;
     }
@@ -221,5 +186,35 @@ public class Post {
 
     public void setCommentList(List<Comment> commentList) {
         this.commentList = commentList;
+    }
+
+    public void addReaction(Long userId, String action) {
+        String existingReaction = reactions.put(userId, action);
+
+        if ("Like".equals(action)) {
+            likesCount++;
+        } else if ("Dislike".equals(action)) {
+            dislikesCount++;
+        }
+
+        if (existingReaction != null) {
+            if ("Like".equals(existingReaction)) {
+                likesCount--;
+            } else if ("Dislike".equals(existingReaction)) {
+                dislikesCount--;
+            }
+        }
+    }
+
+    public void removeReaction(Long userId) {
+        String existingReaction = reactions.remove(userId);
+
+        if (existingReaction != null) {
+            if ("Like".equals(existingReaction)) {
+                likesCount--;
+            } else if ("Dislike".equals(existingReaction)) {
+                dislikesCount--;
+            }
+        }
     }
 }
