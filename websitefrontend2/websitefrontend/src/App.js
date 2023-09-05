@@ -11,7 +11,6 @@ import specPost from './pages/posts/specpost/specPost';
 import specFriend from './pages/friends/specfriend/specFriend';
 import GetAllFriends from './pages/friends/allfriends/getAllFriends';
 import createMessage from './pages/message/createMessage/createMessage';
-import getAllMessages from './pages/message/getAllMessages/getAllMessages';
 import createPost from './pages/posts/createPost/createPost';
 import ProtectedRoute from './pages/usercontext/ProtectedRoute';
 import Banner from './banners/banner';
@@ -57,7 +56,7 @@ class App extends Component {
                 <Route path="/createComment" component={CommentForm}/>
                 <Route path="/updateAccount" component={UpdateAccount}/>
                 <Route path="/deleteAccount" component={DeleteAccount}/>
-                <Route path="/userProfile" component={GetUser}/>
+                <Route path="/userProfile/:username" component={GetUser}/>
               </Switch>    
             </header>
           </div>
