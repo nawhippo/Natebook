@@ -13,14 +13,29 @@ import java.util.List;
 @Table(name = "app_users")
 public class AppUser {
 
+    @Column
+    private String profilePictureUrl;
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
 
     @Column
     private List<Long> requests;
 
     private List<Long> blockList;
 
+    public List<Long> getBlockList() {
+        return blockList;
+    }
 
-
+    public void setBlockList(List<Long> blockList) {
+        this.blockList = blockList;
+    }
 
     public AppUser(String firstName, String lastName, String email, String password, String username) {
         this.firstname = firstName;
@@ -28,6 +43,9 @@ public class AppUser {
         this.email=  email;
         this.password = password;
         this.username = username;
+        this.blockList = new ArrayList<>();
+        this.requests = new ArrayList<>();
+        this.role = "USER";
     }
 
     public List<Long> getRequests() {
@@ -127,6 +145,7 @@ public class AppUser {
         this.posts = new ArrayList<>();
         this.friends = new ArrayList<>();
         this.requests = new ArrayList<>();
+        this.blockList = new ArrayList<>();
         this.role = "USER";
     }
 
