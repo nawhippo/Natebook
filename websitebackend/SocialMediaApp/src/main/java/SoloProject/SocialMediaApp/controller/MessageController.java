@@ -44,7 +44,7 @@ public class MessageController {
         String content = (String) requestBody.get("content");
         List<String> recipientNames = (List<String>) requestBody.get("recipientNames");
 
-        ResponseEntity<Message> response = messageService.sendMessage(userId, content, recipientNames);
+        ResponseEntity<Message> response = (ResponseEntity<Message>) messageService.sendMessage(userId, content, recipientNames);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Message message = response.getBody();
@@ -57,16 +57,17 @@ public class MessageController {
         }
     }
 
-    @PostMapping("/message/{userId}/{messageId}/replyMessage")
+    @PostMapping("/message/{userId}/{parentUserId}/{messageId}/replyMessage")
     public ResponseEntity<Message> replyMessage(
             @PathVariable Long userId,
             @PathVariable Long messageId,
+            @PathVariable Long parentSenderId,
             @RequestBody Map<String, Object> requestBody
     ) {
         String content = (String) requestBody.get("content");
         List<String> recipientNames = (List<String>) requestBody.get("recipientNames");
 
-        ResponseEntity<Message> response = messageService.sendReplyMessage(userId, content, messageId);
+        ResponseEntity<Message> response = messageService.sendReplyMessage(userId, content, parentSenderId, messageId);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Message message = response.getBody();
