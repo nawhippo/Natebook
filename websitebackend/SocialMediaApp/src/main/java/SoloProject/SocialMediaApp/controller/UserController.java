@@ -17,9 +17,10 @@ public class UserController {
 
     @Autowired
     public UserController(AppUserService appUserService, AppUserRepository appUserRepository) {
-        this.appUserService= appUserService;
+        this.appUserService = appUserService;
         this.appUserRepository = appUserRepository;
     }
+
     @GetMapping
     public String helloWorld() {
         return "Hello, user!";
@@ -36,4 +37,13 @@ public class UserController {
         return appUserService.findUser(username);
     }
 
-@GetMapping("/user/getAllWebsiteUsers") public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() { return appUserService.getAllUsers(); } }
+    @GetMapping("/user/getAllWebsiteUsers")
+    public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() {
+        return appUserService.getAllUsers();
+    }
+
+    @PutMapping("/user/{userId}/{blockId}")
+    public ResponseEntity<AppUser> BlockUser(@PathVariable Long userId, @PathVariable Long blockId) {
+        return appUserService.blockUser(userId, blockId);
+    }
+}
