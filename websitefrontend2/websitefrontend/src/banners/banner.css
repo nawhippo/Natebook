@@ -7,3 +7,38 @@
     font-weight: bold;
     border-radius: 0.2px;
   }
+
+
+
+.dropbtn {
+  cursor: pointer;
+  width: 150px;
+  text-align: left;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  font-weight: normal;
+  min-width: 150px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow';
+  background-color: grey;
+}
+
+.dropdown-content p:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
