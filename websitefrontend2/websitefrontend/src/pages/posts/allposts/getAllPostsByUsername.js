@@ -1,86 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
 import CommentForm from '../comment/createComment';
 
 const PostsPage = () => {
-    const { user } = useUserContext();
-    const [targetUsername, setTargetUsername] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [inputValue, setInputValue] = useState('');
-    const [currentPostId, setCurrentPostId] = useState(null);
-    const [allPostsData, setAllPostsData] = useState(null);
+  const { user } = useUserContext();
+  const [targetUsername, setTargetUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [currentPostId, setCurrentPostId] = useState(null);
+  const [allPostsData, setAllPostsData] = useState(null);
 
-    const fetchData = (username) => {
-        const endpoint = username 
-            ? `/api/post/${user.appUserID}/postsByUsername/${username}`
-            : `/api/post/${user.appUserID}/posts`;
-            
-        setIsLoading(true);
-        fetch(endpoint)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setAllPostsData(data);
-                setIsLoading(false);
-            })
-            .catch((err) => {
-                setError(err.message);
-                setIsLoading(false);
-            });
-    };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    const handleDelete = async (endpoint) => {
-        try {
-            const response = await fetch(endpoint, { method: 'DELETE' });
-            if (!response.ok) {
-                throw new Error('Failed to delete.');
-            }
-            fetchData(targetUsername);
-        } catch (error) {
-            setError(error.message);
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+  
+  const handleSearchClick = () => {
+    fetchData(inputValue);
+  };
+
+  const handleCommentClick = (postId) => setCurrentPostId(postId);
+
+  const fetchData = async (event) => {
+    const endpoint = event 
+      ? `/api/post/${user.appUserID}/postsByUsername/${event}`
+      : `/api/post/${user.appUserID}/friendPosts`;
+    setIsLoading(true);
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setAllPostsData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteComment = async (userId, postId, commentId) => {
+    try {
+      const response = await fetch(`/post/${userId}/${postId}/${commentId}/deleteComment`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Failed to delete.');
+      }
+      fetchData(targetUsername);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleDeletePost = async (userId, postId) => {
+    try {
+      const response = await fetch(`/post/${userId}/${postId}/deletePost`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Failed to delete.');
+      }
+      fetchData(targetUsername);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  
+
+  const handleReaction = async (type, postId, posterId, commentId = null, action) => {
+    let updateReactionEndpoint;
+  
+    if (type === "post") {
+      updateReactionEndpoint = `/post/${user.appUserID}/${posterId}/${postId}/updateReactionPost`;
+    } else if (type === "comment") {
+      updateReactionEndpoint = `/post/${user.appUserID}/${posterId}/${postId}/${commentId}/updateReactionComment`;
+    } else {
+      // Invalid type
+      console.error("Invalid reaction type");
+      return;
+    }
+  
+    try {
+        const response = await fetch(updateReactionEndpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ action }),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to update reaction.");
         }
-    };
+    
+        // Refresh the post data
+        fetchData(targetUsername);
+      } catch (error) {
+        setError(error.message);
+      }
 
-    const handleInputChange = (event) => setInputValue(event.target.value);
-    const handleSearchClick = () => {
-        setTargetUsername(inputValue);
-        fetchData(inputValue);
-    };
-
-
-    const handleCommentClick = (postId) => setCurrentPostId(postId);
-
-    const handleReaction = async (endpoint, action, callback) => {
-        try {
-            const response = await fetch(endpoint);
-            const currentReaction = await response.json();
-
-            let nextAction;
-            if (currentReaction === "None") {
-                nextAction = action;
-            } else if (currentReaction === action) {
-              //unlike etc
-                nextAction = `Un${action.toLowerCase()}`;
-            } else {
-                nextAction = action;
-            }
-
-            await fetch(endpoint, {
-                method: "PUT",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: nextAction })
-            });
-
-            callback();
-        } catch (error) {
-            setError("Error updating reaction.");
-        }
-    };
+};
 
     return (
       <div>
@@ -92,12 +113,13 @@ const PostsPage = () => {
               <div key={post.id} className="post-card">
                   <h2>{post.title}</h2>
                   <p>{post.description}</p>
-                  <p>Likes: {post.likesCount} <button onClick={() => handleReaction(post.posterid, post.id, null, "Like")}>Like</button> 
-                  Dislikes: {post.dislikesCount} <button onClick={() => handleReaction("post", post.id, null, "Dislike")}>Dislike</button></p>
+                  <p><button onClick={() => handleReaction("post", post.id, post.posterid, null, "Like")}>Like</button>
+                    <button onClick={() => handleReaction("post", post.id, post.posterid, null, "Dislike")}>Dislike</button></p>
                   <p>{post.email}</p>
                   <p>{post.dateTime}</p>
                   <p>By: {post.posterusername}</p>
-                  {post.posterId === user.appUserID && <button onClick={() => handleDelete(post.id)}>Delete Post</button>}
+                  {post.posterid === user.appUserID && 
+                  <button onClick={() => handleDeletePost(user.appUserID, post.id)}>Delete Post</button>}
                   
                   <p>Comments:</p>
                   <button onClick={() => handleCommentClick(post.id)}>Comment</button>
@@ -107,14 +129,15 @@ const PostsPage = () => {
                       <div key={comment.id} className='comment'>
                           <p>{comment.content}</p>
                           <p>By: {comment.commenterusername}</p>
-                          <p>Likes: {comment.likesCount} <button onClick={() => handleReaction("comment", post.id, comment.id, "Like")}>Like</button> 
-                          Dislikes: {comment.dislikesCount} <button onClick={() => handleReaction("comment", post.id, comment.id, "Dislike")}>Dislike</button></p>
-                          {comment.commenterId === user.appUserID && <button onClick={() => handleDelete(post.id, comment.id)}>Delete Comment</button>}
+                          <p><button onClick={() => handleReaction("comment", post.id, post.posterid, comment.id, "Like")}>Like</button>
+                             <button onClick={() => handleReaction("comment", post.id, post.posterid, comment.id, "Dislike")}>Dislike</button></p>
+                          {comment.commenterId === user.appUserID && 
+                          <button onClick={() => handleDeleteComment(user.appUserID, post.id, comment.id)}>Delete Comment</button>}
                       </div>
                   ))}
               </div>
           )) : <p>No posts found.</p>}
       </div>
   );
-          }
+          };
 export default PostsPage;
