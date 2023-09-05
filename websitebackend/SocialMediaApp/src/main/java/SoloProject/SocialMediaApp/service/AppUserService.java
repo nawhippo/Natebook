@@ -27,17 +27,24 @@ public class AppUserService {
 
 
 
-    public AppUser createUser(String firstName, String lastName, String username, String email, String password) {
+    public ResponseEntity<AppUser> createUser(String firstName, String lastName, String username, String email, String password) {
         if (repository.findByUsername(username) != null) {
             throw new IllegalArgumentException("Username is already taken. Please choose a different username.");
         }
         List<Message> messages = new ArrayList<>();
         AppUser newuser = new AppUser(messages, firstName, lastName, username, email, password);
         repository.save(newuser);
-        return newuser;
+        return ResponseEntity.ok(newuser);
     }
 
 
+    public ResponseEntity<AppUser> blockUser(Long userId, Long blockId){
+        AppUser user = repository.findByAppUserID(userId);
+
+        user.getBlockList().add(blockId);
+        repository.save(user);
+        return ResponseEntity.ok(user);
+    }
     public ResponseEntity<AppUser> findByAppUserID(Long id) {
         AppUser appUser = repository.findByAppUserID(id);
         if (appUser != null) {
@@ -134,6 +141,11 @@ public class AppUserService {
                 appUser.getEmail()
         );
     }
+
+
+
+
+
 
     public ResponseEntity<AppUser> saveUser(AppUser appUser) {
         repository.save(appUser);
