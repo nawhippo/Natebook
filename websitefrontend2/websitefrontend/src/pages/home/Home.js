@@ -31,12 +31,9 @@ const Home = () => {
 
 
   const handleViewProfileClick = (username) =>{
-    history.push({
-      pathname: '/userProfile',
-      state: { profileUsername: username }
-    });
-  };
-
+    console.log(username);
+    history.push(`/userProfile/${username}`);
+  }
 
 
   const filteredUsers = searchTerm
@@ -72,7 +69,7 @@ const Home = () => {
               {filteredUsers.map(user => ( 
                 <li key={user.appUserID}>
                   {user.username} - {user.firstname} {user.lastname}
-                  <button onClick={handleViewProfileClick(user.username)}>View Profile</button>
+                  <button onClick={() => { handleViewProfileClick(user.username); }}>View Profile</button>
                 </li>
               ))}
             </ul>
