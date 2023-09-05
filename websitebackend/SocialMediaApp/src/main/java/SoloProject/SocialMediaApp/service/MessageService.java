@@ -4,6 +4,7 @@ import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,10 +55,16 @@ public class MessageService {
         return ResponseEntity.ok(messages);
     }
 
+
+
     @Transactional
-    public ResponseEntity<Message> sendMessage(Long senderId, String content, List<String> recipientNames) {
+    public ResponseEntity<?> sendMessage(Long senderId, String content, List<String> recipientNames) {
         AppUser sender = repository.findByAppUserID(senderId);
-        Message message = new Message(content, sender, false);
+        if (sender == null) {
+            return new ResponseEntity<>("Sender not found.", HttpStatus.NOT_FOUND);
+        }
+
+        Message message = new Message(content, sender, true);
 
         for (String recipientName : recipientNames) {
             message.addRecipient(recipientName);
@@ -65,10 +72,14 @@ public class MessageService {
 
         for (String recipientName : recipientNames) {
             AppUser recipient = repository.findByUsername(recipientName);
+            if (recipient == null) {
+                return new ResponseEntity<>("Recipient " + recipientName + " not found.", HttpStatus.NOT_FOUND);
+            }
             recipient.getMessages().add(message);
             repository.save(recipient);
         }
-        message.setIncoming(true);
+
+        message.setIncoming(false);
         sender.getMessages().add(message);
         repository.save(sender);
 
@@ -76,16 +87,18 @@ public class MessageService {
     }
 
 
+
     @Transactional
-    public ResponseEntity<Message> sendReplyMessage(Long senderId, String content, Long parentid) {
+    public ResponseEntity<Message> sendReplyMessage(Long senderId, String content,Long parentSenderId, Long messageId) {
         AppUser sender = repository.findByAppUserID(senderId);
-        Message message = new Message(content, sender, false);
-        for(Message mes : sender.getMessages()){
-            if(mes.getId() == parentid){
+        AppUser parentsender = repository.findByAppUserID(parentSenderId);
+        Message message = new Message(content, sender, true);
+        for(Message mes : parentsender.getMessages()){
+            if(mes.getId() == messageId){
                 mes.getChildMessages().add(message);
             }
         }
-        repository.save(sender);
+        repository.save(parentsender);
         return ResponseEntity.ok(message);
     }
 
