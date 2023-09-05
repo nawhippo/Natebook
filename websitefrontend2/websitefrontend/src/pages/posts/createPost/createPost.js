@@ -7,6 +7,7 @@ const CreatePost = () => {
   const [description, setDescription] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [publicStatus, setPublicStatus] = useState(true);
+  const [message, setMessage] = useState('');
   useEffect(() => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -52,12 +53,15 @@ const handleCreatePost = async () => {
     });
 
     if (response.ok) {
-      alert('Post created successfully!');
+      setMessage('Post created successfully!');
+      setTitle('');
+      setDescription('');
     } else {
-      alert('Failed to create post.');
+      setMessage('Failed to create post.');
     }
   } catch (error) {
     console.error('Error creating post:', error);
+    setMessage('An error occurred while creating the post.'); 
   }
 };
 
@@ -90,6 +94,9 @@ const handleCreatePost = async () => {
       </div>
       <div>
       <button onClick={handleCreatePost}>Create Post</button>
+    </div>
+    <div>
+    {message && <p>{message}</p>}
     </div>
   </div>
   );
