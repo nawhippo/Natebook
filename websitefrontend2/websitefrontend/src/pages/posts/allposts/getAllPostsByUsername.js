@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
 import CommentForm from '../comment/createComment';
-
+import Post from './post';
+import Comment from './comment';
 const PostsPage = () => {
   const { user } = useUserContext();
   const [targetUsername, setTargetUsername] = useState('');
@@ -46,7 +47,7 @@ const PostsPage = () => {
 
   const handleDeleteComment = async (userId, postId, commentId) => {
     try {
-      const response = await fetch(`/post/${userId}/${postId}/${commentId}/deleteComment`, { method: 'DELETE' });
+      const response = await fetch(`/api/post/${userId}/${postId}/${commentId}/deleteComment`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error('Failed to delete.');
       }
@@ -58,7 +59,7 @@ const PostsPage = () => {
 
   const handleDeletePost = async (userId, postId) => {
     try {
-      const response = await fetch(`/post/${userId}/${postId}/deletePost`, { method: 'DELETE' });
+      const response = await fetch(`/api/post/${userId}/${postId}/deletePost`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error('Failed to delete.');
       }
@@ -73,9 +74,9 @@ const PostsPage = () => {
     let updateReactionEndpoint;
   
     if (type === "post") {
-      updateReactionEndpoint = `/post/${user.appUserID}/${posterId}/${postId}/updateReactionPost`;
+      updateReactionEndpoint = `/api/post/${user.appUserID}/${posterId}/${postId}/updateReactionPost`;
     } else if (type === "comment") {
-      updateReactionEndpoint = `/post/${user.appUserID}/${posterId}/${postId}/${commentId}/updateReactionComment`;
+      updateReactionEndpoint = `/api/post/${user.appUserID}/${posterId}/${postId}/${commentId}/updateReactionComment`;
     } else {
       // Invalid type
       console.error("Invalid reaction type");
@@ -103,41 +104,21 @@ const PostsPage = () => {
 
 };
 
-    return (
-      <div>
-          <h1>All Posts</h1>
-          <input type="text" value={inputValue} placeholder="Enter username" onChange={handleInputChange} />
-          <button onClick={handleSearchClick}>Search</button>
-          
-          {allPostsData && allPostsData.length > 0 ? allPostsData.map((post) => (
-              <div key={post.id} className="post-card">
-                  <h2>{post.title}</h2>
-                  <p>{post.description}</p>
-                  <p><button onClick={() => handleReaction("post", post.id, post.posterid, null, "Like")}>Like</button>
-                    <button onClick={() => handleReaction("post", post.id, post.posterid, null, "Dislike")}>Dislike</button></p>
-                  <p>{post.email}</p>
-                  <p>{post.dateTime}</p>
-                  <p>By: {post.posterusername}</p>
-                  {post.posterid === user.appUserID && 
-                  <button onClick={() => handleDeletePost(user.appUserID, post.id)}>Delete Post</button>}
-                  
-                  <p>Comments:</p>
-                  <button onClick={() => handleCommentClick(post.id)}>Comment</button>
-                  {currentPostId === post.id && <CommentForm postId={post.id} />}
-                  
-                  {post.commentList.map((comment) => (
-                      <div key={comment.id} className='comment'>
-                          <p>{comment.content}</p>
-                          <p>By: {comment.commenterusername}</p>
-                          <p><button onClick={() => handleReaction("comment", post.id, post.posterid, comment.id, "Like")}>Like</button>
-                             <button onClick={() => handleReaction("comment", post.id, post.posterid, comment.id, "Dislike")}>Dislike</button></p>
-                          {comment.commenterId === user.appUserID && 
-                          <button onClick={() => handleDeleteComment(user.appUserID, post.id, comment.id)}>Delete Comment</button>}
-                      </div>
-                  ))}
-              </div>
-          )) : <p>No posts found.</p>}
-      </div>
-  );
-          };
+return (
+  <div>
+    <h1>All Posts</h1>
+    <input type="text" value={inputValue} placeholder="Enter username" onChange={handleInputChange} />
+    <button onClick={handleSearchClick}>Search</button>
+
+    {allPostsData && allPostsData.length > 0 ? allPostsData.map((post) => (
+      <Post post={post} user={user} handleReaction={handleReaction} handleDeletePost={handleDeletePost} handleCommentClick={handleCommentClick} currentPostId={currentPostId} CommentFormComponent={CommentForm}>
+        {post.commentList.map((comment) => (
+          <Comment comment={comment} user={user} postId={post.id} handleReaction={handleReaction} handleDeleteComment={handleDeleteComment} />
+        ))}
+      </Post>
+    )) : <p>No posts found.</p>}
+  </div>
+);
+};
+
 export default PostsPage;
