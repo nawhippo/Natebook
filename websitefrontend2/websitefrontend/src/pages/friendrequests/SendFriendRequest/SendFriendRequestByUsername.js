@@ -23,7 +23,7 @@ const SendFriendRequestByUsername = () => {
       setError(error.message);
     } finally {
       setNotification('Friend Request Sent');
-      setTargetUsername(null);
+      setTargetUsername("");
       setIsLoading(false);
     }
   };
