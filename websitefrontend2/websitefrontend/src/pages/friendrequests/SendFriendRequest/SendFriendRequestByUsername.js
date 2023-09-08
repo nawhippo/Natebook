@@ -17,13 +17,15 @@ const SendFriendRequestByUsername = () => {
     });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error("User not Found");
+      } else {
+        setNotification('Friend Request Sent');
+        setTargetUsername("");
       }
     } catch (error) {
       setError(error.message);
     } finally {
-      setNotification('Friend Request Sent');
-      setTargetUsername("");
+   
       setIsLoading(false);
     }
   };
