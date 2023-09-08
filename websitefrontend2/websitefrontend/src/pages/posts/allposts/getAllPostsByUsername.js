@@ -11,6 +11,7 @@ const PostsPage = () => {
   const [inputValue, setInputValue] = useState('');
   const [currentPostId, setCurrentPostId] = useState(null);
   const [allPostsData, setAllPostsData] = useState(null);
+  const [showCommentForm, setShowCommentForm] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -24,7 +25,31 @@ const PostsPage = () => {
     fetchData(inputValue);
   };
 
-  const handleCommentClick = (postId) => setCurrentPostId(postId);
+  const handleCommentClick = async (postid, comment) => {
+    if (comment) {
+    const endpoint = `/api/post/${user.appUserID}/${postid}/createComment`;
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create comment.');
+      }
+  
+      fetchData(targetUsername); // refresh data after commenting
+    } catch (error) {
+      setError(error.message);
+    }
+    setShowCommentForm(false);
+  } else {
+    setShowCommentForm(!showCommentForm);
+  }
+  };
 
   const fetchData = async (event) => {
     const endpoint = event 
@@ -78,7 +103,6 @@ const PostsPage = () => {
     } else if (type === "comment") {
       updateReactionEndpoint = `/api/post/${user.appUserID}/${posterId}/${postId}/${commentId}/updateReactionComment`;
     } else {
-      // Invalid type
       console.error("Invalid reaction type");
       return;
     }
@@ -106,19 +130,41 @@ const PostsPage = () => {
 
 return (
   <div>
-    <h1>All Posts</h1>
+    <h1>Friend Posts</h1>
     <input type="text" value={inputValue} placeholder="Enter username" onChange={handleInputChange} />
     <button onClick={handleSearchClick}>Search</button>
 
     {allPostsData && allPostsData.length > 0 ? allPostsData.map((post) => (
-      <Post post={post} user={user} handleReaction={handleReaction} handleDeletePost={handleDeletePost} handleCommentClick={handleCommentClick} currentPostId={currentPostId} CommentFormComponent={CommentForm}>
-        {post.commentList.map((comment) => (
-          <Comment comment={comment} user={user} postId={post.id} handleReaction={handleReaction} handleDeleteComment={handleDeleteComment} />
-        ))}
-      </Post>
+      <div key={post.id}>
+        <Post
+          post={post}
+          user={user}
+          handleReaction={handleReaction}
+          handleDeletePost={handleDeletePost}
+          handleCommentClick={() => handleCommentClick(post.id)}
+          currentPostId={currentPostId}
+          CommentFormComponent={CommentForm}
+        >
+          {post.commentList.map((comment) => (
+            <Comment
+              comment={comment}
+              user={user}
+              postId={post.id}
+              handleReaction={handleReaction}
+              handleDeleteComment={handleDeleteComment}
+            />
+          ))}
+        </Post>
+        {showCommentForm && currentPostId === post.id ? (
+          <CommentForm
+            onSubmit={(comment) => {
+              handleCommentClick(post.id, comment);
+            }}
+          />
+        ) : null}
+      </div>
     )) : <p>No posts found.</p>}
   </div>
 );
-};
-
+          }
 export default PostsPage;
