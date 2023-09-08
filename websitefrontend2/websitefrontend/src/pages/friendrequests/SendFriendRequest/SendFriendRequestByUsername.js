@@ -6,7 +6,7 @@ const SendFriendRequestByUsername = () => {
   const [targetUsername, setTargetUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [notification, setNotification] = useState('');
   const handleSendRequest = async () => {
     setIsLoading(true);
     setError(null);
@@ -22,6 +22,8 @@ const SendFriendRequestByUsername = () => {
     } catch (error) {
       setError(error.message);
     } finally {
+      setNotification('Friend Request Sent');
+      setTargetUsername(null);
       setIsLoading(false);
     }
   };
@@ -39,6 +41,7 @@ const SendFriendRequestByUsername = () => {
         {isLoading ? "Sending..." : "Send Request"}
       </button>
       {error && <div>Error: {error}</div>}
+      {notification && <div>{notification}</div>}
     </div>
   );
 };
