@@ -5,12 +5,16 @@ import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import SoloProject.SocialMediaApp.models.PublicFeed;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+
 @Service
 public class PostService {
 
@@ -213,37 +217,7 @@ public class PostService {
     }
 
 
-
-    public ResponseEntity<?> handleReaction(Long userId, Long posterId, Long postId, Long commentId, String action) {
-        AppUser poster = repository.findByAppUserID(posterId);
-
-        if (poster == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        Optional<Post> postOpt = poster.getPosts().stream().filter(p -> p.getId().equals(postId)).findFirst();
-
-        if (!postOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        Post post = postOpt.get();
-
-        if (commentId != null) {
-            Optional<Comment> commentOpt = post.getCommentList().stream().filter(c -> c.getId().equals(commentId)).findFirst();
-            if (!commentOpt.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            Comment comment = commentOpt.get();
-            return handleCommentReaction(comment, userId, action);
-        } else {
-            return handlePostReaction(post, userId, action);
-        }
-    }
-
-
-    private ResponseEntity<Comment> handleCommentReaction(Comment comment, Long userId, String action) {
+    public ResponseEntity<Comment> handleCommentReaction(Comment comment, Long userId, String action) {
         HashMap<Long, String> reactions = comment.getReactions();
         String existingReaction = reactions.getOrDefault(userId, "None");
 
@@ -256,7 +230,7 @@ public class PostService {
         return ResponseEntity.ok(comment);
     }
 
-    private ResponseEntity<Post> handlePostReaction(Post post, Long userId, String action) {
+    public ResponseEntity<Post> handlePostReaction(Post post, Long userId, String action) {
         HashMap<Long, String> reactions = post.getReactions();
         String existingReaction = reactions.getOrDefault(userId, "None");
 
@@ -285,35 +259,82 @@ public class PostService {
         return ResponseEntity.ok(list);
     }
 
-    public ResponseEntity<Post> deletePost(Long userId, Long postId) {
+@Transactional
+    public ResponseEntity<?> deletePost(Long userId, Long postId) {
+        // Check for valid user
         AppUser user = repository.findByAppUserID(userId);
-        for (Post post : user.getPosts()) {
-            if (post.getId() == postId) {
-                user.getPosts().remove(post);
-                if(!post.friendsonly) {
-                    publicFeed.removeFromFeed(post);
-                }
-                repository.save(user);
-                return ResponseEntity.ok(post);
-            }
+        if(user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.notFound().build();
+
+        // Find the post to be removed
+        Post removePost = user.getPosts().stream()
+                .filter(post -> post.getId().equals(postId))
+                .findFirst()
+                .orElse(null);
+
+        if(removePost == null) {
+            return new ResponseEntity<>("Post not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Remove post from user's collection
+        user.getPosts().remove(removePost);
+    if (removePost.getAppUser() != null) {
+        removePost.setAppUser(null);
+    }
+        // Remove from public feed if needed
+        if(!removePost.friendsonly) {
+            publicFeed.removeFromFeed(removePost);
+        }
+
+        // Save updated user
+        try {
+            repository.save(user);
+            return new ResponseEntity<>(removePost, HttpStatus.OK);
+        } catch(Exception ex) {
+            // You can log the exception here for more detailed error diagnostics
+            return new ResponseEntity<>("An error occurred while deleting the post", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public ResponseEntity<Post> deleteComment(Long userId, Long postId, Long commentId) {
+
+
+
+
+    public ResponseEntity<Comment> deleteComment(Long userId, Long postId, Long commentId) {
         AppUser user = repository.findByAppUserID(userId);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Post targetPost = null;
         for (Post post : user.getPosts()) {
-            if (post.getId() == postId) {
-                for (Comment comment : post.getCommentList()) {
-                    if (comment.getId() == commentId) {
-                        post.removeComment(comment);
-                        repository.save(user);
-                        return ResponseEntity.ok(post);
-                    }
-                }
-                return ResponseEntity.notFound().build();
+            if (post.getId().equals(postId)) {
+                targetPost = post;
+                break;
             }
         }
-        return ResponseEntity.notFound().build();
+
+        if (targetPost == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Comment commentToRemove = null;
+        for (Comment comment : targetPost.getCommentList()) {
+            if (comment.getId().equals(commentId)) {
+                commentToRemove = comment;
+                break;
+            }
+        }
+
+        if (commentToRemove == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        targetPost.getCommentList().remove(commentToRemove);
+        repository.save(user);
+        return ResponseEntity.ok(commentToRemove);
     }
+
 }
