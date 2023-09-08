@@ -89,7 +89,7 @@ const handleCreatePost = async () => {
           type="checkbox"
           checked={publicStatus}
           onChange={handlePublicStatusChange}
-          />
+          /> Public?
         </label>
       </div>
       <div>
