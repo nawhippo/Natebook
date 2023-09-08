@@ -111,7 +111,7 @@ public class AppUser {
     @Column
     private String password;
 
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<Post> posts;
 
