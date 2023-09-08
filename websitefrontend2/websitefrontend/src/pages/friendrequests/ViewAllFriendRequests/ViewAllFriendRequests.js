@@ -37,7 +37,7 @@ const GetAllFriendRequests = () => {
     if(!response.ok){
       throw new Error("API call failed");
     }
-    window.location.reload();
+    setAllFriendRequestsData(prevData => prevData.filter(friend => friend.id !== friendId));
   })
 };
 
@@ -49,7 +49,7 @@ const GetAllFriendRequests = () => {
     if(!response.ok){
       throw new Error("API call failed");
     }
-    window.location.reload();
+    setAllFriendRequestsData(prevData => prevData.filter(friend => friend.id !== friendId));
   })
 };
 
