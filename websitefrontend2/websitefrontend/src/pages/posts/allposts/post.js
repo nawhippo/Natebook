@@ -1,6 +1,8 @@
 import React from 'react';
 //to shorten posts page.
 const Post = ({ post, user, handleReaction, handleDeletePost, handleCommentClick, currentPostId, CommentFormComponent }) => {
+
+  
   return (
     <div key={post.id} className="post-card">
       <h2>{post.title}</h2>
