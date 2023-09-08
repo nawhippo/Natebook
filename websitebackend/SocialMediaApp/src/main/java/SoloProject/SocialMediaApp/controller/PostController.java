@@ -1,5 +1,6 @@
 package SoloProject.SocialMediaApp.controller;
 
+import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Comment;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
@@ -35,6 +36,7 @@ public class PostController {
     }
 
 
+
     @GetMapping("/post/{userId}/{posterId}/{postId}")
     public ResponseEntity<Post> getPostById(
             @PathVariable Long userId,
@@ -44,23 +46,20 @@ public class PostController {
     }
 
     @PutMapping("/post/{userId}/{posterId}/{postId}/updateReactionPost")
-    public ResponseEntity<?> updateReaction(
+    public ResponseEntity<?> UpdatePostReaction(
             @PathVariable Long userId,
             @PathVariable Long posterId,
             @PathVariable Long postId,
             @RequestBody Map<String, String> payload
     ) {
-        String action = payload.get("action");
-        return postService.handleReaction(userId, posterId, postId, null, action);
-    }
-
-    @PostMapping("/post/{userId}/{postId}/createComment")
-    public ResponseEntity<?> createComment(
-            @PathVariable Long userId,
-            @PathVariable Long postId,
-            @RequestBody Comment comment
-    ) {
-        return postService.createComment(userId, postId, comment);
+        AppUser poster = appUserRepository.findByAppUserID(posterId);
+        for(Post post : poster.getPosts()){
+            if(post.getId() == postId){
+                String action = payload.get("action");
+                return postService.handlePostReaction(post,userId,action);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
     }
 
     @PutMapping("/post/{userId}/{posterId}/{postId}/{commentId}/updateReactionComment")
@@ -71,9 +70,46 @@ public class PostController {
             @PathVariable Long commentId,
             @RequestBody Map<String, String> payload
     ) {
-        String action = payload.get("action");
-        return postService.handleReaction(userId, posterId, postId, commentId, action);
+        AppUser poster = appUserRepository.findByAppUserID(posterId);
+        for(Post post : poster.getPosts()){
+            if(post.getId() == postId){
+                for(Comment comment : post.getCommentList()){
+                    if(comment.getId() == commentId){
+                        String action = payload.get("action");
+                        return postService.handleCommentReaction(comment, userId, action);
+                    }
+                }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @PostMapping("/post/{userId}/{postId}/createComment")
+    public ResponseEntity<?> createComment(
+            @PathVariable Long userId,
+            @PathVariable Long postId,
+            @RequestBody Comment comment
+    ) {
+        return postService.createComment(userId, postId, comment);
+    }
+
 
 
 
@@ -98,13 +134,13 @@ public class PostController {
     }
 
     @DeleteMapping("/post/{userId}/{postId}/deletePost")
-        public ResponseEntity<Post> deletePost(@PathVariable Long userId, @PathVariable Long postId){
+        public ResponseEntity<?> deletePost(@PathVariable Long userId, @PathVariable Long postId){
             return postService.deletePost(userId, postId);
         }
 
 
     @DeleteMapping("/post/{userId}/{postId}/{commentId}/deleteComment")
-    public ResponseEntity<Post> deleteComment(@PathVariable Long userId, @PathVariable Long postId, @PathVariable Long commentId){
+    public ResponseEntity<Comment> deleteComment(@PathVariable Long userId, @PathVariable Long postId, @PathVariable Long commentId){
         return postService.deleteComment(userId, postId, commentId);
     }
     }
