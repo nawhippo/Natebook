@@ -25,6 +25,7 @@ public class Post {
     }
 
 
+
     @Transient
     public HashMap<Long, String> reactions;
     public void setFriendsonly(boolean friendsonly) {
@@ -38,19 +39,6 @@ public class Post {
 
     public void setPosterid(Long posterid) {
         this.posterid = posterid;
-    }
-
-    public Post(Long id, AppUser appUser, String posterusername, String title, String description, List<Comment> commentList, Long posterid, boolean friendsonly) {
-        this.id = id;
-        this.appUser = appUser;
-        this.posterusername = posterusername;
-        this.title = title;
-        this.description = description;
-
-        this.commentList = new ArrayList<>();
-        this.dateTime =  getDateTimeAsString();
-        this.posterid = posterid;
-        this.friendsonly = friendsonly;
     }
 
     public Post() {
