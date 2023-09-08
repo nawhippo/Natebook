@@ -2,6 +2,10 @@ import React from 'react';
 
 //to shorten posts page.
 const Comment = ({ comment, user, postId, handleReaction, handleDeleteComment }) => {
+
+  const handleCommentClick = () => {
+    
+  }
   return (
     <div key={comment.id} className='comment'>
       <p>{comment.content}</p>
