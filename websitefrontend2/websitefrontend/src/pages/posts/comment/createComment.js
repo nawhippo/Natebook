@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
 const CommentForm = ({ userId, postId }) => {
-  const { user } = useUserContext();
+  //const { user } = useUserContext();
   const [commentContent, setCommentContent] = useState('');
 
   const createComment = async () => {
-    const response = await fetch(`/api/post/${user.appUserID}/${postId}/createComment`, {
+    const response = await fetch(`/api/post/${userId}/${postId}/createComment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
