@@ -35,6 +35,12 @@ public class PostController {
         return postService.createPost(userId, post);
     }
 
+    @DeleteMapping("/post/{username}/{postId}/deletePost")
+    public ResponseEntity<?> deletePost(@PathVariable String username, @PathVariable Long postId){
+        return postService.deletePost(username, postId);
+    }
+
+
 
 
     @GetMapping("/post/{userId}/{posterId}/{postId}")
@@ -45,44 +51,39 @@ public class PostController {
         return postService.getPostById(userId, posterId, postId);
     }
 
-    @PutMapping("/post/{userId}/{posterId}/{postId}/updateReactionPost")
-    public ResponseEntity<?> UpdatePostReaction(
-            @PathVariable Long userId,
+    @PutMapping("/post/{reactorId}/{posterId}/{postId}/updateReactionPost")
+    public ResponseEntity<Post> updateReactionPost(
+            @PathVariable Long reactorId,
             @PathVariable Long posterId,
             @PathVariable Long postId,
-            @RequestBody Map<String, String> payload
-    ) {
-        AppUser poster = appUserRepository.findByAppUserID(posterId);
-        for(Post post : poster.getPosts()){
-            if(post.getId() == postId){
-                String action = payload.get("action");
-                return postService.handlePostReaction(post,userId,action);
-            }
+            @RequestParam String action) {
+
+        ResponseEntity<Post> responseEntity = postService.handlePostReaction(reactorId, posterId, postId, action);
+        Post updatedPost = responseEntity.getBody();
+
+        if (updatedPost != null) {
+            return new ResponseEntity<>((Post) updatedPost, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
     }
 
-    @PutMapping("/post/{userId}/{posterId}/{postId}/{commentId}/updateReactionComment")
-    public ResponseEntity<?> updateCommentReaction(
-            @PathVariable Long userId,
+    @PutMapping("/post/{reactorId}/{posterId}/{postId}/{commentId}/updateReactionComment")
+    public ResponseEntity<Comment> updateCommentReaction(
+            @PathVariable Long reactorId,
             @PathVariable Long posterId,
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @RequestBody Map<String, String> payload
+            @RequestParam String action
     ) {
-        AppUser poster = appUserRepository.findByAppUserID(posterId);
-        for(Post post : poster.getPosts()){
-            if(post.getId() == postId){
-                for(Comment comment : post.getCommentList()){
-                    if(comment.getId() == commentId){
-                        String action = payload.get("action");
-                        return postService.handleCommentReaction(comment, userId, action);
-                    }
-                }
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
-            }
+        ResponseEntity<Comment> responseEntity = postService.handleCommentReaction(reactorId, posterId, postId, commentId, action);
+        Comment updatedComment = responseEntity.getBody();
+
+        if (updatedComment != null) {
+            return new ResponseEntity<>(updatedComment, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
     }
 
 
@@ -100,17 +101,15 @@ public class PostController {
 
 
 
-
-    @PostMapping("/post/{userId}/{postId}/createComment")
+    @PostMapping("/post/{posterUsername}/{postId}/createComment")
     public ResponseEntity<?> createComment(
-            @PathVariable Long userId,
+            @PathVariable String posterUsername,
             @PathVariable Long postId,
             @RequestBody Comment comment
     ) {
-        return postService.createComment(userId, postId, comment);
+        comment.setCommenterusername(comment.getCommenterusername());
+        return postService.createComment(posterUsername, postId, comment);
     }
-
-
 
 
 
@@ -133,15 +132,11 @@ public class PostController {
         return postService.getPostsByUsername(userId, friendUsername);
     }
 
-    @DeleteMapping("/post/{userId}/{postId}/deletePost")
-        public ResponseEntity<?> deletePost(@PathVariable Long userId, @PathVariable Long postId){
-            return postService.deletePost(userId, postId);
-        }
 
-
-    @DeleteMapping("/post/{userId}/{postId}/{commentId}/deleteComment")
-    public ResponseEntity<Comment> deleteComment(@PathVariable Long userId, @PathVariable Long postId, @PathVariable Long commentId){
-        return postService.deleteComment(userId, postId, commentId);
+    @DeleteMapping("/post/{username}/{postId}/{commentId}/deleteComment")
+    public ResponseEntity<Comment> deleteComment(@PathVariable String username, @PathVariable Long postId, @PathVariable Long commentId){
+        return postService.deleteComment(username, postId, commentId);
     }
+
     }
 
