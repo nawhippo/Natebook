@@ -38,17 +38,6 @@ const AddressBook = () => {
     });
   };
 
-  const handleAddFriendClick = (username) =>  {
-    fetch(`/api/friendreqs/${user.appUserID}/sendFriendRequestByUsername/${username}`);
-
-    if(isLoading){
-      return <div>Loading...</div>
-    }
-    if(error){
-      return <div>Error: {error}</div>
-    }
-
-  }
   const filteredUsers = searchTerm
     ? addressBookData.filter(user =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -82,7 +71,7 @@ const AddressBook = () => {
                 <li key={user.appUserID}>
                   {user.username} - {user.firstname} {user.lastname}
                   <button onClick={handleViewProfileClick}>View Profile</button>
-                  <button onClick={handleAddFriendClick(user.username)}>Add Friend</button>
+                  <AddFriendButton username={user.username} isLoading={isLoading} error={error} />
                 </li>
               ))}
             </ul>
