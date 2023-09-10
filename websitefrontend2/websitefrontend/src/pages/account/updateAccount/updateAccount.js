@@ -3,7 +3,7 @@ import { useUserContext } from "../../usercontext/UserContext";
 
 const UpdateAccount = () => {
   const { user } = useUserContext();
-  
+  const [isVisible, setIsVisible] = useState(false); 
   const [formData, setFormData] = useState({
     firstname: user.firstname,
     lastname: user.lastname,
@@ -13,6 +13,7 @@ const UpdateAccount = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -50,8 +51,11 @@ const UpdateAccount = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <button onClick={() => setIsVisible(!isVisible)}>Toggle Update Form</button>  {/* Toggle button */}
+      {isVisible && (  // Conditionally render form
         <div>
+          <form onSubmit={handleSubmit}>
+          <div>
           <label>
             First Name:
             <input
@@ -92,8 +96,10 @@ const UpdateAccount = () => {
             />
           </label>
         </div>
-        <button type="submit">Update Account</button>
-      </form>
+            <button type="submit">Update Account</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
