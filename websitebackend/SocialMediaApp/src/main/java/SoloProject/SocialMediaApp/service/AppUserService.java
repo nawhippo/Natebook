@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.naming.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -153,4 +153,23 @@ public class AppUserService {
     }
 
 
+    public ResponseEntity<List<Post>> getAllUserPosts(Long userid, Long profileUserId) {
+        AppUser profile = repository.findByAppUserID(profileUserId);
+        if (profile == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        for (Long friendid : profile.getFriends()) {
+            if (userid.equals(friendid)) {
+                return ResponseEntity.ok(profile.getPosts());
+            }
+        }
+
+        // If not a friend, return only public posts
+        List<Post> publicPosts = profile.getPosts().stream()
+                .filter(post -> !post.isFriendsonly())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(publicPosts);
+    }
 }
