@@ -4,11 +4,28 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @Entity
+@Table(name = "comments")
 public class Comment {
+
+    public Comment() {
+        reactions = new HashMap<>();
+        reactionIds = reactions.keySet();
+        reactionStrings = reactions.values();
+    }
+
+    @Transient
+    public HashMap<Long, String> reactions;
+    public Set<Long> reactionIds;
+    public Collection<String> reactionStrings;
+
+
+
     public HashMap<Long, String> getReactions() {
         return reactions;
     }
@@ -17,12 +34,12 @@ public class Comment {
         this.reactions = reactions;
     }
 
-    public String getCommenterUsername() {
-        return commenterUsername;
+    public String getCommenterusername() {
+        return commenterusername;
     }
 
-    public void setCommenterUsername(String commenterUsername) {
-        this.commenterUsername = commenterUsername;
+    public void setCommenterusername(String commenterusername) {
+        this.commenterusername = commenterusername;
     }
 
     @Id
@@ -32,8 +49,7 @@ public class Comment {
     //for display purposes
     Long commenterid;
 
-    @Transient
-    private HashMap<Long, String> reactions;
+
 
     public Long getCommenterid() {
         return commenterid;
@@ -85,14 +101,6 @@ public class Comment {
         this.dislikes = dislikes;
     }
 
-    public String getCommenterusername() {
-        return commenterUsername;
-    }
-
-    public void setCommenterusername(String commenterusername) {
-        this.commenterUsername = commenterusername;
-    }
-
     @ManyToOne
     @JoinColumn(name = "post_id")
     @JsonBackReference
@@ -130,7 +138,7 @@ public class Comment {
     }
 
     @Column
-    private String commenterUsername;
+    private String commenterusername;
 
     public void addReaction(Long userId, String action) {
         String existingReaction = reactions.put(userId, action);
