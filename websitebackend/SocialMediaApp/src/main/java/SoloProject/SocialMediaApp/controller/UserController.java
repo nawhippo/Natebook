@@ -46,4 +46,9 @@ public class UserController {
     public ResponseEntity<AppUser> BlockUser(@PathVariable Long userId, @PathVariable Long blockId) {
         return appUserService.blockUser(userId, blockId);
     }
+
+    @GetMapping("user/{userid}/{profileUserId}")
+    public ResponseEntity<List<Post>> displayAllUserPosts(@PathVariable Long userid, @PathVariable Long profileUserId){
+        return appUserService.getAllUserPosts(userid, profileUserId);
+    }
 }
