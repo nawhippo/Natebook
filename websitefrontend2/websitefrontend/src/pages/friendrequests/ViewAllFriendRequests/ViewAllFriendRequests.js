@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
 
+//add accept/decline buttons
 const GetAllFriendRequests = () => {
   const { user } = useUserContext();
   const [allFriendRequestsData, setAllFriendRequestsData] = useState([]);
@@ -29,38 +30,7 @@ const GetAllFriendRequests = () => {
     }
   }, [user]);
 
-  const handleClick = (friendId) => {
-    fetch(`/api/friendreqs/${user.appUserID}/acceptFriendRequest/${friendId}`,{
-      method: 'PUT',
-  })
-  .then (response => {
-    if(!response.ok){
-      throw new Error("API call failed");
-    }
-    setAllFriendRequestsData(prevData => prevData.filter(friend => friend.id !== friendId));
-  })
-};
 
-  const handleClickTwo = (friendId) => {
-    fetch(`/api/friendreqs/${user.appUserID}/declineFriendRequest/${friendId}`,{
-      method: 'PUT',
-  })
-  .then (response => {
-    if(!response.ok){
-      throw new Error("API call failed");
-    }
-    setAllFriendRequestsData(prevData => prevData.filter(friend => friend.id !== friendId));
-  })
-};
-
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div>
@@ -72,8 +42,6 @@ const GetAllFriendRequests = () => {
               <h2>{friend.firstname}</h2>
               <p>{friend.lastname}</p>
               <p>{friend.email}</p>
-              <button onClick={() => handleClick(friend.id)}>Add Friend</button>
-              <button onClick={() => handleClickTwo(friend.id)}>Decline Friend</button>
             </li>
           ))}
         </ul>
