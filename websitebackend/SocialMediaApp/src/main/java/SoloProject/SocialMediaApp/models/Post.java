@@ -24,10 +24,30 @@ public class Post {
         this.reactions = reactions;
     }
 
+    public Set<Long> getReactionIds() {
+        if(reactions != null) {
+            return reactions.keySet();
+        }
+        return Collections.emptySet();
+    }
+
+    public Collection<String> getReactionStrings() {
+        if(reactions != null) {
+            return reactions.values();
+        }
+        return Collections.emptyList();
+    }
+
+
+
 
 
     @Transient
     public HashMap<Long, String> reactions;
+    public Set<Long> reactionIds;
+    public Collection<String> reactionStrings;
+
+
     public void setFriendsonly(boolean friendsonly) {
         this.friendsonly = friendsonly;
     }
@@ -42,7 +62,9 @@ public class Post {
     }
 
     public Post() {
-
+        reactions = new HashMap<>();
+        reactionIds = reactions.keySet();
+        reactionStrings = reactions.values();
     }
 
 
@@ -104,7 +126,7 @@ public class Post {
     }
 
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> commentList;
 
