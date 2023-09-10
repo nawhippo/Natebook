@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
 import { useHistory } from 'react-router-dom'
-
+import SendMessageButton from '../../buttonComponents/sendMessageButton/createMessageButton';
 const GetAllFriends = () => {
   const { user } = useUserContext();
   const [allFriendsData, setAllFriendsData] = useState([]);
@@ -9,34 +9,13 @@ const GetAllFriends = () => {
   const [error, setError] = useState(null);
   const history = useHistory();
 
-   
+  
 
-   const handleButtonClick = (recipientUsername) =>{
-    history.push({
-      pathname: '/createMessage',
-      state: { recipient: recipientUsername }
-    });
+  const removeFriend = (username) => {
+    setAllFriendsData(prevFriends => prevFriends.filter(friend => friend.username !== username));
   };
 
-  const handleButtonClick2 = (recipientUsername) => {
-    fetch(`/api/friends/${user.appUserID}/${recipientUsername}/removeFriend`, {
-      method: 'DELETE',
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      setAllFriendsData(prevFriends => prevFriends.filter(friend => friend.username !== recipientUsername));
-    })
-    .catch(error => {
-      console.error("Error:", error);
-      setError(error.message);
-    });
-}
-  
+
   
 useEffect(() => {
   const fetchData = async () => {
@@ -78,8 +57,8 @@ useEffect(() => {
             <li key={friend.id}>
               <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
               <p>{friend.email}</p>
-              <button onClick={()=> handleButtonClick(friend.username)}>Message Friend</button>
-              <button onClick={()=> handleButtonClick2(friend.username)}>Remove Friend</button>
+              <DeleteFriendButton username={friend.username} removeFriend={removeFriend} />
+              <SendMessageButton recipient={friend.username} />
             </li>
           ))}
         </ul>
