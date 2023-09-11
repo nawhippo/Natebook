@@ -1,9 +1,8 @@
 import React from 'react';
-import CommentForm from '../buttonComponents/createCommentButton/createCommentButton';
 import Comment from './comment'
-import { DeletePostButton } from './DeletePostButton';
-import ReactionButtons from './ReactionButtons';
-
+import CommentForm from '../../buttonComponents/createCommentButton/createCommentButton';
+import ReactionButtons from '../../buttonComponents/reactCommentButtons/reactCommentButtons';
+import { deletePostButton } from '../../buttonComponents/deletePostButton/deletePostButton';
 const Post = ({ post, user, handleReaction, fetchData }) => {
   return (
     <div key={post.id}>
@@ -12,7 +11,7 @@ const Post = ({ post, user, handleReaction, fetchData }) => {
       <div>Posted By: {post.posterusername}</div>
       <div>{post.content}</div>
 
-      <DeletePostButton
+      <deletePostButton
         userId={user.appUserID}
         posterusername={post.posterusername}
         postId={post.id}
