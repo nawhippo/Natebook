@@ -1,7 +1,6 @@
 import React from 'react';
-import { DeleteCommentButton } from '../buttonComponents/deleteCommentButton/deleteCommentButton';
-import ReactionButtons from '../posts/reactPost/reactPost';
-
+import { DeleteCommentButton } from '../../buttonComponents/deleteCommentButton/deleteCommentButton';
+import ReactionButtons from '../../buttonComponents/reactCommentButtons/reactCommentButtons';
 const Comment = ({ comment, user, postId, posterusername, handleReaction, fetchData }) => {
   return (
     <div key={comment.id} className='comment'>
