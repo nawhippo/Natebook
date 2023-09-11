@@ -89,18 +89,31 @@ public class MessageService {
 
 
     @Transactional
-    public ResponseEntity<Message> sendReplyMessage(Long senderId, String content,Long parentSenderId, Long messageId) {
+    public ResponseEntity<Message> sendReplyMessage(Long senderId, String content, Long parentSenderId, Long messageId) {
         AppUser sender = repository.findByAppUserID(senderId);
-        AppUser parentsender = repository.findByAppUserID(parentSenderId);
-        Message message = new Message(content, sender, true);
-        for(Message mes : parentsender.getMessages()){
-            if(mes.getId() == messageId){
-                mes.getChildMessages().add(message);
+        AppUser parentSender = repository.findByAppUserID(parentSenderId);
+
+        if (sender == null || parentSender == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Message newMessage = new Message(content, sender, true);
+        List<Message> parentMessages = parentSender.getMessages();
+
+        for (Message mes : parentMessages) {
+            if (mes.getId().equals(messageId)) {
+                mes.getChildMessages().add(newMessage);
+                newMessage.setParentMessage(mes);
+                break;
             }
         }
-        repository.save(parentsender);
-        return ResponseEntity.ok(message);
+
+        parentSender.setMessages(parentMessages);
+        repository.save(parentSender);
+
+        return ResponseEntity.ok(newMessage);
     }
+
 
 
 

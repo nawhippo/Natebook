@@ -30,7 +30,7 @@ public class AddressBookController {
     }
 
 
-    @GetMapping("/address-book")
+    @GetMapping("/addressBook")
     public ResponseEntity<List<Post>> getAllPublicPosts() { return postService.getAllPublicPosts();}
     @GetMapping("/about") // The endpoint URL: /api/about
     public String about() {
