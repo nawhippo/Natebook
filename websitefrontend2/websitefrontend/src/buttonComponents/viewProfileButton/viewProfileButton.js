@@ -1,12 +1,12 @@
-//this should direct to the users profile page, not make any fetches. 
+ 
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-const ViewProfileButton = ({ username }) => {
+const ViewProfileButton = ({ userid }) => {
   const history = useHistory();
 
   const handleClick = () => {
-    history.push(`/userProfile/${username}`);
+    history.push(`/userProfile/${userid}`);
   };
 
   return (
