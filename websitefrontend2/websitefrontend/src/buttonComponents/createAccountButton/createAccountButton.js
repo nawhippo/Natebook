@@ -61,8 +61,8 @@ const CreateAccount = () => {
 
   return (
     <div>
-      <button onClick={() => setIsVisible(!isVisible)}>Create Account</button> {/* Toggle button */}
-      {isVisible && ( // Conditionally render form
+      <button onClick={() => setIsVisible(!isVisible)}>Create Account</button> 
+       {isVisible && (
         <form onSubmit={handleSubmit} className="createAccountForm">
           <div>
             <label>
@@ -115,7 +115,7 @@ const CreateAccount = () => {
               />
             </label>
           </div>
-          <button type="submit">Create Account</button>
+          <button type="submit">Submit</button>
         </form>
       )}
     </div>
