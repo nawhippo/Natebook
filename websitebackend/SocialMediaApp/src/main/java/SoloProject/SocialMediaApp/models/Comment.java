@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "comments")
@@ -15,22 +12,21 @@ public class Comment {
 
     public Comment() {
         reactions = new HashMap<>();
-        reactionIds = reactions.keySet();
-        reactionStrings = reactions.values();
     }
 
-    @Transient
-    public HashMap<Long, String> reactions;
-    public Set<Long> reactionIds;
-    public Collection<String> reactionStrings;
+    @ElementCollection
+    @MapKeyColumn(name="user_id")
+    @Column(name="action")
+    @CollectionTable(name="comment_reactions", joinColumns=@JoinColumn(name="comment_id"))
+    private Map<Long, String> reactions = new HashMap<>();
 
 
 
-    public HashMap<Long, String> getReactions() {
+    public Map<Long, String> getReactions() {
         return reactions;
     }
 
-    public void setReactions(HashMap<Long, String> reactions) {
+    public void setReactions(Map<Long, String> reactions) {
         this.reactions = reactions;
     }
 
@@ -141,21 +137,32 @@ public class Comment {
     private String commenterusername;
 
     public void addReaction(Long userId, String action) {
-        String existingReaction = reactions.put(userId, action);
+        System.out.println("Before Add: Likes: " + likesCount + ", Dislikes: " + dislikesCount);
 
-        if ("Like".equals(action)) {
-            likesCount++;
-        } else if ("Dislike".equals(action)) {
-            dislikesCount++;
-        }
+        String existingReaction = reactions.getOrDefault(userId, "None");
 
-        if (existingReaction != null) {
+        System.out.println("Existing Reaction: " + existingReaction);
+
+        if (!existingReaction.equals(action)) {
+            // Handle new reaction
+            if ("Like".equals(action)) {
+                likesCount++;
+            } else if ("Dislike".equals(action)) {
+                dislikesCount++;
+            }
+
+            // Handle existing reaction
             if ("Like".equals(existingReaction)) {
                 likesCount--;
             } else if ("Dislike".equals(existingReaction)) {
                 dislikesCount--;
             }
+
+            // Update the reaction in the map
+            reactions.put(userId, action);
         }
+
+        System.out.println("After Add: Likes: " + likesCount + ", Dislikes: " + dislikesCount);
     }
 
     public void removeReaction(Long userId) {
