@@ -3,7 +3,7 @@ import { useUserContext } from '../../pages/usercontext/UserContext';
 const CommentForm = ({ posterusername, postId }) => {
   const { user } = useUserContext();
   const [commentContent, setCommentContent] = useState('');
-  const [showForm, setShowForm] = useState(false);  // state to toggle form visibility
+  const [showForm, setShowForm] = useState(false); 
 
 
   const createComment = async () => {
@@ -39,7 +39,7 @@ const CommentForm = ({ posterusername, postId }) => {
   return (
     <div>
       <button onClick={() => setShowForm(!showForm)}>
-        {showForm ? "Hide Comment Form" : "Show Comment Form"}
+        {showForm ? "Or not..." : "Comment"}
       </button>
       {showForm && (
         <form onSubmit={handleSubmit}>
