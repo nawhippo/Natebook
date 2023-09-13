@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
-const CreateMessageForm = ({ userId }) => {
+const CreateMessageForm = ({ userId, defaultRecipientName }) => {
   const [showForm, setShowForm] = useState(false);
   const [content, setContent] = useState('');
   const [recipientNames, setRecipientNames] = useState('');
@@ -27,25 +27,37 @@ const CreateMessageForm = ({ userId }) => {
     });
   };
 
+  useEffect(() => {
+    if (defaultRecipientName){
+      setRecipientNames(defaultRecipientName);
+    }
+  }, [defaultRecipientName]);
+  
+  
   return (
     <div>
       <button onClick={handleToggle}>Create Message</button>
-      
+      <br></br>
       {showForm && (
         <div>
-          <input 
-            type="text" 
-            value={content} 
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Content" 
-          />
           <input 
             type="text" 
             value={recipientNames} 
             onChange={(e) => setRecipientNames(e.target.value)}
             placeholder="Recipients (comma separated)" 
           />
+          <br></br>
+          <textarea 
+            type="text" 
+            value={content} 
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Content" 
+          />
+          <br></br>
           <button onClick={handleSubmit}>Send</button>
+          <br></br>
+          <br></br>
+          <br></br>
         </div>
       )}
     </div>
