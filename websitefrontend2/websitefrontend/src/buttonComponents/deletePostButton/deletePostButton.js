@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const deletePostButton = ({ userId, posterusername, postId, fetchData }) => {
+export const DeletePostButton = ({ userId, posterusername, postId, fetchData }) => {
 
   const handleDelete = async () => {
     try {
@@ -9,7 +9,7 @@ export const deletePostButton = ({ userId, posterusername, postId, fetchData }) 
         throw new Error('Failed to delete.');
       }
       if (fetchData) {
-        fetchData(); // Call fetchData after successful deletion
+        fetchData(); 
       }
     } catch (error) {
       console.error(error.message);
