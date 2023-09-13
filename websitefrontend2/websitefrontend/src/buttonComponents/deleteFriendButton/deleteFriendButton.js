@@ -1,13 +1,16 @@
-const deleteFriendButton = ({ username, removeFriend }) => {
+import { useUserContext } from "../../pages/usercontext/UserContext";
+
+const DeleteFriendButton = ({ removeFriend }) => {
+  const { user } = useUserContext();
     const handleClick = () => {
-      fetch(`/api/friends/${username}/removeFriend`, {
+      fetch(`/api/friends/${user.appUserID}/removeFriend/${removeFriend}`, {
         method: 'DELETE',
       })
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        removeFriend(username);
+        removeFriend();
       })
       .catch(error => {
         console.error("Error:", error);
@@ -17,4 +20,4 @@ const deleteFriendButton = ({ username, removeFriend }) => {
     return <button onClick={handleClick}>Remove Friend</button>;
   };
   
-  export default deleteFriendButton;
+  export default DeleteFriendButton;
