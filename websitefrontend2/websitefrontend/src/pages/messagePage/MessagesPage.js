@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useUserContext } from '../usercontext/UserContext';
 import Message from '../objects/message';
 import ReplyMessageForm from '../../buttonComponents/replyToMessageButton/replyToMessageButton';
-
+import CreateMessageForm from '../../buttonComponents/createMessageButton/createMessageButton';
 const MessagesPage = () => {
   const { user } = useUserContext();
   const [showIncoming, setShowIncoming] = useState(true);
@@ -42,12 +42,14 @@ const MessagesPage = () => {
   return (
     <div>
       <h1>Messages Page</h1>
+      <CreateMessageForm userId = {user.appUserID}></CreateMessageForm>
       <input
         type="text"
         value={searchText}
         onChange={handleSearchTextChange}
         placeholder="Search Messages"
       />
+      
       <button onClick={() => setShowIncoming(!showIncoming)}> 
         {showIncoming ? 'Show Sent Messages' : 'Show Incoming Messages'} 
       </button>
@@ -56,7 +58,7 @@ const MessagesPage = () => {
         {messagesToDisplay.map((message) => (
           <li key={message.id}>
             <Message message={message} user={user} />
-            <ReplyMessageForm userId={user.appUserID} parentSenderId={message.senderId} messageId={message.id} />  {/* <-- Add ReplyMessageForm */}
+            <ReplyMessageForm userId={user.appUserID} parentSenderId={message.senderId} messageId={message.id} /> 
           </li>
         ))}
       </ul>
