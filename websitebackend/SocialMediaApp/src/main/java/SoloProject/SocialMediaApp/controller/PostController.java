@@ -56,7 +56,9 @@ public class PostController {
             @PathVariable Long reactorId,
             @PathVariable Long posterId,
             @PathVariable Long postId,
-            @RequestParam String action) {
+            @RequestBody Map<String, String> payload) {
+
+        String action = payload.get("action");
 
         ResponseEntity<Post> responseEntity = postService.handlePostReaction(reactorId, posterId, postId, action);
         Post updatedPost = responseEntity.getBody();
@@ -67,15 +69,16 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
     @PutMapping("/post/{reactorId}/{posterId}/{postId}/{commentId}/updateReactionComment")
-    public ResponseEntity<Comment> updateCommentReaction(
+            public ResponseEntity<Comment> updateCommentReaction(
             @PathVariable Long reactorId,
             @PathVariable Long posterId,
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @RequestParam String action
-    ) {
+            @RequestBody Map<String, String> payload) {
+
+        String action = payload.get("action");
+
         ResponseEntity<Comment> responseEntity = postService.handleCommentReaction(reactorId, posterId, postId, commentId, action);
         Comment updatedComment = responseEntity.getBody();
 
