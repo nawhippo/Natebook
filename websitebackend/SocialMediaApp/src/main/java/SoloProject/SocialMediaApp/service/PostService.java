@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import SoloProject.SocialMediaApp.models.PublicFeed;
 import org.springframework.transaction.annotation.Transactional;
@@ -233,24 +234,31 @@ public class PostService {
             if (post == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+
             Comment comment = null;
             for (Comment searchComment : post.getCommentList()){
-                if(searchComment.getId() == commentId){
+                if(searchComment.getId().equals(commentId)){
                     comment = searchComment;
                     break;
                 }
             }
+
             if (comment == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            HashMap<Long, String> reactions = comment.getReactions();
+
+            Map<Long, String> reactions = comment.getReactions();
             String existingReaction = reactions.getOrDefault(reactorId, "None");
 
-            if (action.equals(existingReaction)) {
-                comment.removeReaction(reactorId);
+            if (existingReaction.equals(action)) {
+                return ResponseEntity.ok(comment);
             } else {
+                if (!existingReaction.equals("None")) {
+                    comment.removeReaction(reactorId);
+                }
                 comment.addReaction(reactorId, action);
             }
+
             repository.save(poster);
             return ResponseEntity.ok(comment);
         }
@@ -272,14 +280,19 @@ public class PostService {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            HashMap<Long, String> reactions = post.getReactions();
+            Map<Long, String> reactions = post.getReactions();
             String existingReaction = reactions.getOrDefault(reactorId, "None");
 
-            if (action.equals(existingReaction)) {
+            if (existingReaction.equals(action)) {
                 post.removeReaction(reactorId);
+                return ResponseEntity.ok(post);
             } else {
+                if (!existingReaction.equals("None")) {
+                    post.removeReaction(reactorId);
+                }
                 post.addReaction(reactorId, action);
             }
+
             repository.save(poster);
             return ResponseEntity.ok(post);
         }
@@ -380,5 +393,26 @@ public ResponseEntity<?> deletePost(String username, Long postId) {
         targetPost.getCommentList().remove(commentToRemove);
         repository.save(user);
         return ResponseEntity.ok(commentToRemove);
+    }
+
+
+    public ResponseEntity<List<Post>> getAllUserPosts(Long userid, Long profileUserId) {
+        AppUser profile = repository.findByAppUserID(profileUserId);
+        if (profile == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        for (Long friendid : profile.getFriends()) {
+            if (userid.equals(friendid)) {
+                return ResponseEntity.ok(profile.getPosts());
+            }
+        }
+
+        // If not a friend, return only public posts
+        List<Post> publicPosts = profile.getPosts().stream()
+                .filter(post -> !post.isFriendsonly())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(publicPosts);
     }
 }
