@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Post from "../objects/post";
 import { useUserContext } from '../usercontext/UserContext';
+import CreatePostButton from '../../buttonComponents/createPostButton/createPostButton';
 const FeedPage = () => {
   const { user } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -15,15 +16,15 @@ const FeedPage = () => {
   }, []);
 
   useEffect(() => {
-    if (searchTerm) {
+    if (allPostsData && searchTerm) {
       setFilteredPosts(allPostsData.filter(post => post.posterusername.toLowerCase().includes(searchTerm.toLowerCase())));
-    } else {
+    } else if (allPostsData) {
       setFilteredPosts(allPostsData);
     }
   }, [searchTerm, allPostsData]);
 
   const fetchData = () => {
-    const endpoint = '/api/public-feed';
+    const endpoint = '/api/publicFeed';
     
     setIsLoading(true);
     fetch(endpoint)
@@ -48,6 +49,7 @@ const FeedPage = () => {
   return (
     <div>
       <h1>All Posts</h1>
+      {user && <CreatePostButton></CreatePostButton>}
       <input 
         type="text" 
         value={searchTerm} 
