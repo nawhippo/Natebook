@@ -135,8 +135,4 @@ public class FriendRequestService {
         repository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }
-
-
-
-
 }
