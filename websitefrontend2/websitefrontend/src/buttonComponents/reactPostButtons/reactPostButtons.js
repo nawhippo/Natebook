@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-
-const ReactionButtons = ({ user, postId }) => {
-  const [reactionState, setReactionState] = useState('None'); // Possible states: 'None', 'Like', 'Dislike'
+const ReactionButtons = ({ user, posterId, postId, updateLikesDislikes }) => {
+  const [reactionState, setReactionState] = useState('None');
 
   const updateReactionOnServer = async (reactorId, posterId, postId, action) => {
-    const url = `/post/${reactorId}/${posterId}/${postId}/updateReactionPost`;
+    const url = `/api/post/${reactorId}/${posterId}/${postId}/updateReactionPost`;
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
@@ -15,23 +14,25 @@ const ReactionButtons = ({ user, postId }) => {
 
     if (response.ok) {
       const updatedPost = await response.json();
-      // Do something with updatedPost if needed
-      return true;
+      return updatedPost;
     } else {
-      return false;
+      return null;
     }
   };
 
   const handleButtonClick = async (newReaction) => {
-    const isSuccess = await updateReactionOnServer(user.appUserID, postId, user.appUserID, newReaction);
-    if (isSuccess) {
+    const updatedPost = await updateReactionOnServer(user.appUserID, posterId, postId, newReaction);
+    if (updatedPost) {
       if (newReaction === reactionState) {
         setReactionState('None');
       } else {
         setReactionState(newReaction);
       }
+
+      updateLikesDislikes(updatedPost.likesCount, updatedPost.dislikesCount); // Update likes and dislikes in Post component
     }
   };
+
 
   return (
     <div>
