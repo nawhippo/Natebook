@@ -1,9 +1,11 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.AppUser;
+import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.AccountService;
 import SoloProject.SocialMediaApp.service.AppUserService;
+import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,13 @@ public class AccountController {
 
     private final AccountService accountservice;
     private final AppUserRepository appUserRepository;
+    private final PostService postService;
 
     @Autowired
-    public AccountController(AccountService userserviceimpl, AppUserRepository appUserRepository) {
+    public AccountController(AccountService userserviceimpl, AppUserRepository appUserRepository, PostService postService) {
         this.accountservice = userserviceimpl;
         this.appUserRepository = appUserRepository;
+        this.postService = postService;
     }
 
     @GetMapping("/account/{userId}/accountDetails")
@@ -64,6 +68,9 @@ public class AccountController {
             AppUser frienduser = appUserRepository.findByAppUserID(friend);
             frienduser.getFriends().remove(userId);
             appUserRepository.save(frienduser);
+        }
+        for(Post post : user.getPosts()){
+            postService.deletePost(user.getUsername(),post.getId());
         }
         appUserRepository.delete(user);
         return ResponseEntity.ok(user);
