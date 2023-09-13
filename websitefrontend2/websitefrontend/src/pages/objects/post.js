@@ -1,9 +1,24 @@
 import React from 'react';
 import Comment from './comment'
 import CommentForm from '../../buttonComponents/createCommentButton/createCommentButton';
-import ReactionButtons from '../../buttonComponents/reactCommentButtons/reactCommentButtons';
-import { deletePostButton } from '../../buttonComponents/deletePostButton/deletePostButton';
-const Post = ({ post, user, handleReaction, fetchData }) => {
+import ReactionButtons from '../../buttonComponents/reactPostButtons/reactPostButtons';
+import { DeletePostButton } from '../../buttonComponents/deletePostButton/deletePostButton';
+
+const Post = ({ post, user, fetchData }) => {
+  const [localLikesCount, setLocalLikesCount] = React.useState(post.likesCount);
+  const [localDislikesCount, setLocalDislikesCount] = React.useState(post.dislikesCount);
+
+  const updateLikesDislikes = (newLikes, newDislikes) => {
+    setLocalLikesCount(newLikes);
+    setLocalDislikesCount(newDislikes);
+  };
+
+
+
+
+
+
+
   return (
     <div key={post.id}>
       <div>Title: {post.title}</div>
@@ -11,14 +26,21 @@ const Post = ({ post, user, handleReaction, fetchData }) => {
       <div>Posted By: {post.posterusername}</div>
       <div>{post.content}</div>
 
-      <deletePostButton
-        userId={user.appUserID}
-        posterusername={post.posterusername}
-        postId={post.id}
-        fetchData={fetchData}
+      {user.username === post.posterusername && (
+        <DeletePostButton
+          userId={user.appUserID}
+          posterusername={post.posterusername}
+          postId={post.id}
+          fetchData={fetchData}
+        />
+      )}
+      <p>Likes: {localLikesCount} Dislikes: {localDislikesCount}</p>
+      <ReactionButtons 
+      user={user} 
+      posterId={post.posterid} 
+      postId={post.id} 
+      updateLikesDislikes={updateLikesDislikes}
       />
-      
-      <ReactionButtons user={user} postId={post.id} />
 
       <CommentForm
         userId={user.appUserID}
@@ -28,13 +50,14 @@ const Post = ({ post, user, handleReaction, fetchData }) => {
 
       {post.commentList && post.commentList.map((comment) => (
         <Comment
-          comment={comment}
-          user={user}
-          postId={post.id}
-          posterusername={post.posterusername}
-          handleReaction={handleReaction}
-          fetchData={fetchData}
-        />
+        key={comment.id}
+        comment={comment}
+        user={user}
+        postId={post.id}
+        posterId={post.posterid}
+        fetchData={fetchData}
+        updateLikesDislikes={updateLikesDislikes}
+      />
       ))}
     </div>
   );
