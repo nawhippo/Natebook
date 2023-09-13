@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../usercontext/UserContext";
-import { Link, useHistory} from "react-router-dom";
+import UpdateAccountButton from "../../buttonComponents/updateAccountButton/updateAccountButton";
+import DeleteAccountButton from "../../buttonComponents/deleteAccountButton/deleteAccountButton";
 const AccountPage = () => {
   const { user } = useUserContext();
   const [accountData, setAccountData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const history = useHistory();
-  const handleLinkClick = (url) => {
-    history.push(url);
-  };
+  const [overlay, setOverlay] = useState(true);
+
+  const toggleOverlay = () =>{
+    if (overlay == true){
+    setOverlay(false);
+    } else {
+      setOverlay(true);
+    }
+  }
+
 
 
   useEffect(() => {
@@ -43,14 +50,19 @@ const AccountPage = () => {
 
   return (
     <div>
+      {overlay &&
+      <overlay>
       <h2>Account Details</h2>
       <p>ID: {accountData.appUserID}</p>
+      <p>Username: {accountData.username}</p>
       <p>First Name: {accountData.firstname}</p>
       <p>Last Name: {accountData.lastname}</p>
       <p>Email: {accountData.email}</p>
       <p>Password: {accountData.password}</p>
-      <button onClick={() => handleLinkClick('/updateAccount')}>Update Account</button>
-      <button onClick={() => handleLinkClick('/deleteAccount')}>Delete Account</button>
+      </overlay>
+}
+      <UpdateAccountButton></UpdateAccountButton>
+      <DeleteAccountButton></DeleteAccountButton>
     </div>
   );
 };
