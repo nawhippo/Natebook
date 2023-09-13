@@ -10,6 +10,7 @@ const LogoutButton = () => {
   const handleLogout = () => {
     clearUserContext();
     Cookies.remove('userData');
+    history.push('/Feed');
   };
 
   return (
