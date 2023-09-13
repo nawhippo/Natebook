@@ -135,34 +135,12 @@ public class FriendService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public ResponseEntity<List<Long>> getAllFriends(Long userId) {
+        AppUser user = repository.findByAppUserID(userId);
+        if(user == null) {
+            return ResponseEntity.notFound().build();
+        }else {
+            return ResponseEntity.ok(user.getFriends());
+        }
+    }
 }
