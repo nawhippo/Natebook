@@ -23,15 +23,15 @@ public class FriendController {
         this.appUserRepository = appUserRepository;
     }
 
-    @DeleteMapping("/friends/{userId}/{friendusername}/removeFriend")
+    @DeleteMapping("/friends/{userId}/removeFriend/{friendusername}")
         public ResponseEntity<AppUser> removeFriend(@PathVariable Long userId, @PathVariable String friendusername) {
             return friendService.removeFriend(userId, friendusername);
         }
 
 
     @GetMapping("/friends/{userId}/getAllFriends")
-    public ResponseEntity<List<UserDTO>> getAllFriends(@PathVariable Long userId) {
-        return friendService.getAllFriendsDTOS(userId);
+    public ResponseEntity<List<Long>> getAllFriends(@PathVariable Long userId) {
+        return friendService.getAllFriends(userId);
     }
 
     @GetMapping("/friends/{userId}/{friendId}")
