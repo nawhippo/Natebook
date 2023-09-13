@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useUserContext } from "../../usercontext/UserContext";
+import { useUserContext } from "../../pages/usercontext/UserContext";
 import { useHistory } from "react-router-dom";
-
+import Cookies from 'js-cookie';
 const DeleteAccountButton = () => {
   const { user, setUser } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isDeleted, setIsDeleted] = useState(false); 
   const history = useHistory();
 
   const handleDeleteAccount = async () => {
@@ -20,8 +21,9 @@ const DeleteAccountButton = () => {
       }
 
       console.log("Account Deleted!");
-      setUser(null);
-      history.push("/createAccount");
+      history.push("/Feed")
+      Cookies.remove('userData');
+      setIsDeleted(true);  
     } catch (error) {
       console.error("Error:", error);
       setError(error.message);
@@ -30,9 +32,12 @@ const DeleteAccountButton = () => {
     }
   };
 
+  if (isDeleted) { 
+    return <p>Account Deleted</p>;
+  }
+
   return (
     <div>
-      <p>Are you sure?</p>
       {error && <p>{error}</p>}
       <button onClick={handleDeleteAccount} disabled={isLoading}>
         {isLoading ? "Deleting..." : "Delete"}
