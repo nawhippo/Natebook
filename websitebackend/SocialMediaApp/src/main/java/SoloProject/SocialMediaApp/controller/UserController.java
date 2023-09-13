@@ -32,10 +32,10 @@ public class UserController {
         return appUserService.findByAppUserID(userId);
     }
 
-    @GetMapping("/user/{username}")
-    public ResponseEntity<AppUser> findByUsername(@PathVariable String username) {
-        return appUserService.findUser(username);
-    }
+//    @GetMapping("/user/{username}")
+//    public ResponseEntity<AppUser> findByUsername(@PathVariable String username) {
+//        return appUserService.findUser(username);
+//    }
 
     @GetMapping("/user/getAllWebsiteUsers")
     public ResponseEntity<List<AppUser>> GetAllWebsiteUsers() {
