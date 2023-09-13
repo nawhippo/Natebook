@@ -16,11 +16,11 @@ public class Post {
         return friendsonly;
     }
 
-    public HashMap<Long, String> getReactions() {
+    public Map<Long, String> getReactions() {
         return reactions;
     }
 
-    public void setReactions(HashMap<Long, String> reactions) {
+    public void setReactions(Map<Long, String> reactions) {
         this.reactions = reactions;
     }
 
@@ -42,10 +42,11 @@ public class Post {
 
 
 
-    @Transient
-    public HashMap<Long, String> reactions;
-    public Set<Long> reactionIds;
-    public Collection<String> reactionStrings;
+    @ElementCollection
+    @MapKeyColumn(name="user_id")
+    @Column(name="action")
+    @CollectionTable(name="post_reactions", joinColumns=@JoinColumn(name="post_id"))
+    private Map<Long, String> reactions = new HashMap<>();
 
 
     public void setFriendsonly(boolean friendsonly) {
@@ -63,8 +64,6 @@ public class Post {
 
     public Post() {
         reactions = new HashMap<>();
-        reactionIds = reactions.keySet();
-        reactionStrings = reactions.values();
     }
 
 
@@ -199,20 +198,21 @@ public class Post {
     }
 
     public void addReaction(Long userId, String action) {
-        String existingReaction = reactions.put(userId, action);
+        String existingReaction = reactions.getOrDefault(userId, "None");
+        if (!existingReaction.equals(action)) {
+            if ("Like".equals(action)) {
+                likesCount++;
+            } else if ("Dislike".equals(action)) {
+                dislikesCount++;
+            }
 
-        if ("Like".equals(action)) {
-            likesCount++;
-        } else if ("Dislike".equals(action)) {
-            dislikesCount++;
-        }
-
-        if (existingReaction != null) {
             if ("Like".equals(existingReaction)) {
                 likesCount--;
             } else if ("Dislike".equals(existingReaction)) {
                 dislikesCount--;
             }
+
+            reactions.put(userId, action);
         }
     }
 
