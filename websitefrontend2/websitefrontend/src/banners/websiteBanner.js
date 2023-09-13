@@ -18,7 +18,7 @@ const Banner = () => {
   return (
     <div className="banner">
       <h1>NateBook</h1>
-      <button onClick={() => handleLinkClick('/AddressBook')}>Home</button>
+      <button onClick={() => handleLinkClick('/AllUsersPage')}>Users</button>
       <button onClick={() => handleLinkClick('/Account')}>Account</button>
       <button onClick={() => handleLinkClick('/Messages')}>View Messages</button>
       <button onClick={() => handleLinkClick('/Feed')}>View Feed</button>
