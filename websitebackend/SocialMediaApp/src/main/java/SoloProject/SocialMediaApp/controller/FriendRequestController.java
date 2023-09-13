@@ -27,7 +27,6 @@ public class FriendRequestController {
 
 
 
-
     @GetMapping("/friendreqs/{userId}/getFriendRequests")
     public ResponseEntity<List<UserDTO>> getAllFriendRequests(@PathVariable Long userId) {
         return friendRequestService.getAllFriendRequestsDTOS(userId);
