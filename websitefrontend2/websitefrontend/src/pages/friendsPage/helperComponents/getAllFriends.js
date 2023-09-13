@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
 import { useHistory } from 'react-router-dom';
 import CreateMessageForm from '../../../buttonComponents/createMessageButton/createMessageButton';
-import deleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
+import DeleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
 const GetAllFriends = () => {
   const { user } = useUserContext();
   const [allFriendsData, setAllFriendsData] = useState([]);
@@ -77,7 +77,7 @@ const GetAllFriends = () => {
                 <li key={friend.id}>
                   <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
                   <p>{friend.email}</p>
-                  <deleteFriendButton username={friend.username} removeFriend={removeFriend} />
+                  <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
                   <CreateMessageForm recipient={friend.username} />
                 </li>
               ))}
