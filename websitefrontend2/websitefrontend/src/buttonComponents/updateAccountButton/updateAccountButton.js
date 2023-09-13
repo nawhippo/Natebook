@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useUserContext } from "../../pages/usercontext/UserContext";
 
-const UpdateAccount = () => {
+const UpdateAccountButton = () => {
   const { user } = useUserContext();
   const [isVisible, setIsVisible] = useState(false); 
   const [formData, setFormData] = useState({
@@ -51,8 +51,8 @@ const UpdateAccount = () => {
 
   return (
     <div>
-      <button onClick={() => setIsVisible(!isVisible)}>Toggle Update Form</button>  {/* Toggle button */}
-      {isVisible && (  // Conditionally render form
+      <button onClick={() => setIsVisible(!isVisible)}>Update Account</button>  {/* Toggle button */}
+      {isVisible && (  
         <div>
           <form onSubmit={handleSubmit}>
           <div>
@@ -96,7 +96,7 @@ const UpdateAccount = () => {
             />
           </label>
         </div>
-            <button type="submit">Update Account</button>
+            <button type="submit">Submit</button>
           </form>
         </div>
       )}
@@ -104,4 +104,4 @@ const UpdateAccount = () => {
   );
 };
 
-export default UpdateAccount;
+export default UpdateAccountButton;
