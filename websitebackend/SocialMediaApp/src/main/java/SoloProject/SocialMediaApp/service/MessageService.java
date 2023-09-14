@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -97,18 +98,27 @@ public class MessageService {
             return ResponseEntity.badRequest().body(null);
         }
 
-        Message newMessage = new Message(content, sender, true);
-        List<Message> parentMessages = parentSender.getMessages();
+        String senderusername = repository.findByAppUserID(senderId).getUsername();
 
-        for (Message mes : parentMessages) {
+        Message newMessage = new Message(content, sender, true);
+        List<Message> parentSenderMessages = parentSender.getMessages();
+        //the message is not saved to the sender, but the recipient.
+        for (Message mes : parentSenderMessages) {
             if (mes.getId().equals(messageId)) {
                 mes.getChildMessages().add(newMessage);
                 newMessage.setParentMessage(mes);
+                //We exclude the replier itself from the recipients list.
+                //it shouldn't cause any problems because recipients are chosen from the initial message
+                //not the latest reply
+                List<String> filteredRecipients = mes.getRecipients().stream()
+                        .filter(r -> !r.equals(senderusername))
+                        .collect(Collectors.toList());
+                newMessage.setRecipients(filteredRecipients);
                 break;
             }
         }
 
-        parentSender.setMessages(parentMessages);
+        parentSender.setMessages(parentSenderMessages);
         repository.save(parentSender);
 
         return ResponseEntity.ok(newMessage);
