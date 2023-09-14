@@ -22,7 +22,8 @@ const Comment = ({ comment, user, postId, posterId, fetchData }) => {
         commentId={comment.id} 
         updateCommentLikesDislikes={updateLocalLikesDislikes}
       />
-      
+
+      {/*both the commenter and the poster can delete the comment*/}
       {user && (comment.commenterusername === user.username || posterId === user.appUserID) && 
         <DeleteCommentButton 
           commenterusername={user.username} 
