@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 const Message = ({ message, user }) => {
   const [showReplies, setShowReplies] = useState(false);
 
@@ -11,18 +10,18 @@ const Message = ({ message, user }) => {
     <div>
       <p>{message.title}</p>
       <p>{message.content}</p>
-      <p>Sender: {message.incoming ? user.username : 'You'}</p>
+     <p>Sender: {message.senderusername}</p>
       {message.recipients && (
         <p>Recipients: {message.recipients.join(', ')}</p>
       )}
-      <button onClick={toggleReplies}>Reply</button>
+      <button onClick={toggleReplies}>Replies</button>
       {showReplies && message.childMessages && (
         <div>
           <h4>Replies:</h4>
           {message.childMessages.map((reply, index) => (
             <div key={index}>
+              <p>Sender: {reply.senderusername}</p>
               <p>{reply.content}</p>
-              <p>Sender: {reply.incoming ? reply.sender.username : 'You'}</p>
             </div>
           ))}
         </div>
