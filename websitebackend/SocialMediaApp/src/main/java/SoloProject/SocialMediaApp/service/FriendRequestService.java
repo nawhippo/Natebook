@@ -30,6 +30,11 @@ public class FriendRequestService {
 
     public ResponseEntity<List<UserDTO>> getAllFriendRequestsDTOS(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Long> friendreqs = user.getRequests();
         List<UserDTO> DTOList = convertToDTOList(friendreqs);
         for (UserDTO dto : DTOList) {
@@ -69,8 +74,13 @@ public class FriendRequestService {
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
         }
         List<Long> newRequests = recipient.getRequests();
-        if(newRequests.contains(senderId)){
+        if(newRequests.contains(senderId)) {
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
+        }
+        if(recipient.getBlockList().contains(senderId)){
+            AppUser errorUser = new AppUser();
+            errorUser.setUsername("Recipient " + recipient.getUsername() + " blocked Sender.");
+            return new ResponseEntity<>(errorUser, HttpStatus.BAD_REQUEST);
         }
         newRequests.add(senderId);
         recipient.setRequests(newRequests);
@@ -82,6 +92,11 @@ public class FriendRequestService {
         AppUser recipient = repository.findByUsername(recipientUsername);
         if(senderId == recipient.getAppUserID()){
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
+        }
+        if(recipient.getBlockList().contains(senderId)){
+            AppUser errorUser = new AppUser();
+            errorUser.setUsername("Recipient " + recipientUsername + " blocked Sender.");
+            return new ResponseEntity<>(errorUser, HttpStatus.BAD_REQUEST);
         }
         if (recipient.getFriends().contains(senderId)) {
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
