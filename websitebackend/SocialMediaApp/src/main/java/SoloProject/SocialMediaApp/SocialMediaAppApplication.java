@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Import;
 public class SocialMediaAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SocialMediaAppApplication.class, args);
+
 	}
 
 }
