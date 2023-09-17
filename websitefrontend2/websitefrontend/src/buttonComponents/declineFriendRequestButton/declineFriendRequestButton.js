@@ -1,15 +1,16 @@
 import React from 'react';
-
-const DeclineFriendRequestButton = ({ friendId, removeRequest }) => {
+import { useUserContext } from '../../pages/usercontext/UserContext';
+const DeclineFriendRequestButton = ({ friendId, triggerFetch  }) => {
+  const { user } = useUserContext();
   const handleClick = () => {
-    fetch(`/api/friendreqs/${friendId}/declineFriendRequest`,{
+    fetch(`/api/friendreqs/${user.appUserID}/declineFriendRequest/${friendId}`,{
       method: 'PUT',
     })
     .then(response => {
       if(!response.ok){
         throw new Error("API call failed");
       }
-      removeRequest(friendId);
+      triggerFetch();
     });
   };
 
