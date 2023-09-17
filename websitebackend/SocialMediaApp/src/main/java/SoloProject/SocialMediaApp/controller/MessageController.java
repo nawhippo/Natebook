@@ -1,8 +1,8 @@
 package SoloProject.SocialMediaApp.controller;
 
+import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
-import SoloProject.SocialMediaApp.service.AppUserService;
 import SoloProject.SocialMediaApp.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -25,10 +27,23 @@ public class MessageController {
         this.appUserRepository = appUserRepository;
     }
 
-    @GetMapping("/message/{userId}/allMessages")
-    public ResponseEntity<List<Message>> getAllMessages(@PathVariable Long userId) {
-        return messageService.getAllMessages(userId);
+    @GetMapping("/message/{userId}/receivedMessages")
+    public ResponseEntity<List<Message>> getAllRecMessages(@PathVariable Long userId) {
+        if(messageService.getAllRecMessages(userId) == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(messageService.getAllRecMessages(userId));
     }
+
+    @GetMapping("/message/{userId}/sentMessages")
+    public ResponseEntity<List<Message>> getAllSentMessages(@PathVariable Long userId) {
+        if(messageService.getAllSentMessages(userId) == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(messageService.getAllSentMessages(userId));
+    }
+
+
 
     @GetMapping("/message/{userId}/{messageId}")
     public ResponseEntity<Message> getMessageById(@PathVariable Long userId, @PathVariable Long messageId) {
@@ -42,49 +57,37 @@ public class MessageController {
             @RequestBody Map<String, Object> requestBody
     ) {
         String content = (String) requestBody.get("content");
+        String title = (String) requestBody.get("title");
         List<String> recipientNames = (List<String>) requestBody.get("recipientNames");
+        AppUser appUser = appUserRepository.findByAppUserID(userId);
+        Optional<Message> optionalMessage = messageService.sendMessage(title, content, appUser, recipientNames);
 
-        ResponseEntity<Message> response = (ResponseEntity<Message>) messageService.sendMessage(userId, content, recipientNames);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            Message message = response.getBody();
+        if (optionalMessage.isPresent()) {
+            Message message = optionalMessage.get();
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .header("Location", "/message/" + message.getId())
                     .body(message);
         } else {
-            return ResponseEntity.status(response.getStatusCode()).build();
+            return ResponseEntity.badRequest().build();
         }
     }
 
-    @PostMapping("/message/{userId}/{parentUserId}/{messageId}/replyMessage")
+    @PostMapping("/message/{userId}/{messageId}/replyMessage")
     public ResponseEntity<Message> replyMessage(
-            @PathVariable Long userId,
             @PathVariable Long messageId,
-            @PathVariable Long parentSenderId,
+            @PathVariable Long userId,
             @RequestBody Map<String, Object> requestBody
     ) {
         String content = (String) requestBody.get("content");
-        List<String> recipientNames = (List<String>) requestBody.get("recipientNames");
 
-        ResponseEntity<Message> response = messageService.sendReplyMessage(userId, content, parentSenderId, messageId);
+        Optional<Message> optionalMessage = messageService.sendReplyMessage(messageId, userId, content);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            Message message = response.getBody();
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .header("Location", "/message/" + message.getId())
-                    .body(message);
+        if (optionalMessage.isPresent()) {
+            return ResponseEntity.ok(optionalMessage.get());
         } else {
-            return ResponseEntity.status(response.getStatusCode()).build();
+            return ResponseEntity.badRequest().build();
         }
     }
-
-    @GetMapping("/message/{userId}/messagesByUsername/{username}")
-    public ResponseEntity<List<Message>> getMessageByUser(@PathVariable Long userId, @PathVariable String username) {
-        return messageService.getMessagesByUsername(userId, username);
-    }
-
-
-
 }
