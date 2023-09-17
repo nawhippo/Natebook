@@ -12,16 +12,16 @@ import java.util.List;
 @Table(name = "messages")
 public class Message {
     public Message() {
-    this.dateTime = new Date();
-    this.recipients = new ArrayList<>();
+        this.dateTime = new Date();
+        this.recipients = new ArrayList<>();
     }
 
-    public Message(String content, AppUser sender, boolean isIncoming, List<String> recipients, Date dateTime) {
+    public Message(String content, AppUser sender, List<String> recipients) {
         this.content = content;
         this.sender = sender;
         this.isIncoming = isIncoming;
         this.recipients = recipients;
-        this.dateTime = dateTime;
+        this.dateTime = new Date();
     }
 
     public Message(boolean isIncoming) {
@@ -36,10 +36,32 @@ public class Message {
     private Long id;
 
     @Column
+    private int senderid;
+
+    public int getSenderid() {
+        return senderid;
+    }
+
+    public void setSenderid(int senderid) {
+        this.senderid = senderid;
+    }
+
+    @Column
     private String content;
 
     @Column
     private String title;
+
+    @Column
+    private String senderusername;
+
+    public String getSenderusername() {
+        return senderusername;
+    }
+
+    public void setSenderusername(String senderusername) {
+        this.senderusername = senderusername;
+    }
 
     @ManyToOne
     @JsonBackReference
@@ -48,8 +70,8 @@ public class Message {
     @Column(name = "is_incoming")
     private boolean isIncoming;
 
-   @Column(name = "recipients")
-   @ElementCollection
+    @Column(name = "recipients")
+    @ElementCollection
     private List<String> recipients;
 
     @Column(name = "date_time")
