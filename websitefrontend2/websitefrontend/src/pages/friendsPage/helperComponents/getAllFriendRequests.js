@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
-
+import AcceptFriendRequestButton from "../../../buttonComponents/acceptFriendRequestButton/AcceptFriendRequestButton"
+import DeclineFriendRequestButton from "../../../buttonComponents/declineFriendRequestButton/declineFriendRequestButton";
 const GetAllFriendRequests = () => {
   const { user } = useUserContext();
   const [allFriendRequestsData, setAllFriendRequestsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isTabOpen, setIsTabOpen] = useState(false); // State to manage tab visibility
-
+  const [isTabOpen, setIsTabOpen] = useState(false);
+  const [shouldFetchData, setShouldFetchData] = useState(true);
   useEffect(() => {
-    if (user) {
+    if (user && shouldFetchData) {
       fetch(`/api/friendreqs/${user.appUserID}/getFriendRequests`)
         .then(response => {
           return response.json();
@@ -23,8 +24,9 @@ const GetAllFriendRequests = () => {
         .finally(() => {
           setIsLoading(false);
         });
+        setShouldFetchData(false);
     }
-  }, [user]);
+  }, [user, shouldFetchData]);
 
   const toggleTab = () => {
     setIsTabOpen(!isTabOpen);
@@ -50,6 +52,10 @@ const GetAllFriendRequests = () => {
                   <h2>{friend.firstname}</h2>
                   <p>{friend.lastname}</p>
                   <p>{friend.email}</p>
+                  <AcceptFriendRequestButton friendId = {friend.id}
+                    triggerFetch={() => setShouldFetchData(true)} ></AcceptFriendRequestButton>
+                  <DeclineFriendRequestButton friendId = {friend.id} 
+                   triggerFetch={() => setShouldFetchData(true)} ></DeclineFriendRequestButton>
                 </li>
               ))}
             </ul>
