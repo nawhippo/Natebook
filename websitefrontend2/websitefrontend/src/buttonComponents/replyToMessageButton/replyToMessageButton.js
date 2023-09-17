@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-
-const ReplyMessageForm = ({ userId, parentSenderId, messageId }) => {
+import { useUserContext } from '../../pages/usercontext/UserContext'; // Adjust the path if needed
+const ReplyMessageForm = ({ messageId, posterId }) => {
   const [showForm, setShowForm] = useState(false);
   const [content, setContent] = useState('');
-  const [recipientNames, setRecipientNames] = useState('');
-
+  const user = useUserContext();
+  
   const handleToggle = () => setShowForm(!showForm);
-
+  
   const handleSubmit = () => {
-    fetch(`/api/message/${userId}/${parentSenderId}/${messageId}/replyMessage`, {
+    fetch(`/api/message/${user.appUserID}/${messageId}/replyMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, recipientNames: recipientNames.split(',') }),
+      body: JSON.stringify({ content }),
     })
     .then((response) => {
       if (response.ok) {
@@ -38,12 +38,6 @@ const ReplyMessageForm = ({ userId, parentSenderId, messageId }) => {
             value={content} 
             onChange={(e) => setContent(e.target.value)}
             placeholder="Content" 
-          />
-          <input 
-            type="text" 
-            value={recipientNames} 
-            onChange={(e) => setRecipientNames(e.target.value)}
-            placeholder="Recipients (comma separated)" 
           />
           <button onClick={handleSubmit}>Send Reply</button>
         </div>
