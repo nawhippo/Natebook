@@ -4,6 +4,7 @@ const CreateMessageForm = ({ userId, defaultRecipientName }) => {
   const [showForm, setShowForm] = useState(false);
   const [content, setContent] = useState('');
   const [recipientNames, setRecipientNames] = useState('');
+  const [title, setTitle] = useState('');
 
   const handleToggle = () => setShowForm(!showForm);
 
@@ -11,7 +12,8 @@ const CreateMessageForm = ({ userId, defaultRecipientName }) => {
     fetch(`/api/message/${userId}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, recipientNames: recipientNames.split(',') }),
+      // Adding title to the JSON payload
+      body: JSON.stringify({ title, content, recipientNames: recipientNames.split(',').map(name => name.trim()) }),
     })
     .then((response) => {
       if (response.ok) {
@@ -32,14 +34,20 @@ const CreateMessageForm = ({ userId, defaultRecipientName }) => {
       setRecipientNames(defaultRecipientName);
     }
   }, [defaultRecipientName]);
-  
-  
+
   return (
     <div>
       <button onClick={handleToggle}>Create Message</button>
       <br></br>
       {showForm && (
         <div>
+          <input 
+            type="text" 
+            value={title} 
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title" 
+          />
+          <br></br>
           <input 
             type="text" 
             value={recipientNames} 
