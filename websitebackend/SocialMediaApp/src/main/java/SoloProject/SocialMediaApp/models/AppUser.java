@@ -220,4 +220,8 @@ public class AppUser {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+    public Long getId() {
+        return this.appUserID;
+    }
 }
