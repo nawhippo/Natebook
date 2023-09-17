@@ -317,13 +317,13 @@ public class PostService {
 
 @Transactional
 public ResponseEntity<?> deletePost(String username, Long postId) {
-        // Check for valid user
+
         AppUser user = repository.findByUsername(username);
         if(user == null) {
             return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
 
-        // Find the post to be removed
+
         Post removePost = user.getPosts().stream()
                 .filter(post -> post.getId().equals(postId))
                 .findFirst()
@@ -333,12 +333,11 @@ public ResponseEntity<?> deletePost(String username, Long postId) {
             return new ResponseEntity<>("Post not found", HttpStatus.NOT_FOUND);
         }
 
-        // Remove post from user's collection
         user.getPosts().remove(removePost);
     if (removePost.getAppUser() != null) {
         removePost.setAppUser(null);
     }
-        // Remove from public feed if needed
+
         if(!removePost.friendsonly) {
             publicFeed.removeFromFeed(removePost);
         }
@@ -348,7 +347,7 @@ public ResponseEntity<?> deletePost(String username, Long postId) {
             repository.save(user);
             return new ResponseEntity<>(removePost, HttpStatus.OK);
         } catch(Exception ex) {
-            // You can log the exception here for more detailed error diagnostics
+
             return new ResponseEntity<>("An error occurred while deleting the post", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -408,7 +407,7 @@ public ResponseEntity<?> deletePost(String username, Long postId) {
             }
         }
 
-        // If not a friend, return only public posts
+        //If not a friend, return only public posts
         List<Post> publicPosts = profile.getPosts().stream()
                 .filter(post -> !post.isFriendsonly())
                 .collect(Collectors.toList());
