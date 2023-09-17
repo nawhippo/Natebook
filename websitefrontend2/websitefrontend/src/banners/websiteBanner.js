@@ -1,6 +1,7 @@
 import LoginButton from '../buttonComponents/loginButton/loginButton';
 import LogoutButton from '../buttonComponents/logoutButton/logoutButton';
 import CreateAccount from '../buttonComponents/createAccountButton/createAccountButton';
+import FriendReqCounter from './notificationHelpers/friendRequestHelpers';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useUserContext } from '../pages/usercontext/UserContext';
 import './banner.css'
@@ -22,6 +23,7 @@ const Banner = () => {
       <button onClick={() => handleLinkClick('/Account')}>Account</button>
       <button onClick={() => handleLinkClick('/Messages')}>View Messages</button>
       <button onClick={() => handleLinkClick('/Feed')}>View Feed</button>
+      <FriendReqCounter></FriendReqCounter>
       <button onClick={() => handleLinkClick('/Friends')}>Friends</button>
 
       {isLoggedIn ? (
