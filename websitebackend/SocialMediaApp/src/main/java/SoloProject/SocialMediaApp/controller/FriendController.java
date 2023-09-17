@@ -30,8 +30,8 @@ public class FriendController {
 
 
     @GetMapping("/friends/{userId}/getAllFriends")
-    public ResponseEntity<List<Long>> getAllFriends(@PathVariable Long userId) {
-        return friendService.getAllFriends(userId);
+    public ResponseEntity<List<AppUser>> getAllFriends(@PathVariable Long userId) {
+        return friendService.getAllFriendsAppUsers(userId);
     }
 
     @GetMapping("/friends/{userId}/{friendId}")
