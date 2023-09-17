@@ -76,7 +76,7 @@ const ProfilePage = () => {
         <AddFriendButton username={accountData.username} isLoading={isLoading} error={error} />
       )}
 
-      <SendMessageButton defaultRecipientName={accountData.username} />
+      <SendMessageButton userId={user.appUserID} defaultRecipientName={accountData.username} />
       <UserPosts userid={userid} profileUserId={accountData ? accountData.appUserID : null} />
     </div>
   );
