@@ -3,6 +3,8 @@ package SoloProject.SocialMediaApp.controller;
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import SoloProject.SocialMediaApp.repository.CommentRepository;
+import SoloProject.SocialMediaApp.repository.PostRepository;
 import SoloProject.SocialMediaApp.service.AccountService;
 import SoloProject.SocialMediaApp.service.AppUserService;
 import SoloProject.SocialMediaApp.service.PostService;
@@ -20,13 +22,19 @@ public class AccountController {
 
     private final AccountService accountservice;
     private final AppUserRepository appUserRepository;
+
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+
     private final PostService postService;
 
     @Autowired
-    public AccountController(AccountService userserviceimpl, AppUserRepository appUserRepository, PostService postService) {
+    public AccountController(CommentRepository commentRepository, PostRepository postRepository, AccountService userserviceimpl, AppUserRepository appUserRepository, PostService postService) {
         this.accountservice = userserviceimpl;
         this.appUserRepository = appUserRepository;
         this.postService = postService;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
     @GetMapping("/account/{userId}/accountDetails")
@@ -69,9 +77,8 @@ public class AccountController {
             frienduser.getFriends().remove(userId);
             appUserRepository.save(frienduser);
         }
-        for(Post post : user.getPosts()){
-            postService.deletePost(user.getUsername(),post.getId());
-        }
+        commentRepository.deleteByCommenterId(userId);
+        postRepository.deleteByPosterId(userId);
         appUserRepository.delete(user);
         return ResponseEntity.ok(user);
     }
