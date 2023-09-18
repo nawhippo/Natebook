@@ -45,7 +45,6 @@ public class AppUser {
         this.username = username;
         this.blockList = new ArrayList<>();
         this.requests = new ArrayList<>();
-        this.role = "USER";
     }
 
     public List<Long> getRequests() {
@@ -83,19 +82,6 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long appUserID;
 
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sender")
-    @JsonManagedReference
-    private List<Message> messages;
-
     @Column
     private String firstname;
 
@@ -111,10 +97,6 @@ public class AppUser {
     @Column
     private String password;
 
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
-    private List<Post> posts;
-
 
     @ElementCollection
     @CollectionTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_id"))
@@ -122,36 +104,18 @@ public class AppUser {
     private List<Long> friends;
 
 
-    public AppUser(String firstname, String lastname, String email, String username, List<Post> posts, List<Message> messages, List<Long> friends, String password, List<Long> requests, List<Message> messages1) {
+    public AppUser(String firstname, String lastname, String email, String username, List<Long> friends, String password, List<Long> requests) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.username = username;
-        this.posts = posts;
         this.friends = friends;
         this.password = password;
         this.requests = requests;
-        this.messages = messages1;
-        this.role = "USER";
-    }
-
-    public AppUser(List<Message> messages, String firstname, String lastname, String username, String email, String password) {
-        this.messages = messages;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.posts = new ArrayList<>();
-        this.friends = new ArrayList<>();
-        this.requests = new ArrayList<>();
-        this.blockList = new ArrayList<>();
         this.role = "USER";
     }
 
     public AppUser() {
-        this.messages = new ArrayList<>();
-        this.posts = new ArrayList<>();
         this.friends = new ArrayList<>();
         this.requests = new ArrayList<>();
         this.role = "USER";
@@ -193,13 +157,6 @@ public class AppUser {
         this.username = username;
     }
 
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
 
 
     public List<Long> getFriends() {
