@@ -5,6 +5,7 @@ import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.service.AppUserService;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,16 @@ public class AddressBookController {
 
 
     @GetMapping("/publicFeed")
-    public ResponseEntity<List<Post>> getAllPublicPosts() { return postService.getAllPublicPosts();}
+    public ResponseEntity<List<Post>> getAllPublicPosts() {
+        List<Post> publicPosts = postService.getAllPublicPosts();
+
+        if (publicPosts != null && !publicPosts.isEmpty()) {
+            return new ResponseEntity<>(publicPosts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/about") // The endpoint URL: /api/about
     public String about() {
         return "{\"message\": \"Welcome to my about page, it is a react/java application. It is a simple CRUD application, " +
