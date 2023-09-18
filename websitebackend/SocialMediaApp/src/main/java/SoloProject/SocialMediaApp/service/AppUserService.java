@@ -31,8 +31,7 @@ public class AppUserService {
         if (repository.findByUsername(username) != null) {
             throw new IllegalArgumentException("Username is already taken. Please choose a different username.");
         }
-        List<Message> messages = new ArrayList<>();
-        AppUser newuser = new AppUser(messages, firstName, lastName, username, email, password);
+        AppUser newuser = new AppUser(firstName, lastName, username, email, password);
         repository.save(newuser);
         return ResponseEntity.ok(newuser);
     }
@@ -55,10 +54,6 @@ public class AppUserService {
     }
 
 
-
-
-    //should only return 1 user
-
     public ResponseEntity<AppUser> findUser(Long id) {
         AppUser appUser = repository.findByAppUserID(id);
         if (appUser != null) {
@@ -68,7 +63,6 @@ public class AppUserService {
         }
     }
 
-    //should only return 1 user
 
     public ResponseEntity<AppUser> findUser(String username) {
         AppUser appUser = repository.findByUsername(username);
@@ -95,20 +89,6 @@ public class AppUserService {
 
         return ResponseEntity.ok(appUsers);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public ResponseEntity<List<Long>> getAllFriendRequests(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
         if (user == null) {
@@ -117,19 +97,10 @@ public class AppUserService {
         return ResponseEntity.ok(user.getRequests());
     }
 
-
-
-
-
     public ResponseEntity<List<AppUser>> getAllUsers() {
         List<AppUser> allUsers = repository.findAll();
         return ResponseEntity.ok(allUsers);
     }
-
-
-
-
-
     //to display user data extrapolated from longs.
     private UserDTO convertToUserDTO(Long userId) {
         AppUser appUser = repository.findByAppUserID(userId);
@@ -141,35 +112,8 @@ public class AppUserService {
                 appUser.getEmail()
         );
     }
-
-
-
-
-
-
     public ResponseEntity<AppUser> saveUser(AppUser appUser) {
         repository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
-    }
-
-
-    public ResponseEntity<List<Post>> getAllUserPosts(Long userid, Long profileUserId) {
-        AppUser profile = repository.findByAppUserID(profileUserId);
-        if (profile == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        for (Long friendid : profile.getFriends()) {
-            if (userid.equals(friendid)) {
-                return ResponseEntity.ok(profile.getPosts());
-            }
-        }
-
-        // If not a friend, return only public posts
-        List<Post> publicPosts = profile.getPosts().stream()
-                .filter(post -> !post.isFriendsonly())
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(publicPosts);
     }
 }
