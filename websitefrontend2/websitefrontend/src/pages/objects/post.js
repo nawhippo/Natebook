@@ -14,11 +14,6 @@ const Post = ({ post, user, fetchData }) => {
   };
 
 
-
-
-
-
-
   return (
     <div key={post.id}>
       <div>Title: {post.title}</div>
@@ -28,16 +23,12 @@ const Post = ({ post, user, fetchData }) => {
 
       {user.username === post.posterusername && (
         <DeletePostButton
-          userId={user.appUserID}
-          posterusername={post.posterusername}
           postId={post.id}
           fetchData={fetchData}
         />
       )}
       <p>Likes: {localLikesCount} Dislikes: {localDislikesCount}</p>
       <ReactionButtons 
-      user={user} 
-      posterId={post.posterid} 
       postId={post.id} 
       updateLikesDislikes={updateLikesDislikes}
       />

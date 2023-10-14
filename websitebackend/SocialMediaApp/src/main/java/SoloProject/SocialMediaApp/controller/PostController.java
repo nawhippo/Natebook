@@ -32,114 +32,73 @@ public class PostController {
             @PathVariable Long userId,
             @RequestBody Post post
     ) {
-        return postService.createPost(userId, post);
+        Post createdPost = postService.createPost(userId, post);
+        if (createdPost != null) {
+            return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @DeleteMapping("/post/{username}/{postId}/deletePost")
-    public ResponseEntity<?> deletePost(@PathVariable String username, @PathVariable Long postId){
-        return postService.deletePost(username, postId);
+
+
+    @DeleteMapping("/post/{postId}/deletePost")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId){
+        postService.deletePost(postId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
-
-
-    @GetMapping("/post/{userId}/{posterId}/{postId}")
-    public ResponseEntity<Post> getPostById(
-            @PathVariable Long userId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId) {
-        return postService.getPostById(userId, posterId, postId);
-    }
-
-    @PutMapping("/post/{reactorId}/{posterId}/{postId}/updateReactionPost")
+    @PutMapping("/post/{postId}/{reactorId}/updateReactionPost")
     public ResponseEntity<Post> updateReactionPost(
             @PathVariable Long reactorId,
-            @PathVariable Long posterId,
             @PathVariable Long postId,
             @RequestBody Map<String, String> payload) {
 
         String action = payload.get("action");
 
-        ResponseEntity<Post> responseEntity = postService.handlePostReaction(reactorId, posterId, postId, action);
-        Post updatedPost = responseEntity.getBody();
+        Post updatedPost = postService.handlePostReaction(postId, reactorId, action);
 
         if (updatedPost != null) {
-            return new ResponseEntity<>((Post) updatedPost, HttpStatus.OK);
+            return new ResponseEntity<>(updatedPost, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @PutMapping("/post/{reactorId}/{posterId}/{postId}/{commentId}/updateReactionComment")
-            public ResponseEntity<Comment> updateCommentReaction(
-            @PathVariable Long reactorId,
-            @PathVariable Long posterId,
-            @PathVariable Long postId,
-            @PathVariable Long commentId,
-            @RequestBody Map<String, String> payload) {
-
-        String action = payload.get("action");
-
-        ResponseEntity<Comment> responseEntity = postService.handleCommentReaction(reactorId, posterId, postId, commentId, action);
-        Comment updatedComment = responseEntity.getBody();
-
-        if (updatedComment != null) {
-            return new ResponseEntity<>(updatedComment, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @PostMapping("/post/{posterUsername}/{postId}/createComment")
-    public ResponseEntity<?> createComment(
-            @PathVariable String posterUsername,
-            @PathVariable Long postId,
-            @RequestBody Comment comment
-    ) {
-        comment.setCommenterusername(comment.getCommenterusername());
-        return postService.createComment(posterUsername, postId, comment);
-    }
-
-
 
 
 
     @GetMapping("/post/{userId}/friendPosts")
     public ResponseEntity<List<Post>> getAllFriendPosts(@PathVariable Long userId) {
-        return postService.getAllFriendPosts(userId);
+        List<Post> posts = postService.getAllFriendPosts(userId);
+        if (posts != null && !posts.isEmpty()) {
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
     @GetMapping("/post/{userId}/posts/{targetUserId}")
     public ResponseEntity<List<Post>> getAllPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {
-        return postService.getPostsByUserId(userId, targetUserId);
+        List<Post> posts = postService.getPostsByPosterId(userId, targetUserId);
+        if (posts != null && !posts.isEmpty()) {
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
-    @GetMapping("/post/{userId}/postsByUsername/{friendUsername}")
-    public ResponseEntity<List<Post>> getAllPostsByUsername(@PathVariable Long userId, @PathVariable String friendUsername) {
-        return postService.getPostsByUsername(userId, friendUsername);
-    }
-
-
-    @DeleteMapping("/post/{username}/{postId}/{commentId}/deleteComment")
-    public ResponseEntity<Comment> deleteComment(@PathVariable String username, @PathVariable Long postId, @PathVariable Long commentId){
-        return postService.deleteComment(username, postId, commentId);
-    }
+        @GetMapping("/post/{userId}/postsByUsername/{posterUsername}")
+        public ResponseEntity<List<Post>> getAllPostsByUsername(@PathVariable Long userId, @PathVariable String posterUsername) {
+            List<Post> posts = postService.getPostsByPosterUsername(userId, posterUsername);
+            if (posts != null && !posts.isEmpty()) {
+                return new ResponseEntity<>(posts, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
 
     }
 

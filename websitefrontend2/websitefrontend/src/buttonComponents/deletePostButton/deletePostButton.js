@@ -1,10 +1,10 @@
 import React from 'react';
 
-export const DeletePostButton = ({ userId, posterusername, postId, fetchData }) => {
+export const DeletePostButton = ({ postId, fetchData }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/post/${posterusername}/${postId}/deletePost`, { method: 'DELETE' });
+      const response = await fetch(`/api/post/${postId}/deletePost`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error('Failed to delete.');
       }

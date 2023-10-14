@@ -25,22 +25,9 @@ public class MessageService {
 
     private final AppUserRepository repository;
 
-    public MessageService(AppUserRepository repository, MessageRepository mrepository) {
+    public MessageService(AppUserRepository repository, MessageRepository messageRepository) {
         this.repository = repository;
-        this.messageRepository = mrepository;
-    }
-
-    public ResponseEntity<Message> getMessageById(Long userId, Long messageId) {
-        AppUser appUser = repository.findByAppUserID(userId);
-        if (appUser != null) {
-            for (Message message : appUser.getMessages()) {
-                if (message.getId().equals(messageId)) {
-                    return ResponseEntity.ok(message);
-                }
-            }
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.notFound().build();
+        this.messageRepository = messageRepository;
     }
 
 

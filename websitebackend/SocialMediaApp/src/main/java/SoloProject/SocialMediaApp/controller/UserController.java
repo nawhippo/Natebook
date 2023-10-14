@@ -5,6 +5,7 @@ import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.AppUserService;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -15,10 +16,13 @@ public class UserController {
     private final AppUserService appUserService;
     private final AppUserRepository appUserRepository;
 
+    private final PostService postService;
+
     @Autowired
-    public UserController(AppUserService appUserService, AppUserRepository appUserRepository) {
+    public UserController(AppUserService appUserService, AppUserRepository appUserRepository, PostService postService) {
         this.appUserService = appUserService;
         this.appUserRepository = appUserRepository;
+        this.postService = postService;
     }
 
     @GetMapping
@@ -48,7 +52,12 @@ public class UserController {
     }
 
     @GetMapping("user/{userid}/{profileUserId}")
-    public ResponseEntity<List<Post>> displayAllUserPosts(@PathVariable Long userid, @PathVariable Long profileUserId){
-        return appUserService.getAllUserPosts(userid, profileUserId);
+    public ResponseEntity<List<Post>> displayAllUserPosts(@PathVariable Long userid, @PathVariable Long profileUserId) {
+        List<Post> posts = postService.getPostsByPosterId(userid, profileUserId);
+        if (posts == null || posts.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        }
     }
 }

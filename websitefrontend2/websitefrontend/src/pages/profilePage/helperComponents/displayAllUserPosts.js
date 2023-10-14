@@ -1,31 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import Post from '../../objects/post';
 import { useUserContext } from '../../usercontext/UserContext';
+
 const UserPosts = ({ userid, profileUserId }) => {
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useUserContext();
+
   const fetchData = async () => {
-    try {
-      const response = await fetch(`/api/user/${userid}/${profileUserId}`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+    const response = await fetch(`/api/user/${userid}/${profileUserId}`);
+
+    if (response.status === 204) {
+      setError('No posts found.');
+    } else {
       const data = await response.json();
       setPosts(data);
-      setIsLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   const filteredPosts = posts.filter(post => {
-    return post.content.toLowerCase().includes(searchTerm.toLowerCase());
+    return post.description.toLowerCase().includes(searchTerm.toLowerCase());
   });
-
 
   useEffect(() => {
     fetchData();
@@ -36,10 +35,10 @@ const UserPosts = ({ userid, profileUserId }) => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>{error}</div>;
   }
 
- return (
+  return (
     <div>
       <h1>User Posts</h1>
       <input 
@@ -65,4 +64,3 @@ const UserPosts = ({ userid, profileUserId }) => {
 };
 
 export default UserPosts;
-

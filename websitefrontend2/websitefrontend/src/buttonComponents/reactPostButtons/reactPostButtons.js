@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-const ReactionButtons = ({ user, posterId, postId, updateLikesDislikes }) => {
+import { useUserContext } from '../../pages/usercontext/UserContext';
+const ReactionButtons = ({ postId, updateLikesDislikes }) => {
   const [reactionState, setReactionState] = useState('None');
-
-  const updateReactionOnServer = async (reactorId, posterId, postId, action) => {
-    const url = `/api/post/${reactorId}/${posterId}/${postId}/updateReactionPost`;
+  const { user } = useUserContext();
+  const updateReactionOnServer = async (postId, action) => {
+    const url = `/api/post/${postId}/${user.appUserID}/updateReactionPost`;
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
@@ -21,7 +22,7 @@ const ReactionButtons = ({ user, posterId, postId, updateLikesDislikes }) => {
   };
 
   const handleButtonClick = async (newReaction) => {
-    const updatedPost = await updateReactionOnServer(user.appUserID, posterId, postId, newReaction);
+    const updatedPost = await updateReactionOnServer(postId, newReaction);
     if (updatedPost) {
       if (newReaction === reactionState) {
         setReactionState('None');
@@ -29,7 +30,7 @@ const ReactionButtons = ({ user, posterId, postId, updateLikesDislikes }) => {
         setReactionState(newReaction);
       }
 
-      updateLikesDislikes(updatedPost.likesCount, updatedPost.dislikesCount); // Update likes and dislikes in Post component
+      updateLikesDislikes(updatedPost.likesCount, updatedPost.dislikesCount); 
     }
   };
 

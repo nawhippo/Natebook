@@ -52,7 +52,8 @@ const handleCreatePost = async () => {
         title: title,
         description: description,
         dateTime: formattedDateTime,
-        friendsonly: publicStatus,
+        friendsOnly: publicStatus,
+        posterUsername: user.username
       }),
     });
 

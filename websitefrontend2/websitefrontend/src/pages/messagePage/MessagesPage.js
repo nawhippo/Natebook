@@ -3,7 +3,8 @@ import { useUserContext } from '../usercontext/UserContext';
 import Message from '../objects/message';
 import ReplyMessageForm from '../../buttonComponents/replyToMessageButton/replyToMessageButton';
 import CreateMessageForm from '../../buttonComponents/createMessageButton/createMessageButton';
-
+import SentList from './HelperComponents/OutgoingMessages';
+import RecList from './HelperComponents/IncomingMessages';
 const MessagesPage = () => {
   const { user } = useUserContext();
   const [searchText, setSearchText] = useState('');
@@ -51,17 +52,18 @@ const MessagesPage = () => {
       <button onClick={() => setShowIncoming(!showIncoming)}>
         {showIncoming ? 'Show Sent Messages' : 'Show Incoming Messages'}
       </button>
-      <h2>{showIncoming ? 'Incoming Messages:' : 'Sent Messages:'}</h2>
-      <ul>
-        {messagesToDisplay.map((message) => (
-          <li key={message.id}>
-            <Message message={message} user={user} />
-            <ReplyMessageForm messageId={message.id} posterId={message.senderid} userId={user.appUserID}/>
-          </li>
-        ))}
-      </ul>
+      {showIncoming ? (
+        <>
+          <h2>Incoming Messages:</h2>
+          <RecList /> 
+        </>
+      ) : (
+        <>
+          <h2>Sent Messages:</h2>
+          <SentList /> 
+        </>
+      )}
     </div>
   );
-};
-
+      }
 export default MessagesPage;

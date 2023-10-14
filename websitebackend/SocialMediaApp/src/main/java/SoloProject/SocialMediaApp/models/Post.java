@@ -1,9 +1,5 @@
 package SoloProject.SocialMediaApp.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.text.SimpleDateFormat;
@@ -12,8 +8,8 @@ import java.util.*;
 @Entity
 @Table(name = "posts")
 public class Post {
-    public boolean isFriendsonly(){
-        return friendsonly;
+    private boolean isFriendsOnly(){
+        return friendsOnly;
     }
 
     public Map<Long, String> getReactions() {
@@ -49,17 +45,17 @@ public class Post {
     private Map<Long, String> reactions = new HashMap<>();
 
 
-    public void setFriendsonly(boolean friendsonly) {
-        this.friendsonly = friendsonly;
+    private void setFriendsOnly(boolean friendsOnly) {
+        this.friendsOnly = friendsOnly;
     }
 
-    public boolean friendsonly;
-    public Long getPosterid() {
-        return posterid;
+    private boolean friendsOnly;
+    public Long getPosterAppUserId() {
+        return posterId;
     }
 
-    public void setPosterid(Long posterid) {
-        this.posterid = posterid;
+    public void setPosterAppUserId(Long posterAppUserId) {
+        this.posterId = posterAppUserId;
     }
 
     public Post() {
@@ -68,8 +64,8 @@ public class Post {
 
 
 
-    public String getPosterusername() {
-        return posterusername;
+    public String getPosterUsername() {
+        return posterUsername;
     }
 
     @Id
@@ -77,22 +73,16 @@ public class Post {
     private Long id;
 
 
-
-
-    @ManyToOne
-    @JoinColumn(name ="user_id")
-    @JsonIgnore
-    private AppUser appUser;
-
-    public void setPosterusername(String posterusername) {
-        this.posterusername = posterusername;
+    public void setPosterUsername(String posterUsername) {
+        this.posterUsername = posterUsername;
     }
 
     //for display purposes
-   private String posterusername;
+   private String posterUsername;
 
     //for display purposes
-    private Long posterid;
+    private Long posterId;
+
 
     @Column
     private String title;
@@ -102,6 +92,7 @@ public class Post {
 
 
     //return the length of this to get number of.
+
 
     //for display
     private int likesCount;
@@ -124,22 +115,6 @@ public class Post {
         this.dislikesCount = dislikesCount;
     }
 
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Comment> commentList;
-
-    public void addComment(Comment comment) {
-        commentList.add(comment);
-        comment.setPost(this);
-    }
-
-    public void removeComment(Comment comment){
-        commentList.remove(comment);
-        comment.setPost(null);
-    }
-
-
     @Column
     private String dateTime;
 
@@ -151,14 +126,6 @@ public class Post {
 
     public Long getId() {
         return id;
-    }
-
-    public AppUser getAppUser() {
-        return appUser;
-    }
-
-    public void setAppUser(AppUser appUser) {
-        this.appUser = appUser;
     }
 
     public String getTitle() {
@@ -187,14 +154,6 @@ public class Post {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public List<Comment> getCommentList() {
-        return commentList;
-    }
-
-    public void setCommentList(List<Comment> commentList) {
-        this.commentList = commentList;
     }
 
     public void addReaction(Long userId, String action) {

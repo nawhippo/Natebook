@@ -3,16 +3,16 @@ import { useUserContext } from "../../pages/usercontext/UserContext";
 
 const UpdateAccountButton = () => {
   const { user } = useUserContext();
-  const [isVisible, setIsVisible] = useState(false); 
+  const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
     password: "",
   });
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(""); 
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -22,10 +22,20 @@ const UpdateAccountButton = () => {
     }));
   };
 
+  const clearFields = () => {
+    setFormData({
+      firstname: "",
+      lastname: "",
+      email: "",
+      password: "",
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
+    setMessage("");
 
     try {
       const response = await fetch(`/api/account/${user.appUserID}/updateAccountDetails`, {
@@ -41,63 +51,29 @@ const UpdateAccountButton = () => {
       }
 
       console.log("Account updated successfully!");
+      setMessage("Message Sent!"); 
     } catch (error) {
       console.error("Error:", error);
       setError(error.message);
     } finally {
       setIsLoading(false);
     }
+    clearFields();
   };
 
   return (
     <div>
-      <button onClick={() => setIsVisible(!isVisible)}>Update Account</button>  {/* Toggle button */}
-      {isVisible && (  
+      <button onClick={() => setIsVisible(!isVisible)}>Update Account</button>
+      {isVisible && (
         <div>
           <form onSubmit={handleSubmit}>
-          <div>
-          <label>
-            First Name:
-            <input
-              type="text"
-              name="firstname"
-              value={formData.firstname}
-              onChange={handleChange}
-            />
-          </label>
-          <br />
-          <label>
-            Last Name:
-            <input
-              type="text"
-              name="lastname"
-              value={formData.lastname}
-              onChange={handleChange}
-            />
-          </label>
-          <br />
-          <label>
-            Email:
-            <input
-              type="text"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </label>
-          <br />
-          <label>
-            Password:
-            <input
-              type="text"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
+            <div>
+              {/* Your input fields here */}
+            </div>
             <button type="submit">Submit</button>
           </form>
+          {message && <p>{message}</p>}
+          {error && <p>{error}</p>}
         </div>
       )}
     </div>

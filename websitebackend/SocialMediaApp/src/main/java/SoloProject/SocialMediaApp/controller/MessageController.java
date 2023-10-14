@@ -44,13 +44,6 @@ public class MessageController {
     }
 
 
-
-    @GetMapping("/message/{userId}/{messageId}")
-    public ResponseEntity<Message> getMessageById(@PathVariable Long userId, @PathVariable Long messageId) {
-        return messageService.getMessageById(userId, messageId);
-    }
-
-
     @PostMapping("/message/{userId}/sendMessage")
     public ResponseEntity<Message> sendMessage(
             @PathVariable Long userId,

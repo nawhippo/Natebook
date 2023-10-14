@@ -14,6 +14,14 @@ public class Comment {
         reactions = new HashMap<>();
     }
 
+    public Long getPostid() {
+        return postid;
+    }
+
+    public void setPostid(Long postid) {
+        this.postid = postid;
+    }
+
     @ElementCollection
     @MapKeyColumn(name="user_id")
     @Column(name="action")
@@ -42,7 +50,16 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @Column
+    private Long postid;
+
+    @Column
+    private String commenterusername;
+
+
     //for display purposes
+    @Column
     Long commenterid;
 
 
@@ -64,23 +81,6 @@ public class Comment {
     }
 
 
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public AppUser getAppUser() {
-        return appUser;
-    }
-
-    public void setAppUser(AppUser appUser) {
-        this.appUser = appUser;
-    }
-
     public String getContent() {
         return content;
     }
@@ -97,17 +97,6 @@ public class Comment {
         this.dislikes = dislikes;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    @JsonBackReference
-    private Post post;
-
-
-
-    @OneToOne
-    @JoinColumn(name ="user_id")
-    @JsonIgnore
-    private AppUser appUser;
     @Column
     private String content;
 
@@ -132,9 +121,6 @@ public class Comment {
     public void setDislikesCount(int dislikesCount) {
         this.dislikesCount = dislikesCount;
     }
-
-    @Column
-    private String commenterusername;
 
     public void addReaction(Long userId, String action) {
         System.out.println("Before Add: Likes: " + likesCount + ", Dislikes: " + dislikesCount);
