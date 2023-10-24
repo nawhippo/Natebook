@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SocialMediaApp/SocialMediaApp.iml" filepath="$PROJECT_DIR$/SocialMediaApp/SocialMediaApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/websitebackend.iml" filepath="$PROJECT_DIR$/.idea/websitebackend.iml" />
+    </modules>
+  </component>
+</project>
