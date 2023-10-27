@@ -1,31 +1,38 @@
 package SoloProject.SocialMediaApp.service;
 import org.springframework.http.ResponseEntity;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class EmailSenderService {
+
+    private Properties properties;
     public ResponseEntity<?> sendEmail(String userEmail) {
         String to = userEmail;
-        //how to actually authorize email with this, gmail method again potentially.
-        String from = "";
+        String from = "nateapplications@gmail.com";
+        String password = "wwjx fxad xcfn xtww";
+
         String host = "localhost";
-        Properties properties = System.getProperties();
+        Properties properties = new Properties();
         properties.setProperty("mail.smtp.host", host);
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
 
-        Session session = Session.getDefaultInstance(properties);
-
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        });
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject("Recovery Password");
 
-            String recoveryPassword = "your_recovery_password"; // Define the recovery password
+            String recoveryPassword = "your_recovery_password";
             message.setText("This is your recovery password: " + recoveryPassword);
 
             Transport.send(message);
@@ -33,8 +40,6 @@ public class EmailSenderService {
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
-
-        // You might want to return a response entity based on the success or failure of the email sending
         return ResponseEntity.ok("Email sent successfully to " + userEmail);
     }
 }

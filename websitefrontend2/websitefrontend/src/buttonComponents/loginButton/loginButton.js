@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
 import GoogleSignInButton from "../googleSigninButton/googleSignInButton";
+import ForgotPasswordButton from "../forgotPasswordButton/forgotPasswordButton";
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false); 
   const [username, setUsername] = useState('');
@@ -74,6 +75,7 @@ const LoginButton = () => {
                 {error && <p style={{ color: 'red' }}>{error}</p>}
               </form>
               <GoogleSignInButton />
+              <ForgotPasswordButton />
             </div>
         )}
       </div>

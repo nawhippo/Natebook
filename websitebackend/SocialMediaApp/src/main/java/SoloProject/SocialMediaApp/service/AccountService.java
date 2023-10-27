@@ -114,6 +114,7 @@ public class AccountService {
     public ResponseEntity<AppUser> forgotPassword(Long userId) {
         AppUser user = appUserRepository.findByAppUserID(userId);
         String email = user.getEmail();
-        return emailSenderService.sendEmail(email);
+        emailSenderService.sendEmail(email);
+        return ResponseEntity.ok(user);
     }
 }
