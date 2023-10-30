@@ -9,8 +9,6 @@ import SoloProject.SocialMediaApp.service.AppUserSearchService;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -62,8 +60,9 @@ public class AccountController {
         return ResponseEntity.ok(appUser);
     }
     @PutMapping("/account/{userId}/ForgotPassword")
-    public ResponseEntity<AppUser> ForgotPassword(@PathVariable Long userId) {
-        return accountservice.forgotPassword(userId);
+    public ResponseEntity<AppUser> ForgotPassword(@RequestBody Map<String, String> formData) {
+        String email = formData.get("email");
+        return accountservice.forgotPassword(email);
     }
 
     @PutMapping("/account/{userId}/updateAccountDetails")
@@ -75,7 +74,7 @@ public class AccountController {
         return accountservice.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword);
     }
 
-    //need more authorization for this.
+
     @DeleteMapping("/account/{userId}/deleteAccount")
     public ResponseEntity<AppUser> deleteAccount(@PathVariable Long userId){
        return accountservice.deleteAccount(userId);
