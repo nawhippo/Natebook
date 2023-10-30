@@ -3,6 +3,7 @@ import { useUserContext } from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
 import GoogleSignInButton from "../googleSigninButton/googleSignInButton";
 import ForgotPasswordButton from "../forgotPasswordButton/forgotPasswordButton";
+import styles from "./loginButton.module.css"
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false); 
   const [username, setUsername] = useState('');
@@ -60,22 +61,26 @@ const LoginButton = () => {
       <div>
         <button onClick={() => setIsVisible(!isVisible)}>Login</button> {/* Toggle button */}
         {isVisible && (
-            <div>
-              <h2>Login</h2>
-              <form onSubmit={handleLogin}>
-                <div>
-                  <label>Username:</label>
-                  <input type="text" name="username" value={username} onChange={handleInputChange} />
-                </div>
-                <div>
-                  <label>Password:</label>
-                  <input type="password" name="password" value={password} onChange={handleInputChange} />
-                </div>
-                <button type="submit">Login</button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-              </form>
-              <GoogleSignInButton />
-              <ForgotPasswordButton />
+            <div className={styles.overlay}>
+              <div className={styles.loginFormContainer}>
+                <button className={styles.closeButton} onClick={() => setIsVisible(false)}>X</button>
+                <h2>Login</h2>
+                <form onSubmit={handleLogin}>
+                  <div className={styles.inputGroup}>
+                    <label>Username:</label>
+                    <input type="text" name="username" value={username} onChange={handleInputChange} />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Password:</label>
+                    <input type="password" name="password" value={password} onChange={handleInputChange} autoComplete={"off"} />
+                  </div>
+                  <div className={styles.buttonContainer}>
+                    <button type="submit">Login</button>
+                    <ForgotPasswordButton />
+                  </div>
+                  {error && <p style={{ color: 'red' }}>{error}</p>}
+                </form>
+              </div>
             </div>
         )}
       </div>
