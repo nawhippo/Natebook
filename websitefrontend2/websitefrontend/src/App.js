@@ -10,6 +10,7 @@ import MessagesPage from './pages/messagePage/MessagesPage';
 import ProfilePage from './pages/profilePage/profilePage';
 import LoginPage from './pages/loginPage/loginPage';
 import Banner from "./banners/websiteBanner"
+import styles from "./global.css";
 class App extends Component {
   render() {
     return (
