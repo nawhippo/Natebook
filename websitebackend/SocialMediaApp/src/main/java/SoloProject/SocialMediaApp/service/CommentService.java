@@ -1,14 +1,10 @@
 package SoloProject.SocialMediaApp.service;
 
-import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.Comment;
-import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CommentRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public class CommentService {
-    //comment gives commenter id, the id should be the posterid
+
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
 
