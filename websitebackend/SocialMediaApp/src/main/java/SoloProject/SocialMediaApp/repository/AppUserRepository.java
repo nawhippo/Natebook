@@ -14,6 +14,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     List<AppUser> findByLastname(String lastName);
     AppUser findByUsername(String username);
 
+    AppUser findByEmail(String Email);
     AppUser findByAppUserID(long uid);
 
     @Query("SELECT u FROM AppUser u WHERE u.firstname = :firstname AND u.lastname = :lastname")
