@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Controller
 @RequestMapping("/api") // The base path for all endpoints in this controller
@@ -25,6 +24,7 @@ public class SecurityController {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
         AppUser user = appUserRepository.findByUsername(username);
+        user.setOnline(true);
         if (user != null) {
             if(user.isGoogleUser){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Invalid username or password\"}");
@@ -38,22 +38,13 @@ public class SecurityController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Invalid username or password\"}");
     }
 
-    @PostMapping("/loginwithGoogle")
-    public ResponseEntity<?> handleGoogleLogin(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String email) {
-        // Create username from email
-        String username = email.split("@")[0];
-
-        AppUser existingUser = appUserRepository.findByUsername(username);
-        if (existingUser != null) {
-            // User already exists, update if needed
-            return ResponseEntity.ok(existingUser);
-        } else {
-            // Create a new user account with the provided information
-            // You may need to adjust the logic in accountService.createAccountFromUser
-            // to handle the provided user information.
-            return accountService.createAccountFromGoogle(firstName, lastName, email);
-        }
+    @PostMapping("/{userid}/logout")
+    public ResponseEntity<?> handleLogout(@PathVariable long userid) {
+        AppUser user = appUserRepository.findByAppUserID(userid);
+        user.setOnline(false);
+        return ResponseEntity.ok(user);
     }
+
 
 
     @GetMapping("/access-denied")
@@ -73,4 +64,5 @@ public class SecurityController {
             return this.password;
         }
     }
+
 }
