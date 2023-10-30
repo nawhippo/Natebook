@@ -9,7 +9,7 @@ import './banner.css'
 
 const Banner = () => {
   const history = useHistory();
-  const { user } = useUserContext(); 
+  const { user } = useUserContext();
   const isLoggedIn = !!user;
 
   const handleLinkClick = (url) => {
@@ -18,17 +18,17 @@ const Banner = () => {
 
   return (
     <div className="banner">
-      <h1>NateBook</h1>
-      <button onClick={() => handleLinkClick('/AllUsersPage')}>Users</button>
-      <button onClick={() => handleLinkClick('/Account')}>Account</button>
-      <button onClick={() => handleLinkClick('/Messages')}>View Messages</button>
-      <button onClick={() => handleLinkClick('/Feed')}>View Feed</button>
+      <h1 className="title">NateBook</h1>
+      <button className="button-common" onClick={() => handleLinkClick('/AllUsersPage')}>Users</button>
+      <button className="button-common" onClick={() => handleLinkClick('/Feed')}>View Feed</button>
       <FriendReqCounter></FriendReqCounter>
-      <button onClick={() => handleLinkClick('/Friends')}>Friends</button>
 
       {isLoggedIn ? (
         <div>
         <p>Logged in as : {user.username} </p>
+            <button className="button-common" onClick={() => handleLinkClick('/Account')}>Account</button>
+            <button className="button-common" onClick={() => handleLinkClick('/Messages')}>View Messages</button>
+            <button className="button-common" onClick={() => handleLinkClick('/Friends')}>Friends</button>
         <LogoutButton />
         </div>
       ) : (
