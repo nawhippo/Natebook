@@ -37,7 +37,7 @@ const GetAllFriends = () => {
       }
     };
     fetchData();
-  }, [user]);
+  }, [user, allFriendsData]);
 
   const filteredFriends = searchTerm
     ? allFriendsData.filter(friend =>
@@ -77,6 +77,7 @@ const GetAllFriends = () => {
                 <li key={friend.id}>
                   <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
                   <p>{friend.email}</p>
+                  <p>{friend.isOnline}</p>
                   <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
                   <CreateMessageForm recipient={friend.username} />
                 </li>
