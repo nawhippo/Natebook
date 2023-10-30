@@ -1,36 +1,51 @@
-import {react, useEffect, useState, useContext} from 'react';
-import {useUserContext} from "../../pages/usercontext/UserContext";
+import React, { useEffect, useState, useContext } from 'react';
+
 const ForgotPasswordButton = () => {
-    //should display whether operation was successful.
+    // Should display whether the operation was successful.
     const [buttonUsed, setButtonUsed] = useState('');
-    const [user, setUser] = useUserContext();
+    const [email, setEmail] = useState('');
+    const [visible, setVisible] = useState(false);
+    // Implement email sending
+    const handleButtonClick = () => {
+        if (visible) {
+            fetch(`/account/ForgotPassword`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email})
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Response was not ok!');
+                    }
+                    console.log('Email sent successfully!');
+                    setButtonUsed('Email sent Successfully!');
+                })
+                .catch(error => {
+                    console.log('Email Send Failure!');
+                    setButtonUsed('OTP Message failed to send.');
+                });
+        }
+        setVisible(true);
+    };
 
-
-//implement email sending
- const handleButtonClick = () => {
-     fetch(`/account/${user.appUserID}/ForgotPassword`, {
-         METHOD: 'PUT',
-     })
-         .then(response  => {
-             if (!response.ok) {
-                 throw new Error('Response was not ok!')
-             }
-             console.log('Email sent successfully!');
-             setButtonUsed('Email sent Successfully!');
-         })
-         .catch(error => {
-             console.log('Email Send Failure!')
-             setButtonUsed('OTP Message failed to send.')
-         });
- };
-
-    return(
-    <div>
-        <button onClick={handleButtonClick}>Forgot your Password?</button>
-        {buttonUsed && <p>{buttonUsed}</p>}
-    </div>
-);
+    return (
+        <div>
+            {visible ?
+            <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+            /> : ''
+            }
+            <button onClick={handleButtonClick}>
+                {visible ? 'Send OTP' : 'Forgot your Password?'}
+                </button>
+            {buttonUsed && <p>{buttonUsed}</p>}
+        </div>
+    );
 };
-
 
 export default ForgotPasswordButton;
