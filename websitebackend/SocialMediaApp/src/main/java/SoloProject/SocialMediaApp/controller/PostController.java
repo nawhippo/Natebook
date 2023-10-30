@@ -1,9 +1,8 @@
 package SoloProject.SocialMediaApp.controller;
 
-import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.Comment;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,11 +18,13 @@ public class PostController {
     private final PostService postService;
 
     private final AppUserRepository appUserRepository;
+    private final CompressedImageRepository compressedImageRepository;
 
     @Autowired
-    public PostController(PostService postService, AppUserRepository appUserRepository) {
+    public PostController(PostService postService, AppUserRepository appUserRepository, CompressedImageRepository compressedImageRepository) {
         this.postService = postService;
         this.appUserRepository = appUserRepository;
+        this.compressedImageRepository = compressedImageRepository;
     }
 
 
@@ -39,7 +40,6 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 
 
     @DeleteMapping("/post/{postId}/deletePost")
@@ -99,6 +99,12 @@ public class PostController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }
+
+
+
+
+
+
 
     }
 
