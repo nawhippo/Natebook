@@ -29,6 +29,10 @@ public class AccountService {
         return ResponseEntity.ok(user);
     }
 
+    public AppUser getAccountDetails(String username) {
+        AppUser user = appUserRepository.findByUsername(username);
+        return user;
+    }
 
     @Transactional
     public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String newPassword) {
@@ -111,9 +115,8 @@ public class AccountService {
         return ResponseEntity.ok(user);
     }
 
-    public ResponseEntity<AppUser> forgotPassword(Long userId) {
-        AppUser user = appUserRepository.findByAppUserID(userId);
-        String email = user.getEmail();
+    public ResponseEntity<AppUser> forgotPassword(String email) {
+        AppUser user = appUserRepository.findByEmail(email);
         emailSenderService.sendEmail(email);
         return ResponseEntity.ok(user);
     }
