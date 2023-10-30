@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useUserContext } from "../../pages/usercontext/UserContext";
-import './createAccount.css';
-
+import styles from './createAccount.module.css';
 const CreateAccount = () => {
   const [isVisible, setIsVisible] = useState(false); 
   const [formData, setFormData] = useState({
@@ -60,65 +59,42 @@ const CreateAccount = () => {
   };
 
   return (
-    <div>
-      <button onClick={() => setIsVisible(!isVisible)}>Create Account</button> 
-       {isVisible && (
-        <form onSubmit={handleSubmit} className="createAccountForm">
-          <div>
-            <label>
-              First Name:
-              <input
-                type="text"
-                name="firstname"
-                value={formData.firstname}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              Last Name:
-              <input
-                type="text"
-                name="lastname"
-                value={formData.lastname}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              User Name:
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              Email:
-              <input
-                type="text"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              Password:
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </label>
-          </div>
-          <button type="submit">Submit</button>
-        </form>
-      )}
-    </div>
+      <div>
+        <button onClick={() => setIsVisible(!isVisible)}>Create Account</button>
+        {isVisible && (
+            <div className={styles.overlay}>
+              <div className={styles.createAccountFormContainer}>
+                <button className={styles.closeButton} onClick={() => setIsVisible(false)}>X</button>
+                <h2>Create Account</h2>
+                <form onSubmit={handleSubmit} className="createAccountForm">
+                  <div className={styles.inputGroup}>
+                    <label>First Name:</label>
+                    <input type="text" name="firstname" value={formData.firstname} onChange={handleChange} />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Last Name:</label>
+                    <input type="text" name="lastname" value={formData.lastname} onChange={handleChange} />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>User Name:</label>
+                    <input type="text" name="username" value={formData.username} onChange={handleChange} />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Email:</label>
+                    <input type="text" name="email" value={formData.email} onChange={handleChange} />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Password:</label>
+                    <input type="password" name="password" value={formData.password} onChange={handleChange} />
+                  </div>
+                  <div className={styles.buttonContainer}>
+                    <button type="submit">Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+        )}
+      </div>
   );
 };
 
