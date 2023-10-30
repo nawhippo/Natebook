@@ -8,6 +8,8 @@ import java.util.*;
 @Entity
 @Table(name = "posts")
 public class Post {
+    private ArrayList<Long> images;
+
     private boolean isFriendsOnly(){
         return friendsOnly;
     }
@@ -186,4 +188,10 @@ public class Post {
             }
         }
     }
+
+
+    public void addImage(Long id){
+        this.images.add(id);
+    }
+
 }
