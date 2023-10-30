@@ -1,23 +1,35 @@
 package SoloProject.SocialMediaApp.service;
 
-import SoloProject.SocialMediaApp.models.*;
+import SoloProject.SocialMediaApp.models.AppUser;
+import SoloProject.SocialMediaApp.models.CompressedImage;
+import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.*;
 
 @Service
 public class PostService {
 
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
+    private final CompressedImageRepository compressedImageRepository;
+
+    private final CompressionService compressionService;
 
     @Autowired
-    public PostService(AppUserRepository repository, PostRepository postRepository) {
+    public PostService(AppUserRepository repository, PostRepository postRepository, CompressedImageRepository compressedImageRepository, CompressionService compressionService) {
         this.appUserRepository = repository;
         this.postRepository = postRepository;
+        this.compressedImageRepository = compressedImageRepository;
+        this.compressionService = compressionService;
     }
 
 
@@ -109,5 +121,13 @@ public void deletePost(Long postId) {
 
 
 
-
+public ResponseEntity<Post> addImagestoPost(Long postId, ArrayList<MultipartFile> Photos) throws IOException {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        for(MultipartFile photo : Photos){
+          CompressedImage compressedImage = compressionService.compressImage(photo);
+          compressedImage.setAttachedToId(postId);
+          compressedImageRepository.save(compressedImage);
+        }
+        return (ResponseEntity<Post>) ResponseEntity.notFound();
+}
 }
