@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+
 @SpringBootApplication
 @EntityScan(basePackages = "SoloProject.SocialMediaApp.models")
 public class SocialMediaAppApplication {
