@@ -32,13 +32,13 @@ public class AddressBookController {
 
 
     @GetMapping("/publicFeed")
-    public ResponseEntity<List<Post>> getAllPublicPosts() {
+    public ResponseEntity<?> getAllPublicPosts() {
         List<Post> publicPosts = postService.getAllPublicPosts();
 
         if (publicPosts != null && !publicPosts.isEmpty()) {
             return new ResponseEntity<>(publicPosts, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No public posts found", HttpStatus.NOT_FOUND);
         }
     }
 

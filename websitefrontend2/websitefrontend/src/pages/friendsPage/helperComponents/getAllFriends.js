@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../usercontext/UserContext';
-import { useHistory } from 'react-router-dom';
 import CreateMessageForm from '../../../buttonComponents/createMessageButton/createMessageButton';
 import DeleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
+import SearchIcon from '@mui/icons-material/Search';
+
 const GetAllFriends = () => {
   const { user } = useUserContext();
   const [allFriendsData, setAllFriendsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isTabOpen, setIsTabOpen] = useState(false); 
-  const history = useHistory();
 
   const removeFriend = (username) => {
     setAllFriendsData(prevFriends => prevFriends.filter(friend => friend.username !== username));
@@ -37,58 +36,61 @@ const GetAllFriends = () => {
       }
     };
     fetchData();
-  }, [user, allFriendsData]);
+  }, [user]);
 
-  const filteredFriends = searchTerm
-    ? allFriendsData.filter(friend =>
-        friend.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        friend.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        friend.lastname.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : allFriendsData;
-
-
-  const toggleTab = () => {
-    setIsTabOpen(!isTabOpen);
+  const handleSearch = () => {
+    setAllFriendsData(prevFriends =>
+        prevFriends.filter(friend =>
+            friend.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            friend.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            friend.lastname.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+    );
   };
 
-  return (
-    <div>
-      <button onClick={toggleTab}>
-        {isTabOpen ? "Hide All Friends" : "Show All Friends"}
-      </button>
+  const filteredFriends = searchTerm
+      ? allFriendsData.filter(friend =>
+          friend.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          friend.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          friend.lastname.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      : allFriendsData;
 
-      {isTabOpen && (
-        <div>
-          <h1>All Friends</h1>
+  return (
+      <div>
+        <h1>Friends</h1>
+        <div className="search-bar-container">
           <input
-            type="text"
-            placeholder="Search by name or username"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+              className="search-input"
+              type="text"
+              placeholder="Search by name or username"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
           />
-          {isLoading ? (
+          <button className="search-button" onClick={handleSearch}>
+            <SearchIcon />
+          </button>
+        </div>
+        {isLoading ? (
             <div>Loading...</div>
-          ) : error ? (
+        ) : error ? (
             <div>Error: {error}</div>
-          ) : filteredFriends.length > 0 ? (
+        ) : filteredFriends.length > 0 ? (
             <ul>
               {filteredFriends.map(friend => (
-                <li key={friend.id}>
-                  <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
-                  <p>{friend.email}</p>
-                  <p>{friend.isOnline}</p>
-                  <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
-                  <CreateMessageForm recipient={friend.username} />
-                </li>
+                  <li key={friend.id}>
+                    <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
+                    <p>{friend.email}</p>
+                    <p>{friend.isOnline ? 'Online' : 'Offline'}</p>
+                    <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
+                    <CreateMessageForm recipient={friend.username} />
+                  </li>
               ))}
             </ul>
-          ) : (
+        ) : (
             <p>No friends found.</p>
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
   );
 };
 

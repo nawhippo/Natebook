@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
+import '../../global.css'
+import './CreatePostButton.css'
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import PublicIcon from '@mui/icons-material/Public';
+import PublicOffIcon from '@mui/icons-material/PublicOff';
 
 const CreatePostButton = () => {
   const { user } = useUserContext(); 
@@ -22,9 +27,9 @@ const CreatePostButton = () => {
     const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
     setDateTime(formattedDateTime);
   }, []);
-  
-  const handlePublicStatusChange = (e) => {
-    setPublicStatus(e.target.checked);
+
+  const handlePublicStatusToggle = () => {
+    setPublicStatus(!publicStatus);
   };
 
 
@@ -52,7 +57,7 @@ const handleCreatePost = async () => {
         title: title,
         description: description,
         dateTime: formattedDateTime,
-        friendsOnly: publicStatus,
+        friendsOnly: !publicStatus,
         posterUsername: user.username
       }),
     });
@@ -70,48 +75,43 @@ const handleCreatePost = async () => {
   }
 };
 
-  
-return (
-  <div>
-    <button onClick={toggleForm}>Create New Post</button>
-    <div>
-      {showForm && (
-        <div>
-          <div>
-            <input
-              type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div>
+
+  return (
+      <div className="create-post-container">
+        <PostAddIcon className="button" onClick={toggleForm}/>
+        {showForm && (
+            <div>
+              <div>
+                <input
+                    className="post-input"
+                    type="text"
+                    placeholder="Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+              <div>
             <textarea
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+                className="post-textarea"
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
             />
-          </div>
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                checked={publicStatus}
-                onChange={handlePublicStatusChange}
-              /> Public?
-            </label>
-          </div>
-          <div>
-            <button onClick={handleCreatePost}>Submit Post</button>
-          </div>
-          <div>
-            {message && <p>{message}</p>}
-          </div>
-        </div>
-      )}
-    </div>
-  </div>
-);
+              </div>
+              <div className="public-status-icon" onClick={handlePublicStatusToggle}>
+                {publicStatus ? <PublicIcon /> : <PublicOffIcon />}
+                <span>{publicStatus ? 'Public' : 'Private'}</span>
+              </div>
+              <div>
+                <button className="button" onClick={handleCreatePost}>Submit Post</button>
+              </div>
+              <div>
+                {message && <p className="create-post-message">{message}</p>}
+              </div>
+            </div>
+        )}
+      </div>
+  );
 };
 
 export default CreatePostButton;

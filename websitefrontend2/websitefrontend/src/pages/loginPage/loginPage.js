@@ -9,7 +9,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const { setUser } = useUserContext();
+    const { setUser, user } = useUserContext();
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -48,6 +48,7 @@ const LoginPage = () => {
             .then((data) => {
                 setUser(data);
                 Cookies.set('userData', JSON.stringify(data));
+                console.log(Cookies);
             })
             .catch((error) => {
                 console.error('Error logging in:', error);

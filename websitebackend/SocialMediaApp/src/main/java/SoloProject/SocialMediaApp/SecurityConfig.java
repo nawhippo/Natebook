@@ -31,14 +31,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
         http
-                .csrf()
-                .csrfTokenRepository(csrfTokenRepository())
-                .and()
+                .csrf().disable()
                 .authenticationProvider(daoAuthenticationProvider(passwordEncoder))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/login","/account/createAccount").permitAll()
-                        .anyRequest().authenticated()
-                );
+                   //     .requestMatchers("/api/login","/api/account/createAccount").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .httpBasic().disable() // Disable HTTP Basic authentication
+                .formLogin().disable();
+
         return http.build();
     }
 

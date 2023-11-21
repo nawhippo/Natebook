@@ -38,7 +38,7 @@ const AccountPage = () => {
           setIsLoading(false);
         });
     }
-  }, [user, accountData]);
+  }, [user]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -58,7 +58,7 @@ const AccountPage = () => {
       <p>First Name: {accountData.firstname}</p>
       <p>Last Name: {accountData.lastname}</p>
       <p>Email: {accountData.email}</p>
-      <p>Password: {accountData.password}</p>
+      <p>Password: ****** </p>
       </overlay>
 }
       <UpdateAccountButton></UpdateAccountButton>

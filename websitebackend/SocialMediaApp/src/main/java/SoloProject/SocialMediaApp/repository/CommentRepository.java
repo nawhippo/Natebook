@@ -16,4 +16,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.commenterid = ?1")
     void deleteByCommenterId(Long commenterId);
 
+    List<Comment> findByPostId(Long postId);
 }

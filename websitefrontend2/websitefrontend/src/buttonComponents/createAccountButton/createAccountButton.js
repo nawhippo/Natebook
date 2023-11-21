@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useUserContext } from "../../pages/usercontext/UserContext";
 import styles from './createAccount.module.css';
-
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 const CreateAccount = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -63,7 +63,7 @@ const CreateAccount = () => {
 
   return (
       <div>
-        <button onClick={() => setIsVisible(!isVisible)}>Create Account</button>
+        <AccountBoxIcon className="button-common" onClick={() => setIsVisible(!isVisible)} style={{ width: '50px', height: 'auto', background: 'none', color: 'white' }} />
         {isVisible && (
             <div className={styles.overlay}>
               <div className={styles.createAccountFormContainer}>

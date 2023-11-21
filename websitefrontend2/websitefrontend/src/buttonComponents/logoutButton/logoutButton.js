@@ -1,38 +1,41 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useUserContext } from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
-
+import {useUserContext} from "../../pages/usercontext/UserContext";
+import LogoutIcon from '@mui/icons-material/Logout';
+import styles from "./logoutButton.css"
 const LogoutButton = () => {
-  const {user, clearUserContext } = useUserContext();
   const history = useHistory();
-  const [error, setError] = useState();
-  const [buttonUsed, setButtonUsed] = useState('');
+  const [error, setError] = useState('');
+  const { clearUserContext } = useUserContext();
   const handleLogout = () => {
-    const fetch = ((`/api/${user.appUserID}/logout`), {
-      Method: "PUT"})
-      .then(response => {
-        if(!response.ok){
-          throw new Error('Response was not ok!')
+    const userData = Cookies.get('userData');
+    const userId = userData ? JSON.parse(userData).appUserID : null;
+
+    if (userId) {
+      fetch(`/api/${userId}/logout`, { method: "POST" })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Response was not ok!');
+            }
+            console.log('Logged out successfully');
+            Cookies.remove('userData'); // Remove user data from cookie
+            history.push('/Feed');
+            window.location.reload();
+          })
+          .catch(error => {
+            console.error('Logout failed:', error);
+            setError('Logout failed');
+          });
+    } else {
+      console.error('No user data found for logout');
+      setError('No user data found');
     }
-          console.log('Logged out successfully');
-          setButtonUsed('Logged out successfully');
-        })
-    .catch(error => {
-    console.log('Logout failed');
-    setButtonUsed('Logout failed');
-    });
-    };
+  };
 
-    clearUserContext();
-    Cookies.remove('userData');
-    history.push('/Feed');
-
-  return(
-      <div>
-    <button onClick={handleLogout}>Logout</button>
-        {buttonUsed && <p>{buttonUsed}</p>}
-      </div>
+  return (
+        <LogoutIcon className="button-common" style={{ width: '50px', height: '50px', background: 'none', color: 'white' }} onClick={handleLogout}>Logout</LogoutIcon>
   );
 };
+
 export default LogoutButton;

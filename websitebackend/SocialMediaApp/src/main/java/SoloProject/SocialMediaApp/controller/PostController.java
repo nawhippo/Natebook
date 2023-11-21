@@ -1,9 +1,12 @@
 package SoloProject.SocialMediaApp.controller;
 
+import SoloProject.SocialMediaApp.models.Comment;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import SoloProject.SocialMediaApp.repository.CommentRepository;
 import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.service.PostService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +23,25 @@ public class PostController {
     private final AppUserRepository appUserRepository;
     private final CompressedImageRepository compressedImageRepository;
 
+    private final CommentRepository commentRepository;
+
     @Autowired
-    public PostController(PostService postService, AppUserRepository appUserRepository, CompressedImageRepository compressedImageRepository) {
+    public PostController(PostService postService, AppUserRepository appUserRepository, CompressedImageRepository compressedImageRepository, CommentRepository commentRepository) {
         this.postService = postService;
         this.appUserRepository = appUserRepository;
         this.compressedImageRepository = compressedImageRepository;
+        this.commentRepository = commentRepository;
     }
 
+    @GetMapping("/post/{postId}/comments")
+    public ResponseEntity<List<Comment>> getComments(@PathVariable("postId") Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        if (comments != null && !comments.isEmpty()) {
+            return new ResponseEntity<>(comments, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     @PostMapping("/post/{userId}/createPost")
     public ResponseEntity<Post> createPost(

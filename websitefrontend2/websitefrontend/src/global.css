@@ -14,20 +14,57 @@ button {
     cursor: pointer;
     transition: transform 0.5s, box-shadow 0.24s;
 
-    background-image: radial-gradient(circle, #FF4500 5%, transparent 5%),
-    radial-gradient(circle, transparent 5%, darkred 5%);
     background-size: 5px 5px;
     background-position: 0 0, 7.5px 7.5px;
 }
 
 button:hover {
-    transform: translateY(-9px);
-    box-shadow: 0 5px #cc3700;
+    transform: translateY(-3px);
+    box-shadow: 0 3px #cc3700 !important;
 }
 
 button:active {
     transform: translateY(2px);
     box-shadow: 0 2px #cc3700;
+}
+
+
+.closeButton:hover {
+    background-color: #FF9E80; /* Lighter orange on hover */
+}
+
+/* PublicFeed.css */
+
+.search-bar-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0px !important;
+}
+
+.search-input {
+    height: 40px;
+    flex-grow: 1;
+    padding: 0 !important;
+    border: 0 solid #ccc;
+    border-radius: 4px 0 0 4px !important; /* Round only the left side corners */
+    margin-right: 0px !important; /* Overlap the border of the button */
+}
+
+.search-button {
+    height: 40px;
+    padding: 0 !important; /* Remove padding */
+    border: 1px solid #ccc; /* Match input border */
+    border-radius: 0 4px 4px 0 !important; /* Round only the right side corners */
+    margin: 0;
+    color: white; /* Your preferred icon color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-input:focus {
+    outline: none; /* Optionally remove the outline on focus */
 }
 
 input[type="text"] {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 const ReactionButtons = ({ user, postId, posterId, commentId }) => {
   const [reactionState, setReactionState] = useState('None');
   const [localLikesCount, setLocalLikesCount] = useState(0);
@@ -39,8 +40,8 @@ const ReactionButtons = ({ user, postId, posterId, commentId }) => {
   return (
     <div>
       <p>Likes: {localLikesCount} Dislikes: {localDislikesCount}</p>
-      <button onClick={() => handleButtonClick('Like')}>Like</button>
-      <button onClick={() => handleButtonClick('Dislike')}>Dislike</button>
+      <ThumbUpOffAltIcon onClick={() => handleButtonClick('Like')}/>
+      <ThumbDownOffAltIcon onClick={() => handleButtonClick('Dislike')} />
     </div>
   );
 };

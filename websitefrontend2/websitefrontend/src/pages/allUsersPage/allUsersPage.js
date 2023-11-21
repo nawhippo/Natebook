@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useUserContext } from '../usercontext/UserContext';
 import SendFriendRequestButton from '../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton';
 import ViewProfileButton from '../../buttonComponents/viewProfileButton/viewProfileButton';
-
+import SearchIcon from '@mui/icons-material/Search'; // Import the search icon
+import './allUsersPage.css'
 const AllUsersPage = () => {
   const [addressBookData, setAddressBookData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); 
+  const [searchTerm, setSearchTerm] = useState('');
   const { user } = useUserContext();
 
   useEffect(() => {
@@ -31,10 +31,14 @@ const AllUsersPage = () => {
   }, []);
 
   const filteredUsers = searchTerm
-    ? addressBookData.filter(user =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+      ? addressBookData.filter(userItem =>
+          userItem.username.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : addressBookData;
+      : addressBookData;
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -45,35 +49,45 @@ const AllUsersPage = () => {
   }
 
   return (
-    <div>
-      <p>{addressBookData && addressBookData.message}</p>
-      {user && (
-        <>
-          <h2>Website Users</h2>
-          <input
-            type="text"
-            placeholder="Search by username"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-          />
-          {filteredUsers && filteredUsers.length > 0 ? (
-            <ul>
-              {filteredUsers.map(userItem => ( 
-                <li key={userItem.appUserID}>
-                  {userItem.username} - {userItem.firstname} {userItem.lastname}
-                  <ViewProfileButton userid={userItem.appUserID} /> 
-                  {user.username !== userItem.username && (
-                    <SendFriendRequestButton username={userItem.username} />
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No website users found.</p>
-          )}
-        </>
-      )}
-    </div>
+      <div>
+        <p>{addressBookData && addressBookData.message}</p>
+        {user && (
+            <>
+              <h2>Users</h2>
+              <form onSubmit={handleSearch} className="search-bar-container">
+                <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Search by username"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                />
+                <button className="search-button" type="submit">
+                  <SearchIcon />
+                </button>
+              </form>
+              {filteredUsers && filteredUsers.length > 0 ? (
+                  <ul>
+                    {filteredUsers.map(userItem => (
+                        <li key={userItem.appUserID} className="user-item">
+        <span className="user-name">
+            {userItem.username} - {userItem.firstname} {userItem.lastname}
+        </span>
+                          <div className="button-group">
+                            <ViewProfileButton userid={userItem.appUserID} />
+                            {user.username !== userItem.username && (
+                                <SendFriendRequestButton username={userItem.username} />
+                            )}
+                          </div>
+                        </li>
+                    ))}
+                  </ul>
+              ) : (
+                  <p>No website users found.</p>
+              )}
+            </>
+        )}
+      </div>
   );
 };
 

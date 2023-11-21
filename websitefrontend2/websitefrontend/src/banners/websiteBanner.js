@@ -3,18 +3,25 @@ import LogoutButton from '../buttonComponents/logoutButton/logoutButton';
 import CreateAccount from '../buttonComponents/createAccountButton/createAccountButton';
 import FriendReqCounter from './notificationHelpers/friendRequestHelpers';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import Cookies from 'js-cookie'; // Import Cookies library
+import SettingsIcon from '@mui/icons-material/Settings';
+import PeopleIcon from '@mui/icons-material/People';
+import MessageIcon from '@mui/icons-material/Message';
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import './banner.css';
 import { useEffect, useState } from "react";
 import {useUserContext} from "../pages/usercontext/UserContext";
-
+import Cookies from 'js-cookie';
 const Banner = () => {
     const history = useHistory();
-    const { user } = useUserContext(); // Use useState to manage user data
-
+    const [userData, setUserData] = useState(null);
+    const { user } = useUserContext();
     useEffect(() => {
-        // Load user data from cookies when the component mounts
-    }, [user]);
+        const cookieUserData = Cookies.get('userData'); // Get user data from cookie
+        if (cookieUserData) {
+            setUserData(JSON.parse(cookieUserData)); // Parse and set user data from cookie
+        }
+    }, [user]); // Empty dependency array to run only once on mount
 
     const handleLinkClick = (url) => {
         history.push(url);
@@ -22,20 +29,16 @@ const Banner = () => {
 
     return (
         <div className="banner">
-            <h1 className="title">NateBook</h1>
-            <button className="button-common" onClick={() => handleLinkClick('/AllUsersPage')}>Users</button>
-            <button className="button-common" onClick={() => handleLinkClick('/Feed')}>View Feed</button>
-            <FriendReqCounter></FriendReqCounter>
-
-            {user !== null ? (
+            <h1 className="title">NateBook!</h1>
+            <PeopleIcon className="button-common" onClick={() => handleLinkClick('/AllUsersPage')} style={{ width: '50px', height: 'auto', background: 'none' }} />
+            <DynamicFeedIcon className="button-common" onClick={() => handleLinkClick('/Feed')} style={{ width: '50px', height: 'auto', background: 'none' }} />
+            <FriendReqCounter />
+            {userData !== null ? (
                 <div>
-                    <p>Logged in as: {user.username}</p>
-                    <button className="button-common" onClick={() => handleLinkClick('/Account')}>Account</button>
-                    <button className="button-common" onClick={() => handleLinkClick('/Messages')}>View Messages</button>
-                    <button className="button-common" onClick={() => handleLinkClick('/Friends')}>Friends</button>
+                    <MessageIcon className="button-common" onClick={() => handleLinkClick('/Messages')} style={{ width: '50px', height: 'auto', background: 'none' }} />
+                    <EmojiEmotionsIcon className="button-common" onClick={() => handleLinkClick('/Friends')} style={{ width: '50px', height: 'auto', background: 'none' }} />
                     <LogoutButton />
-                    <LoginButton />
-                    <CreateAccount />
+                    <SettingsIcon className="button-common" onClick={() => handleLinkClick('/Account')} style={{ width: '50px', height: 'auto', background: 'none' }} />
                 </div>
             ) : (
                 <>

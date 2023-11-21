@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
+import AddCommentIcon from '@mui/icons-material/AddComment';
 const CommentForm = ({ posterusername, postId }) => {
   const { user } = useUserContext();
   const [commentContent, setCommentContent] = useState('');
@@ -12,20 +13,19 @@ const CommentForm = ({ posterusername, postId }) => {
       return;
     }
     console.log("User before creating comment:", user);
-    const response = await fetch(`/api/post/${posterusername}/${postId}/createComment`, {
+    const response = await fetch(`/api/comment/${postId}/createComment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        commenterUsername: user.username,
+        commenterusername: user.username,
         content: commentContent,
       }),
     });
 
     if (response.ok) {
       console.log('Comment created successfully');
-      window.location.reload(true);
     } else {
       console.error('Failed to create comment');
     }
@@ -38,9 +38,9 @@ const CommentForm = ({ posterusername, postId }) => {
 
   return (
     <div>
-      <button onClick={() => setShowForm(!showForm)}>
+      <AddCommentIcon onClick={() => setShowForm(!showForm)}>
         {showForm ? "Or not..." : "Comment"}
-      </button>
+      </ AddCommentIcon>
       {showForm && (
         <form onSubmit={handleSubmit}>
           <label>

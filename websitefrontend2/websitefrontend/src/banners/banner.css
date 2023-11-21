@@ -1,5 +1,5 @@
 .banner {
-    background-color: grey;
+    background-color: darkorange;
     padding: 6px;
     text-align: left;
     text-decoration-color: bisque;
@@ -7,12 +7,16 @@
     font-weight: bold;
     border-radius: 0.5px;
     display: flex;
-    flex-direction: row;
+    flex-direction: row !important;
   }
 
 .title {
-font-size: 30px;
+    font-family: 'Comic Sans MS', 'Comic Neue', cursive; /* Fun, casual font */
+    color: #FFD700; /* Golden text */
+    text-shadow: 2px 2px 4px #000000; /* Slight shadow for depth */
+    font-size: 30px; /* Larger size for emphasis */
 }
+
 
 .dropbtn {
   cursor: pointer;
@@ -40,9 +44,8 @@ font-size: 30px;
 
 
 .button-common {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
+    padding: 10px 10px;
+    margin: 10px;
     background-color: #FF6D00;
     color: white;
     cursor: pointer;
@@ -53,6 +56,8 @@ font-size: 30px;
 
 .button-common:hover {
     background-color: #FF9E80;
+    transform: scale(1.05) translateY(-5px);
+    color: black;
 }
 
 .dropdown-content p:hover {
@@ -77,4 +82,8 @@ button {
 
 button:hover {
     background-color: #FF9E80; /* Lighter shade for hover effect */
+}
+img {
+    width: 10px;
+    length: 10px;
 }

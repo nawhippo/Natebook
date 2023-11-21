@@ -53,7 +53,7 @@ const FriendFeed = () => {
       <input 
         type="text" 
         value={searchTerm} 
-        placeholder="Search by poster username" 
+        placeholder="Search by Username"
         onChange={handleInputChange} 
       />
       

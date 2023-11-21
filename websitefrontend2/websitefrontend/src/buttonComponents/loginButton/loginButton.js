@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import GoogleSignInButton from "../googleSigninButton/googleSignInButton";
 import ForgotPasswordButton from "../forgotPasswordButton/forgotPasswordButton";
 import styles from "./loginButton.module.css"
+import LoginIcon from '@mui/icons-material/Login';
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false); 
   const [username, setUsername] = useState('');
@@ -37,29 +38,28 @@ const LoginButton = () => {
       },
       body: JSON.stringify(requestBody),
     })
-    .then((response) => {
-      if (response.ok) {
-        console.log('login successful');
-        return response.json();
-      } else {
-        setError('Invalid username or password.');
-        throw new Error('Invalid username or password.');
-      }
-    })
-    .then((data) => {
-      setUser(data);
-      Cookies.set('userData', JSON.stringify(data));
-    })
-    .catch((error) => {
-      console.error('Error logging in:', error);
-      setError('Error logging in. Please try again later.');
-    });
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            setError('Invalid username or password.');
+            throw new Error('Invalid username or password.');
+          }
+        })
+        .then((data) => {
+          console.log('Fetched data:', data);
+          setUser(data); // Update the user context with the fetched data
+          Cookies.set('userData', JSON.stringify(data)); // Store user data in a cookie
+        })
+        .catch((error) => {
+          console.error('Error logging in:', error);
+          setError('Error logging in. Please try again later.');
+        });
   };
-
 
   return (
       <div>
-        <button onClick={() => setIsVisible(!isVisible)}>Login</button> {/* Toggle button */}
+        <LoginIcon className="button-common" onClick = {() => setIsVisible(!isVisible)} style={{ width: '50px', height: 'auto', background: 'none', color: 'white' }} /> {/* Toggle button */}
         {isVisible && (
             <div className={styles.overlay}>
               <div className={styles.loginFormContainer}>

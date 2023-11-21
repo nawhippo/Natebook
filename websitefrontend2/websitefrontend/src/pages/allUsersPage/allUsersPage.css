@@ -1,0 +1,14 @@
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Aligns items vertically */
+    padding: 10px; /* Optional for spacing */
+}
+
+.user-name {
+    flex-grow: 1; /* Allows the username to take up available space */
+}
+
+.button-group {
+    /* If you need specific styling for the buttons container */
+}

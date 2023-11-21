@@ -12,9 +12,34 @@
     z-index: 1000; /* Ensures overlay is on top */
 }
 
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #FF6D00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    z-index: 3;
+    box-shadow: 0 3px black;
+    /* Add transition effect */
+    transition: transform 0.5s ease;
+
+    /* Button size and layout */
+    width: auto; /* or a specific width, e.g., 50px */
+    height: auto; /* or a specific height, e.g., 30px */
+}
+
+.closeButton:hover {
+    background-color: #FF9E80; /* Color change on hover */
+    color:black;
+}
+
 .loginFormContainer {
     background-color: antiquewhite; /* White background for the form */
-    padding: 20px;
+    padding: 10px;
     border-radius: 10px; /* Soften the edges a bit */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* A slight shadow to give depth */
     width: 500px;
@@ -24,11 +49,13 @@
     position:relative;
 }
 
+
 .inputGroup {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    transform: translateX(-50px)
 }
 
 .buttonContainer {
@@ -36,26 +63,30 @@
     flex-direction: column;
     padding: 10px 0;
     width: 250px;
-}
-
-.closeButton {
-    all: initial;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 2;
-    color: #555;
+    transform: translateX(50px)
 }
 
 .inputGroup label {
     width: 50px;
     font-size: 15px;
-    text-align: left;
+    text-align: center;
     margin-right: 50px;
+}
+.button-common {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    background-color: #FF6D00;
+    color: white;
+    cursor: pointer;
+    width: 100px;
+    height: 50px;
+
+}
+
+
+.button-common:hover {
+    background-color: #FF9E80;
 }
 
 .inputGroup input[type="text"],
