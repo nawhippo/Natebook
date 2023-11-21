@@ -9,6 +9,7 @@ import SoloProject.SocialMediaApp.service.AppUserSearchService;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,7 +20,8 @@ import java.util.Map;
 public class AccountController {
 
     private final AccountService accountservice;
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private AppUserSearchService appUserSearchService;
@@ -55,8 +57,9 @@ public class AccountController {
         String password = formData.get("password");
         String username = formData.get("username");
 
-        AppUser appUser = new AppUser(firstName, lastName, email, password, username);
-        accountservice.saveAccount(appUser);
+        String encodedPassword = passwordEncoder.encode(password);
+        AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
+        accountservice.saveAccount(appUser, encodedPassword);
         return ResponseEntity.ok(appUser);
     }
     @PutMapping("/account/{userId}/ForgotPassword")

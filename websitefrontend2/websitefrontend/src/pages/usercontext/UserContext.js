@@ -9,11 +9,11 @@ export function useUserContext() {
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  
+
   useEffect(() => {
-    console.log("User Data:", user);
+    console.log("User Data set:", user);
     const userData = Cookies.get('userData');
-    if(userData){
+    if(userData && !user){
       setUser(JSON.parse(userData));
     }
   }, []);

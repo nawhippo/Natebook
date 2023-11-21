@@ -6,9 +6,12 @@ import SoloProject.SocialMediaApp.repository.CommentRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.security.cert.Extension;
 
 @Service
 public class AccountService {
@@ -17,7 +20,10 @@ public class AccountService {
     private final PostRepository postRepository;
     private final EmailSenderService emailSenderService;
 
-    public AccountService(AppUserRepository appUserRepository, CommentRepository commentRepository, PostRepository postRepository, EmailSenderService emailSenderService) {
+    public AccountService(AppUserRepository appUserRepository,
+                          CommentRepository commentRepository,
+                          PostRepository postRepository,
+                          EmailSenderService emailSenderService) {
         this.appUserRepository = appUserRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
@@ -58,12 +64,11 @@ public class AccountService {
         return ResponseEntity.ok(user);
     }
 
-    public ResponseEntity<AppUser> saveAccount(AppUser appUser) {
+    public ResponseEntity<AppUser> saveAccount(AppUser appUser, String encodedPassword) {
+        appUser.setPassword(encodedPassword);
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }
-
-
     public ResponseEntity<AppUser> createAccountFromUser(OAuth2User principal){
         String firstName = principal.getAttribute("given_name");
         String lastName = principal.getAttribute("family_name");

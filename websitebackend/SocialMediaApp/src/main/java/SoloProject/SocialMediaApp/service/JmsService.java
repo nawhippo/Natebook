@@ -2,65 +2,56 @@ package SoloProject.SocialMediaApp.service;
 
 import SoloProject.SocialMediaApp.models.CustomMessage;
 import SoloProject.SocialMediaApp.repository.CustomMessageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class JmsService {
-    @Autowired
+
+    private static final Logger logger = LoggerFactory.getLogger(JmsService.class);
+
     private final CustomMessageRepository customMessageRepository;
+    private final JmsTemplate jmsTemplate;
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
-
-    public JmsService(CustomMessageRepository customMessageRepository) {
+    public JmsService(CustomMessageRepository customMessageRepository, JmsTemplate jmsTemplate) {
         this.customMessageRepository = customMessageRepository;
+        this.jmsTemplate = jmsTemplate;
     }
 
-    // This method can be used to process received messages
     @JmsListener(destination = "queue.sample")
     public void receiveMessage(CustomMessage message) {
-        // Logic for processing received messages, e.g., logging, saving to a database
+        logger.info("Received message: {}", message);
+        try {
+            customMessageRepository.save(message);
+        } catch (Exception e) {
+            logger.error("Error saving message: {}", e.getMessage(), e);
+        }
     }
 
-    // Method for sending a message to a group chat topic
     public void sendMessageToGroup(CustomMessage message) {
-        String groupChatTopic = resolveGroupChatTopic(message.getChatGroupId());
+        String groupChatTopic = resolveGroupChatTopic(message.getGroupChatId());
         jmsTemplate.convertAndSend(groupChatTopic, message);
     }
 
-    // Resolving the group chat topic name based on the chatGroupId
     private String resolveGroupChatTopic(long chatGroupId) {
-        // The topic name is created using a convention like "group.chat." + chatGroupId
         return "group.chat." + chatGroupId;
     }
 
-    // Find group chats by the sender's ID
-    public Set<Long> getGroupChatsFromSenderId(Long senderId) {
-        List<CustomMessage> sentMessages = customMessageRepository.findBySender(senderId);
-        Set<Long> groupChatIds = new HashSet<>();
 
-        for (CustomMessage message : sentMessages) {
-            groupChatIds.add(message.getChatGroupId());
-        }
+    public Map<Long, List<CustomMessage>> getMessagesByParticipantGroupedByGroupChatId(Long userId) {
+        List<CustomMessage> allMessages = customMessageRepository.findAll();
 
-        return groupChatIds;
-    }
-
-    // Retrieve all messages from a set of group chats
-    public List<CustomMessage> getAllMessagesFromGroupChats(Set<Long> groupChatIds) {
-        List<CustomMessage> allMessages = new ArrayList<>();
-        for (Long chatGroupId : groupChatIds) {
-            List<CustomMessage> messages = customMessageRepository.findByGroupChatId(chatGroupId);
-            allMessages.addAll(messages);
-        }
-        return allMessages;
+        return allMessages.stream()
+                .filter(msg -> msg.getParticipants().contains(userId))
+                .collect(Collectors.groupingBy(CustomMessage::getGroupChatId));
     }
 }

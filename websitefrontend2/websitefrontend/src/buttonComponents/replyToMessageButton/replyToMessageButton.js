@@ -1,49 +1,57 @@
 import React, { useState } from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext'; // Adjust the path if needed
-const ReplyMessageForm = ({ messageId, posterId }) => {
-  const [showForm, setShowForm] = useState(false);
-  const [content, setContent] = useState('');
-  const user = useUserContext();
-  
-  const handleToggle = () => setShowForm(!showForm);
-  
-  const handleSubmit = () => {
-    fetch(`/api/message/${user.appUserID}/${messageId}/replyMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
-    })
-    .then((response) => {
+
+const ReplyToMessageForm = ({ userId, prefillData, onClose }) => {
+  const [messageData, setMessageData] = useState({
+    title: prefillData?.title || '',
+    body: '',
+    groupChatId: prefillData?.groupChatId,
+    participants: prefillData?.participants || [],
+  });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!messageData.participants.includes(userId)) {
+      messageData.participants.push(userId);
+    }
+
+    try {
+      const response = await fetch('/api/message/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messageData),
+      });
       if (response.ok) {
-        return response.json();
+        alert('Reply sent successfully');
+        onClose();
+      } else {
+        alert('Failed to send reply');
       }
-      throw new Error('Failed to send reply');
-    })
-    .then((data) => {
-      console.log('Reply sent:', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+    } catch (error) {
+      console.error('Error sending reply:', error);
+      alert('Error sending reply');
+    }
   };
 
   return (
-    <div>
-      <button onClick={handleToggle}>Reply to Message</button>
-      
-      {showForm && (
-        <div>
-          <input 
-            type="text" 
-            value={content} 
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Content" 
-          />
-          <button onClick={handleSubmit}>Send Reply</button>
-        </div>
-      )}
-    </div>
+      <form onSubmit={handleSubmit}>
+        <h3>Reply to Message</h3>
+        <input
+            type="text"
+            placeholder="Title"
+            value={messageData.title}
+            onChange={(e) => setMessageData({ ...messageData, title: e.target.value })}
+        />
+        <textarea
+            placeholder="Body"
+            value={messageData.body}
+            onChange={(e) => setMessageData({ ...messageData, body: e.target.value })}
+        />
+        <button type="submit">Send Reply</button>
+        <button type="button" onClick={onClose}>Cancel</button>
+      </form>
   );
 };
 
-export default ReplyMessageForm;
+export default ReplyToMessageForm;

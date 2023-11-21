@@ -28,7 +28,7 @@ const AllUsersPage = () => {
     };
 
     fetchData();
-  }, [addressBookData]);
+  }, []);
 
   const filteredUsers = searchTerm
     ? addressBookData.filter(user =>

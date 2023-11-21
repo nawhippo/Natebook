@@ -10,7 +10,7 @@ const LoginButton = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const { setUser } = useUserContext();
+  const { setUser, clearUserContext, user } = useUserContext();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;

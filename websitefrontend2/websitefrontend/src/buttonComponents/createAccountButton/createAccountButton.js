@@ -3,8 +3,9 @@ import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useUserContext } from "../../pages/usercontext/UserContext";
 import styles from './createAccount.module.css';
+
 const CreateAccount = () => {
-  const [isVisible, setIsVisible] = useState(false); 
+  const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -12,6 +13,7 @@ const CreateAccount = () => {
     password: "",
     username: "",
   });
+  const [error, setError] = useState('');
 
   const { setUser } = useUserContext();
   const history = useHistory();
@@ -25,7 +27,7 @@ const CreateAccount = () => {
     event.preventDefault();
 
     if (!formData.firstname || !formData.lastname || !formData.username || !formData.email || !formData.password) {
-      console.error("Please fill in all required fields.");
+      setError("Please fill in all required fields.");
       return;
     }
 
@@ -36,26 +38,27 @@ const CreateAccount = () => {
       },
       body: JSON.stringify(formData),
     })
-    .then((response) => {
-      if (response.ok) {
-        console.log("Account created successfully!");
-        return response.json();
-      } else if (response.status === 409) {
-        console.error("Username is already taken. Please choose a different username.");
-        throw new Error("Username is already taken.");
-      } else {
-        console.error("Failed to create account.");
-        throw new Error("Failed to create account.");
-      }
-    })
-    .then((userData) => {
-      setUser(userData);
-      Cookies.set('userData', JSON.stringify(userData));
-      history.push('/home');
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+        .then((response) => {
+          if (response.ok) {
+            console.log("Account created successfully!");
+            return response.json();
+          } else if (response.status === 409) {
+            setError("Username is already taken. Please choose a different username.");
+            throw new Error("Username is already taken.");
+          } else {
+            setError("Failed to create account.");
+            throw new Error("Failed to create account.");
+          }
+        })
+        .then((userData) => {
+          setUser(userData);
+          Cookies.set('userData', JSON.stringify(userData));
+          history.push('/home');
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          setError('Error creating account. Please try again later.');
+        });
   };
 
   return (
@@ -90,6 +93,7 @@ const CreateAccount = () => {
                   <div className={styles.buttonContainer}>
                     <button type="submit">Submit</button>
                   </div>
+                  {error && <p style={{ color: 'red' }}>{error}</p>}
                 </form>
               </div>
             </div>

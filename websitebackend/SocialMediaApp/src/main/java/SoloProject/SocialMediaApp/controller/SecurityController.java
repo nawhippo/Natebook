@@ -3,39 +3,51 @@ package SoloProject.SocialMediaApp.controller;
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.AuthenticationException;
 
 @Controller
 @RequestMapping("/api") // The base path for all endpoints in this controller
 public class SecurityController {
 
     private AppUserRepository appUserRepository;
-    private AccountService accountService;
 
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
     public SecurityController(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> handleLogin(@RequestBody LoginRequest loginRequest) {
-        String username = loginRequest.getUsername();
-        String password = loginRequest.getPassword();
-        AppUser user = appUserRepository.findByUsername(username);
-        user.setOnline(true);
-        if (user != null) {
-            if(user.isGoogleUser){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Invalid username or password\"}");
-            }
-            if (user.getPassword().equals(password)) {
-                return ResponseEntity.ok(user);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Invalid username or password\"}");
-            }
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Fetch the authenticated user details and return the user object
+            AppUser authenticatedUser = (AppUser) authentication.getPrincipal();
+            authenticatedUser.setOnline(true);
+            return ResponseEntity.ok(authenticatedUser);
+
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"message\": \"Invalid username or password\"}");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Invalid username or password\"}");
     }
 
     @PostMapping("/{userid}/logout")
