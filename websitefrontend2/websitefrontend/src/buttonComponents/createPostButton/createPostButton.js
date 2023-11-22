@@ -78,7 +78,7 @@ const handleCreatePost = async () => {
 
   return (
       <div className="create-post-container">
-        <PostAddIcon className="button" onClick={toggleForm}/>
+        <button className="button" onClick={toggleForm}>Create Post</button>
         {showForm && (
             <div>
               <div>

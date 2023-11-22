@@ -1,9 +1,8 @@
 .create-post-container {
     align-items: center;
-    padding: 20px;
     background-color: #f3f3f3;
     border-radius: 8px;
-    margin: 20px auto; /* Center the container */
+    padding: 5px;
     width: 100%; /* Use full width or adjust as necessary */
     max-width: 500px; /* Max width to contain the form */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
@@ -43,57 +42,14 @@
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
-    background-color: lightcoral;
     color: white;
     cursor: pointer;
     display: block; /* Make buttons block level for full width */
     width: calc(100% - 20px); /* Adjust width to account for padding */
     margin: 10px 0;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-
 }
 
 .create-post-button:hover, .submit-post-button:hover {
     background-color: darkred;
     transform: scale(1.025);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-}
-
-.create-post-button svg {
-    transition: transform 0.2s; /* Smooth transition for transform */
-}
-
-.public-status-icon {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Adjust the space between icon and text */
-}
-
-.public-status-icon svg {
-    transition: transform 0.2s; /* Smooth transition for transform */
-}
-
-.public-status-icon:hover svg {
-    transform: scale(1.1); /* Grow icon slightly on hover */
-}
-
-.create-post-message {
-    margin-top: 10px;
-    color: green; /* Or red in case of an error */
-    padding: 10px 0;
-    display: block; /* Ensure message takes up full width */
-    width: calc(100% - 20px); /* Adjust width to account for padding */
-}
-.button {
-    cursor: pointer;
-    background-color: orange;
-    color: white;
-    display: inline-block; /* Center the icon */
-    margin: 0 auto; /* Center the icon horizontally */
-    transition: transform 0.3s ease; /* Smooth transition for transform */
-}
-
-.button:hover {
-    transform: scale(1.1); /* Grow icon slightly on hover */
 }

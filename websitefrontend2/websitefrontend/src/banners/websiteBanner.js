@@ -29,7 +29,7 @@ const Banner = () => {
 
     return (
         <div className="banner">
-            <h1 className="title">NateBook!</h1>
+            <h1 className="title">NateBook</h1>
             <PeopleIcon className="button-common" onClick={() => handleLinkClick('/AllUsersPage')} style={{ width: '50px', height: 'auto', background: 'none' }} />
             <DynamicFeedIcon className="button-common" onClick={() => handleLinkClick('/Feed')} style={{ width: '50px', height: 'auto', background: 'none' }} />
             <FriendReqCounter />

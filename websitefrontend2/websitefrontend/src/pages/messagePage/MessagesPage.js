@@ -49,7 +49,6 @@ const MessagesPage = () => {
     return (
         <div>
             <h1>Messages</h1>
-            <CreateMessageForm userId={user.appUserID}><AddIcon /></CreateMessageForm>
             <div className="search-bar-container"> {/* Use the same container class for consistent styling */}
                 <input
                     className="search-input" // Apply the search input class
@@ -62,6 +61,8 @@ const MessagesPage = () => {
                     <SearchIcon />
                 </button>
             </div>
+
+            <CreateMessageForm userId={user.appUserID}><AddIcon /></CreateMessageForm>
 
             <button onClick={() => setShowIncoming(!showIncoming)}>
                 {showIncoming ? 'Sent Messages' : 'Incoming Messages'}

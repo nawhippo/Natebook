@@ -27,7 +27,6 @@ const SentList = () => {
 
     return (
         <div>
-            <h2>Sent Messages</h2>
             {messages.length === 0 ? (
                 <p>No sent messages.</p>
             ) : (

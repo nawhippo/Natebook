@@ -5,7 +5,6 @@ import CreatePostButton from '../../../buttonComponents/createPostButton/createP
 import IconButton from '@mui/material/IconButton'; // Make sure this is correctly imported
 import SearchIcon from '@mui/icons-material/Search'; // Make sure this is correctly imported
 import '../../../global.css';
-import './PublicFeed.css'; // Make sure PublicFeed.css is in the correct path
 
 const PublicFeed = () => {
     const { user } = useUserContext();
@@ -58,11 +57,6 @@ const PublicFeed = () => {
     return (
         <div>
             <h1>Feed</h1>
-            {user && (
-                <div className="create-post-section">
-                    <CreatePostButton />
-                </div>
-            )}
             <div className="search-bar-container">
                 <input
                     className="search-input"
@@ -76,6 +70,11 @@ const PublicFeed = () => {
                 </button>
             </div>
 
+            {user && (
+                <div className="create-post-section">
+                    <CreatePostButton />
+                </div>
+            )}
             {isLoading ? (
                 <p>Loading...</p>
             ) : error ? (

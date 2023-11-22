@@ -11,12 +11,10 @@
   }
 
 .title {
-    font-family: 'Comic Sans MS', 'Comic Neue', cursive; /* Fun, casual font */
-    color: #FFD700; /* Golden text */
-    text-shadow: 2px 2px 4px #000000; /* Slight shadow for depth */
-    font-size: 30px; /* Larger size for emphasis */
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    color: #333333;
+    font-size: 30px; /* Maintaining larger size for emphasis */
 }
-
 
 .dropbtn {
   cursor: pointer;
