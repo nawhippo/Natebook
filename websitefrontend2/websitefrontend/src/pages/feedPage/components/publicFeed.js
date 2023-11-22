@@ -57,6 +57,7 @@ const PublicFeed = () => {
 
     return (
         <div>
+            <h1>Feed</h1>
             {user && (
                 <div className="create-post-section">
                     <CreatePostButton />

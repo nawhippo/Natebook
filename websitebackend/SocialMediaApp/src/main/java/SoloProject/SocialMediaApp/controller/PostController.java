@@ -35,7 +35,7 @@ public class PostController {
 
     @GetMapping("/post/{postId}/comments")
     public ResponseEntity<List<Comment>> getComments(@PathVariable("postId") Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
+        List<Comment> comments = commentRepository.findByPostid(postId);
         if (comments != null && !comments.isEmpty()) {
             return new ResponseEntity<>(comments, HttpStatus.OK);
         } else {
