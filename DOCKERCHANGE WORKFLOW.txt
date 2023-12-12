@@ -1,0 +1,51 @@
+Stop and Remove Local Containers (if needed):
+
+
+docker stop <container_id_or_name>
+docker rm <container_id_or_name>
+
+Build Docker Images:
+
+docker build -t gcr.io/natebook-402816/frontend:latest -f Dockerfile .
+docker build -t gcr.io/natebook-402816/backend:latest -f Dockerfile .
+
+Push Images to Google Container Registry:
+
+docker push gcr.io/natebook-402816/frontend:latest
+docker push gcr.io/natebook-402816/backend:latest
+
+
+Update Images to Google Container:
+kubectl set image deployment/backend-deployment backend=gcr.io/natebook-402816/backend:latest
+kubectl set image deployment/backend-deployment backend=gcr.io/natebook-402816/frontend:latest
+Check rollouts status
+kubectl rollout status deployment/backend-deployment
+
+
+Set up Credentials for GKE Cluster (Authenticate)cd ..:
+
+gcloud container clusters get-credentials natebook-kubernetes-cluster --zone us-central1 --project natebook-40281
+
+Deploy to GKE using kubectl:
+
+kubectl apply -f combined-deployment.yaml
+
+check deployments
+kubectl get deployments
+
+deal with errors of pod logs
+kubectl logs backend-deployment-564f4b55dc-wx6x8
+
+kubectl describe pod backend-deployment-564f4b55dc-wx6x8
+
+
+
+
+
+
+
+
+
+check pods
+kubectl get pods
+
