@@ -1,11 +1,13 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.AppUser;
+import SoloProject.SocialMediaApp.models.CompressedImage;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CommentRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import SoloProject.SocialMediaApp.service.AccountService;
 import SoloProject.SocialMediaApp.service.AppUserSearchService;
+import SoloProject.SocialMediaApp.service.CompressionService;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,20 +34,30 @@ public class AccountController {
 
     private final PostService postService;
 
+    private final CompressionService compressionService;
     @Autowired
-    public AccountController(CommentRepository commentRepository, PostRepository postRepository, AccountService userserviceimpl, AppUserRepository appUserRepository, PostService postService) {
+    public AccountController(CommentRepository commentRepository, PostRepository postRepository, AccountService userserviceimpl, AppUserRepository appUserRepository, PostService postService, CompressionService compressionService) {
         this.accountservice = userserviceimpl;
         this.appUserRepository = appUserRepository;
         this.postService = postService;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.compressionService = compressionService;
     }
 
     @GetMapping("/account/{userId}/accountDetails")
     public ResponseEntity<AppUser> getAccountDetails(@PathVariable Long userId) {
         return accountservice.getAccountDetails(userId);
     }
-
+    @GetMapping("/account/{userId}/profilePicture")
+    public ResponseEntity<CompressedImage> getProfilePicture(@PathVariable Long userId) {
+        CompressedImage profileImage = accountservice.getProfilePicture(userId);
+        if (profileImage != null) {
+            return ResponseEntity.ok(profileImage);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
     @PostMapping("/account/createAccount")
@@ -76,6 +88,20 @@ public class AccountController {
         String newPassword = formData.get("password");
         return accountservice.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword);
     }
+
+    @PutMapping("/account/{userId}/uploadProfilePicture")
+    public ResponseEntity<?> uploadProfilePicture(@PathVariable Long userId, @RequestBody Map<String, String> formData) {
+        // Extract the Base64 image string from formData
+        String base64Image = formData.get("image");
+
+        if (base64Image == null || base64Image.isEmpty()) {
+            return ResponseEntity.badRequest().body("No image data provided");
+        }
+
+        // Call the service method to handle the profile picture update
+        return accountservice.uploadProfilePicture(userId, base64Image);
+    }
+
 
 
     @DeleteMapping("/account/{userId}/deleteAccount")

@@ -12,6 +12,17 @@ import java.util.List;
 @Table(name = "app_users")
 public class AppUser implements UserDetails {
 
+    public Long profilePicture;
+
+
+    public Long getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(Long profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
     public boolean isOnline;
 
     public boolean isOnline() {
@@ -32,16 +43,8 @@ public class AppUser implements UserDetails {
         return isGoogleUser;
     }
 
-    @Column
-    private String profilePictureUrl;
 
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
-    }
 
     @Column
     private List<Long> requests;
@@ -227,4 +230,6 @@ public class AppUser implements UserDetails {
     public Long getId() {
         return this.appUserID;
     }
+
+
 }

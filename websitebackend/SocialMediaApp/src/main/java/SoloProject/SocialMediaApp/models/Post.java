@@ -39,6 +39,13 @@ public class Post {
 
 
 
+    public ArrayList<Long> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<Long> images) {
+        this.images = images;
+    }
 
     @ElementCollection
     @MapKeyColumn(name="user_id")

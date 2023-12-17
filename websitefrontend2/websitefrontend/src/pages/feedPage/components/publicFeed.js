@@ -32,11 +32,12 @@ const PublicFeed = () => {
         setIsLoading(true);
         fetch(endpoint)
             .then((response) => {
-                if (!response.ok) {
+                if (response.status === 404) {
+                    setAllPostsData([]);
+                    throw new Error('No posts present');
+                    if (!response.ok) {
                     throw new Error('Network response was not ok');
-                    if (response.status === 404) {
-                        setAllPostsData([]); // Empty the posts data
-                        throw new Error('No posts present'); // Custom error message for 404
+                        setAllPostsData([]);
                     }
                 }
                 return response.json();

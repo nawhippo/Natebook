@@ -45,6 +45,7 @@ const Banner = () => {
                     <LoginButton />
                     <CreateAccount />
                 </>
+
             )}
         </div>
     );

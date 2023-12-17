@@ -59,6 +59,7 @@ const AccountPage = () => {
       <p>Last Name: {accountData.lastname}</p>
       <p>Email: {accountData.email}</p>
       <p>Password: ****** </p>
+
       </overlay>
 }
       <UpdateAccountButton></UpdateAccountButton>

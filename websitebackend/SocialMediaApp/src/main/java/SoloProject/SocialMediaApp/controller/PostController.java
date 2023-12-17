@@ -1,36 +1,46 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.Comment;
+import SoloProject.SocialMediaApp.models.CompressedImage;
+import SoloProject.SocialMediaApp.models.CreatePostRequest;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CommentRepository;
 import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
+import SoloProject.SocialMediaApp.repository.PostRepository;
+import SoloProject.SocialMediaApp.service.CompressionService;
 import SoloProject.SocialMediaApp.service.PostService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
 public class PostController {
     private final PostService postService;
 
-    private final AppUserRepository appUserRepository;
-    private final CompressedImageRepository compressedImageRepository;
-
+    private final CompressionService compressionService;
     private final CommentRepository commentRepository;
+    private final CompressedImageRepository compressedImageRepository;
+    private final PostRepository postRepository;
 
     @Autowired
-    public PostController(PostService postService, AppUserRepository appUserRepository, CompressedImageRepository compressedImageRepository, CommentRepository commentRepository) {
+    public PostController(PostService postService, PostRepository postRepository, CompressionService compressionService, CompressedImageRepository compressedImageRepository, CommentRepository commentRepository) {
         this.postService = postService;
-        this.appUserRepository = appUserRepository;
         this.compressedImageRepository = compressedImageRepository;
         this.commentRepository = commentRepository;
+        this.compressionService = compressionService;
+        this.postRepository = postRepository;
     }
 
     @GetMapping("/post/{postId}/comments")
@@ -43,18 +53,38 @@ public class PostController {
         }
     }
 
+
+    @GetMapping("/post/{postId}/images")
+    @Transactional
+    public ResponseEntity<List<CompressedImage>> getImages(@PathVariable("postId") Long postId) {
+        List<CompressedImage> images = compressedImageRepository.findByPostid(postId);
+        if (images != null && !images.isEmpty()) {
+            return new ResponseEntity<>(images, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @PostMapping("/post/{userId}/createPost")
     public ResponseEntity<Post> createPost(
             @PathVariable Long userId,
-            @RequestBody Post post
-    ) {
-        Post createdPost = postService.createPost(userId, post);
+            @RequestBody CreatePostRequest createPostRequest // Assuming CreatePostRequest contains the Post and List<String> of base64 images
+    ) throws IOException, SQLException {
+        Post createdPost = postService.createPost(userId, createPostRequest.getPost());
+
+        if (createPostRequest.getImages() != null && !createPostRequest.getImages().isEmpty()) {
+            postService.addImagestoPost(createdPost.getId(), createPostRequest.getImages());
+        }
+
         if (createdPost != null) {
             return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 
     @DeleteMapping("/post/{postId}/deletePost")
@@ -114,12 +144,5 @@ public class PostController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }
-
-
-
-
-
-
-
     }
 

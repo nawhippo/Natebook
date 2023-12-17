@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useUserContext } from "../../pages/usercontext/UserContext";
 
 const UpdateAccountButton = () => {
-  const {user} = useUserContext();
+  const { user } = useUserContext();
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     firstname: user.firstname,
@@ -10,12 +10,29 @@ const UpdateAccountButton = () => {
     email: user.email,
     password: "",
   });
+  const [base64Image, setBase64Image] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState("");
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setBase64Image(reader.result);
+        } else {
+          console.error('FileReader result is not a string');
+          setError('Error reading file');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleChange = (event) => {
-    const {name, value} = event.target;
+    const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -29,6 +46,7 @@ const UpdateAccountButton = () => {
       email: "",
       password: "",
     });
+    setBase64Image('');
   };
 
   const handleSubmit = async (event) => {
@@ -38,27 +56,38 @@ const UpdateAccountButton = () => {
     setMessage("");
 
     try {
-      const response = await fetch(`/api/account/${user.appUserID}/updateAccountDetails`, {
+      // Update account details
+      const accountResponse = await fetch(`/api/account/${user.appUserID}/updateAccountDetails`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      if (!accountResponse.ok) {
+        throw new Error("Network response was not ok for account update");
       }
 
-      console.log("Account updated successfully!");
-      setMessage("Account Updated!");
+      // Upload profile picture
+      if (base64Image) {
+        const pictureResponse = await fetch(`/api/account/${user.appUserID}/uploadProfilePicture`, {
+          method: "PUT",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: base64Image }),
+        });
+
+        if (!pictureResponse.ok) {
+          throw new Error("Network response was not ok for picture upload");
+        }
+      }
+
+      setMessage("Account and Picture Updated!");
     } catch (error) {
       console.error("Error:", error);
       setError(error.message);
     } finally {
       setIsLoading(false);
+      clearFields();
     }
-    clearFields();
   };
 
   return (
@@ -110,6 +139,10 @@ const UpdateAccountButton = () => {
                       onChange={handleChange}
                   />
                 </div>
+                <div>
+                  <label htmlFor="icon-button-file">Profile Picture:</label>
+                  <input accept="image/*" id="icon-button-file" type="file" onChange={handleFileChange}/>
+                </div>
                 <button type="submit">Submit</button>
               </form>
               {message && <p>{message}</p>}
@@ -118,5 +151,6 @@ const UpdateAccountButton = () => {
         )}
       </div>
   );
-}
+};
+
 export default UpdateAccountButton;

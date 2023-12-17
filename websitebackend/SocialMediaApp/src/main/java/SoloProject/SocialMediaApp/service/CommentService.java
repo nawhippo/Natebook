@@ -61,8 +61,6 @@ public class CommentService {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
 
         if (!optionalComment.isPresent()) {
-            // Handle the case where the comment is not found.
-            // You could throw an exception or return null here.
             return null;
         }
 
