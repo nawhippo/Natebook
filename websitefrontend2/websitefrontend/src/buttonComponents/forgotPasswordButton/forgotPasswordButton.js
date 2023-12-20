@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
+import styles from './forgotpassword.css';
 const ForgotPasswordButton = () => {
     // Should display whether the operation was successful.
     const [buttonUsed, setButtonUsed] = useState('');
@@ -45,7 +46,7 @@ const ForgotPasswordButton = () => {
                     onChange={e => setEmail(e.target.value)}
                 /> : ''
             }
-            <button onClick={handleButtonClick} style={buttonStyle} className="button-common">
+            <button onClick={handleButtonClick} style={buttonStyle} className="button-common button-forgotpassword">
                 {visible ? 'Send OTP' : 'Forgot your Password?'}
             </button>
             {buttonUsed && <p>{buttonUsed}</p>}

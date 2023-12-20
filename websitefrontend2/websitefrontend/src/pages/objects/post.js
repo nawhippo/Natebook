@@ -6,12 +6,15 @@ import CommentForm from '../../buttonComponents/createCommentButton/createCommen
 import ReactionButtons from '../../buttonComponents/reactPostButtons/reactPostButtons';
 import { DeletePostButton } from '../../buttonComponents/deletePostButton/deletePostButton';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
-const Post = ({ post, user, fetchData }) => {
+import {useUserContext} from "../usercontext/UserContext";
+const Post = ({ post, fetchData }) => {
+    const user = useUserContext();
     const [localLikesCount, setLocalLikesCount] = useState(post.likesCount);
     const [localDislikesCount, setLocalDislikesCount] = useState(post.dislikesCount);
     const [comments, setComments] = useState([]);
     const [images, setImages] = useState([]);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!user); // Check if user is logged in
+    const [areCommentsCollapsed, setAreCommentsCollapsed] = useState(true);
 
     const updateLikesDislikes = (newLikes, newDislikes) => {
         setLocalLikesCount(newLikes);
@@ -68,14 +71,13 @@ const Post = ({ post, user, fetchData }) => {
             <ReactionButtons
                 postId={post.id}
                 updateLikesDislikes={updateLikesDislikes}
-                isUserLoggedIn={isUserLoggedIn} // Pass isUserLoggedIn to disable liking/disliking
             />
             {images.map((image) => (
                 <img
                     key={image.id}
                     src={`data:image/${image.format};base64,${image.base64EncodedImage}`} // Adjusted to use the correct field
                     alt="Post"
-                    style={{ width: image.width / 4, height: image.height / 4 }}
+                    style={{ width: image.width, height: image.height }}
                 />
             ))}
             {user && user.username === post.posterUsername && (
@@ -84,17 +86,6 @@ const Post = ({ post, user, fetchData }) => {
                     fetchData={fetchData}
                 />
             )}
-            {isUserLoggedIn && images.map((comment) => (
-                <Comment
-                    key={comment.id}
-                    comment={comment}
-                    user={user}
-                    postId={post.id}
-                    posterId={post.posterid}
-                    fetchData={fetchData}
-                    updateLikesDislikes={updateLikesDislikes}
-                />
-            ))}
             {isUserLoggedIn && (
                 <CommentForm
                     userId={user.appUserID}
@@ -108,7 +99,8 @@ const Post = ({ post, user, fetchData }) => {
                     comment={comment}
                     user={user}
                     postId={post.id}
-                    posterId={post.posterid}
+                    posterId={post.posterId}
+                    posterusername={post.posterUsername}
                     fetchData={fetchData}
                     updateLikesDislikes={updateLikesDislikes}
                 />

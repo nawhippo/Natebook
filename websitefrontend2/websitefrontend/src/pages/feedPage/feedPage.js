@@ -9,8 +9,7 @@ const FeedPage = ({ userContext }) => {
         <div>
             {userContext && (
                 <>
-                    <button onClick={() => setShowFriendFeed(false)}>All Posts</button>
-                    <button onClick={() => setShowFriendFeed(true)}>Friend Posts</button>
+                    <button onClick={() => setShowFriendFeed(!showFriendFeed)}>Swap Feed</button>
                 </>
             )}
 

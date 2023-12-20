@@ -38,7 +38,7 @@
 }
 
 .loginFormContainer {
-    background-color: antiquewhite; /* White background for the form */
+    background-color: lightgrey; /* White background for the form */
     padding: 10px;
     border-radius: 10px; /* Soften the edges a bit */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* A slight shadow to give depth */
@@ -55,22 +55,21 @@
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    transform: translateX(-50px)
+    padding-bottom: 10px;
+
 }
 
 .buttonContainer {
     display: flex;
     flex-direction: column;
-    padding: 10px 0;
-    width: 250px;
-    transform: translateX(70px)
+    transform: translateX(35px)
 }
 
 .inputGroup label {
     width: 50px;
     font-size: 15px;
-    text-align: center;
     margin-right: 50px;
+    transform: translateX(-50px)
 }
 .button-common {
     padding: 10px 20px;
@@ -79,12 +78,13 @@
     background-color: #FF6D00;
     color: white;
     cursor: pointer;
-    width: 100px;
     height: 50px;
-
 }
 
-
+.login-button {
+     width: 250px !important;
+    transform:translateX(-10px);
+ }
 .button-common:hover {
     background-color: #FF9E80;
 }
@@ -99,4 +99,5 @@
     border: 1px solid #ccc;
     align-items: center;
     margin-left: auto;
+    transform: translateX(-50px)
 }

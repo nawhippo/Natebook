@@ -4,7 +4,7 @@ import UserPosts from "./helperComponents/displayAllUserPosts"
 import AddFriendButton from "../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton"
 import SendMessageButton from "../../buttonComponents/createMessageButton/createMessageButton"
 import { useParams } from 'react-router-dom';
-
+import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 
 const ProfilePage = () => {
   const { userid } = useParams();
@@ -63,6 +63,7 @@ const ProfilePage = () => {
       <h2>Account Details</h2>
       { accountData && (
         <>
+          <ProfilePictureComponent userid={accountData.appUserID}/>
           <p>ID: {accountData.appUserID}</p>
           <p>First Name: {accountData.firstname}</p>
           <p>Last Name: {accountData.lastname}</p>

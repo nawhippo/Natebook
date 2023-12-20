@@ -1,6 +1,12 @@
 import React from 'react';
+import {useUserContext} from "../../pages/usercontext/UserContext";
 
 export const DeleteCommentButton = ({ posterusername, postId, commentId, targetUsername, fetchData }) => {
+  const user = useUserContext();
+
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange'
+  };
   const handleDeleteComment = async () => {
     console.log(typeof posterusername, typeof postId, typeof commentId);
     try {
@@ -15,7 +21,7 @@ export const DeleteCommentButton = ({ posterusername, postId, commentId, targetU
   };
 
   return (
-    <button onClick={handleDeleteComment}>
+    <button style={buttonStyle} onClick={handleDeleteComment}>
       Delete Comment
     </button>
   );

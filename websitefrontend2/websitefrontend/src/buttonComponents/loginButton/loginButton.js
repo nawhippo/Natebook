@@ -3,9 +3,8 @@ import { useUserContext } from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
 import GoogleSignInButton from "../googleSigninButton/googleSignInButton";
 import ForgotPasswordButton from "../forgotPasswordButton/forgotPasswordButton";
-import styles from "./loginButton.module.css"
 import LoginIcon from '@mui/icons-material/Login';
-
+import styles from "./loginButton.module.css";
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState('');
@@ -81,7 +80,7 @@ const LoginButton = () => {
                     <input type="password" name="password" value={password} onChange={handleInputChange} autoComplete={"off"} />
                   </div>
                   <div className={styles.buttonContainer}>
-                    <button type="submit" style={buttonStyle} className="button-common">Login</button>
+                    <button type="submit" style={buttonStyle}  className={`${styles['button-common']} ${styles['login-button']}`}> Login</button>
                     <ForgotPasswordButton style={buttonStyle} />
                   </div>
                   {error && <p style={{ color: 'red' }}>{error}</p>}

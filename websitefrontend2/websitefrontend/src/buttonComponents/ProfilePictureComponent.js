@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import '../global.css';
+import { useUserContext} from "../pages/usercontext/UserContext";
 
 const ProfilePictureComponent = ({ userid, user }) => {
     const [profile, setProfile] = useState(null);
     const [error, setError] = useState('');
-
+    const appUser = useUserContext();
     useEffect(() => {
         if (!userid) {
             setProfile(null);
@@ -16,6 +17,9 @@ const ProfilePictureComponent = ({ userid, user }) => {
         fetch(`/api/account/${userid}/getProfilePicture`)
             .then(response => {
                 if (!response.ok) throw Error('Network response was not ok');
+                if (response.headers.get('content-length') === '0') {
+                    throw Error('Empty response');
+                }
                 return response.json();
             })
             .then(compressedImage => {
@@ -36,7 +40,7 @@ const ProfilePictureComponent = ({ userid, user }) => {
     return (
         <div>
             {userid && (
-                user && userid === user.appUserID ? (
+                appUser && userid != appUser.appUserID ? (
                     <Link to={`/UserProfile/${userid}`}>
                         {profile ? (
                             <img src={profile} className="profile-picture" alt="Profile"/>
@@ -64,7 +68,6 @@ const ProfilePictureComponent = ({ userid, user }) => {
                     )}
                 </>
             )}
-            {error && <div>Error: {error.message}</div>}
         </div>
     );
 };

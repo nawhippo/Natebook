@@ -12,7 +12,7 @@
 }
 
 .createAccountFormContainer {
-    background-color: antiquewhite;
+    background-color: lightgrey;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -78,4 +78,7 @@
     justify-content: flex-end;
     width: 100%;
     transform: translateX(-30px)
+}
+.button-common:hover {
+    background-color: #FF9E80;
 }
