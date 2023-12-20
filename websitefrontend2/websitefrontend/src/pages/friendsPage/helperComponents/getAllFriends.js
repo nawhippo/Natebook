@@ -3,6 +3,7 @@ import { useUserContext } from '../../usercontext/UserContext';
 import CreateMessageForm from '../../../buttonComponents/createMessageButton/createMessageButton';
 import DeleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
 import SearchIcon from '@mui/icons-material/Search';
+import ProfilePictureComponent from "../../../buttonComponents/ProfilePictureComponent";
 
 const GetAllFriends = () => {
   const { user } = useUserContext();
@@ -56,6 +57,13 @@ const GetAllFriends = () => {
       )
       : allFriendsData;
 
+
+
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    color: '#FFFFFF',
+  };
+
   return (
       <div>
         <h1>Friends</h1>
@@ -67,7 +75,7 @@ const GetAllFriends = () => {
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
           />
-          <button className="search-button" onClick={handleSearch}>
+          <button className="search-button" onClick={handleSearch} style={buttonStyle}>
             <SearchIcon />
           </button>
         </div>
@@ -81,6 +89,7 @@ const GetAllFriends = () => {
                   <li key={friend.id}>
                     <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
                     <p>{friend.email}</p>
+                    <ProfilePictureComponent userid={friend.appUserID}/>
                     <p>{friend.isOnline ? 'Online' : 'Offline'}</p>
                     <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
                     <CreateMessageForm recipient={friend.username} />

@@ -36,14 +36,22 @@ const DeleteAccountButton = () => {
     return <p>Account Deleted</p>;
   }
 
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    color: '#FFFFFF',
+  };
+
   return (
-    <div>
-      {error && <p>{error}</p>}
-      <button onClick={handleDeleteAccount} disabled={isLoading}>
-        {isLoading ? "Deleting..." : "Delete"}
-      </button>
-    </div>
+      <div>
+        {error && <p>{error}</p>}
+        <button  className='button-common'
+            onClick={handleDeleteAccount}
+            disabled={isLoading}
+            style={buttonStyle}
+        >
+          {isLoading ? "Deleting..." : "Delete"}
+        </button>
+      </div>
   );
 };
-
 export default DeleteAccountButton;

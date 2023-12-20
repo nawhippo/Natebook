@@ -11,10 +11,15 @@ const SendFriendRequestButton = ({ username }) => {
     }).then(() => setSent(true));
   };
 
+  // Use user's background color or default to dark grey
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'darkgrey'
+  };
+
   return (
-    <>
-      {sent ? 'Friend request sent!' : <button onClick={handleAddFriendClick}>Add Friend</button>}
-    </>
+      <>
+        {sent ? 'Friend request sent!' : <button onClick={handleAddFriendClick}   className='button-common' style={buttonStyle}>Add Friend</button>}
+      </>
   );
 };
 

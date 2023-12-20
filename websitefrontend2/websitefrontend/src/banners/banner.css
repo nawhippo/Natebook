@@ -1,6 +1,9 @@
 .banner {
-    background-color: darkorange;
-    padding: 6px;
+    outline: black;
+    outline-style: solid;
+    outline-width: 5px;
+    padding: 5px;
+    box-shadow: black;
     text-align: left;
     text-decoration-color: bisque;
     font-size: 11px;
@@ -8,12 +11,17 @@
     border-radius: 0.5px;
     display: flex;
     flex-direction: row !important;
-  }
+    position: relative;
+    width: 100%;
+}
 
+.banner {
+    display: flex;
+    align-items: center;
+}
 .title {
-    font-family: 'Arial', 'Helvetica', sans-serif;
-    color: #333333;
-    font-size: 30px; /* Maintaining larger size for emphasis */
+    color: black;
+    font-size: 30px;
 }
 
 .dropbtn {
@@ -21,13 +29,21 @@
   width: 150px;
   text-align: left;
 }
+.title {
+    font-size: 70px;
+    font-family: "Fira Code";
+    padding-right: 80px;
+
+}
 
 .dropdown {
   position: relative;
   display: inline-block;
 }
 
-
+.right-justify {
+    margin-left: auto;
+}
 .dropdown-content {
   display: none;
   position: absolute;
@@ -47,15 +63,38 @@
     background-color: #FF6D00;
     color: white;
     cursor: pointer;
-    width: 150px;
+    width: 200px;
     height: 50px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.button-common:hover {
+    background-color: #FF9E80;
+    transform: scale(0.5) translateY(-5px);
+    color: white;
 }
 
 
 .button-common:hover {
     background-color: #FF9E80;
     transform: scale(1.05) translateY(-5px);
-    color: black;
+    background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.2),
+            rgba(255, 255, 255, 0.8),
+            rgba(255, 255, 255, 0.2)
+    );
+    background-size: 200% 100%;
+    animation: shine 1s linear infinite;
+}
+
+@keyframes shine {
+    from {
+        background-position: -200% 0;
+    }
+    to {
+        background-position: 200% 0;
+    }
 }
 
 .dropdown-content p:hover {
@@ -72,7 +111,7 @@ button {
     margin: 5px;
     border: none;
     background-color: #FF6D00; /* Or any color you prefer */
-    color: white;
+    color: black;
     cursor: pointer;
     width: 80%;
     max-width: 300px;
@@ -85,3 +124,15 @@ img {
     width: 10px;
     length: 10px;
 }
+
+.button-common.friends-button:hover {
+    animation: spin 13s infinite;
+    transform: scale(1.05) translateY(-5px);
+}
+
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-180deg); }
+}
+

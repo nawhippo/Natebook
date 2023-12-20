@@ -21,6 +21,7 @@ const CreatePostButton = () => {
 
   useEffect(() => {
     const createPost = async () => {
+      console.log('useEffect triggered', { triggerPostCreation, images });
       if (triggerPostCreation && images.length > 0) {
         await handleCreatePost();
         setTriggerPostCreation(false); // Reset the trigger
@@ -62,6 +63,11 @@ const CreatePostButton = () => {
     setShowForm(!showForm);
   };
 
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    color: '#FFFFFF',
+  };
+
   const handleCreatePost = async () => {
     const postBody = {
       post: {
@@ -70,10 +76,11 @@ const CreatePostButton = () => {
         friendsOnly: !publicStatus,
         posterUsername: user.username,
       },
-      images: images // Ensure this is an array of base64 encoded image strings
+      images: images
     };
 
     try {
+      console.log('Sending post request', postBody);
       const response = await fetch(`/api/post/${user.appUserID}/createPost`, {
         method: 'POST',
         headers: {
@@ -88,7 +95,7 @@ const CreatePostButton = () => {
         setTitle('');
         setDescription('');
         setImages([]);
-        setShowForm(false); // Hide form after successful post creation
+        setShowForm(false);
       } else {
         setMessage('Failed to create post.');
       }
@@ -101,40 +108,37 @@ const CreatePostButton = () => {
 
   return (
       <div className="create-post-container">
-        <button className="button" onClick={toggleForm}>Create Post</button>
+        <button className="button" onClick={toggleForm} style={buttonStyle}>Create Post</button>
         {showForm && (
-            <div>
-              <div>
-                <input
-                    className="post-input"
-                    type="text"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
-              <div>
-                <textarea
-                    className="post-textarea"
-                    placeholder="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              {/* Public/Private toggle and file input */}
+            <div className="form-container">
+              <input
+                  className="post-input"
+                  type="text"
+                  placeholder="Title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+              />
+              <textarea
+                  className="post-textarea"
+                  placeholder="Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+              />
               <div className="public-status-icon" onClick={handlePublicStatusToggle}>
                 {publicStatus ? <PublicIcon /> : <PublicOffIcon />}
                 <span>{publicStatus ? 'Public' : 'Private'}</span>
               </div>
-              <div>
-                <input type="file" accept="image/*" multiple onChange={handleImageChange} />
-              </div>
-              <div>
-                <button className="button" onClick={() => setTriggerPostCreation(true)}>Submit Post</button>
-              </div>
-              <div>
-                {message && <p className="create-post-message">{message}</p>}
-              </div>
+              <input
+                  id="image-upload"
+                  className="post-image-upload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+              />
+              <label htmlFor="image-upload" className="image-upload-label">Upload Image</label>
+              <button className="button" onClick={() => setTriggerPostCreation(true)} style={buttonStyle}>Submit Post</button>
+              {message && <p className="create-post-message">{message}</p>}
             </div>
         )}
       </div>

@@ -1,8 +1,18 @@
 .user-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Aligns items vertically */
-    padding: 10px; /* Optional for spacing */
+     display: flex;
+     justify-content: space-between;
+     align-items: center; /* Aligns items vertically */
+     padding: 20px; /* Optional for spacing */
+     background-color: antiquewhite;
+     border-radius: 25px;
+     outline: black;
+     border-color: black;
+     outline-width: 3px;
+    margin-bottom: 20px;
+ }
+
+.user-item:hover {
+
 }
 
 .user-name {
@@ -11,4 +21,12 @@
 
 .button-group {
     /* If you need specific styling for the buttons container */
+}
+
+.user-item:nth-child(odd) {
+    background-color: whitesmoke; /* Light grey for odd items */
+}
+
+.user-item:nth-child(even) {
+    background-color: lightgrey; /* White for even items */
 }

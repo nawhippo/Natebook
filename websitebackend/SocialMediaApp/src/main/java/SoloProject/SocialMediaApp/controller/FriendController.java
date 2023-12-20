@@ -22,10 +22,9 @@ public class FriendController {
     }
 
     @DeleteMapping("/friends/{userId}/removeFriend/{friendusername}")
-        public ResponseEntity<AppUser> removeFriend(@PathVariable Long userId, @PathVariable String friendusername) {
-            return friendService.removeFriend(userId, friendusername);
-        }
-
+    public ResponseEntity<AppUser> removeFriend(@PathVariable Long userId, @PathVariable String friendusername) {
+       return friendService.removeFriend(userId,friendusername);
+    }
 
     @GetMapping("/friends/{userId}/getAllFriends")
     public ResponseEntity<List<AppUser>> getAllFriends(@PathVariable Long userId) {

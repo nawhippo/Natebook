@@ -5,12 +5,14 @@ import postImage from './postimage';
 import CommentForm from '../../buttonComponents/createCommentButton/createCommentButton';
 import ReactionButtons from '../../buttonComponents/reactPostButtons/reactPostButtons';
 import { DeletePostButton } from '../../buttonComponents/deletePostButton/deletePostButton';
-
+import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 const Post = ({ post, user, fetchData }) => {
     const [localLikesCount, setLocalLikesCount] = useState(post.likesCount);
     const [localDislikesCount, setLocalDislikesCount] = useState(post.dislikesCount);
     const [comments, setComments] = useState([]);
     const [images, setImages] = useState([]);
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!user); // Check if user is logged in
+
     const updateLikesDislikes = (newLikes, newDislikes) => {
         setLocalLikesCount(newLikes);
         setLocalDislikesCount(newDislikes);
@@ -28,7 +30,6 @@ const Post = ({ post, user, fetchData }) => {
             console.error('Error fetching comments:', error);
         }
     };
-
 
     const fetchImages = async () => {
         try {
@@ -51,33 +52,39 @@ const Post = ({ post, user, fetchData }) => {
         fetchImages();
     }, [post]);
 
+    const footerStyle = {
+        position: 'absolute',
+        right: '40px'
+    };
     return (
         <div className="post-container">
             <div className="post-title">{post.title}</div>
             <div className="post-description">{post.description}</div>
             <div className="post-content">{post.content}</div>
-            <div className="post-content">{post.content}</div>
+            <div className="post-creator">@{post.posterUsername}</div>
+            <ProfilePictureComponent userid={post.posterId}/>
             <p>Likes: {localLikesCount} Dislikes: {localDislikesCount}</p>
 
             <ReactionButtons
                 postId={post.id}
                 updateLikesDislikes={updateLikesDislikes}
+                isUserLoggedIn={isUserLoggedIn} // Pass isUserLoggedIn to disable liking/disliking
             />
             {images.map((image) => (
                 <img
                     key={image.id}
                     src={`data:image/${image.format};base64,${image.base64EncodedImage}`} // Adjusted to use the correct field
                     alt="Post"
-                    style={{ width: image.width/4, height: image.height/4 }}
+                    style={{ width: image.width / 4, height: image.height / 4 }}
                 />
             ))}
-            {user.username === post.posterUsername && (
+            {user && user.username === post.posterUsername && (
                 <DeletePostButton
                     postId={post.id}
                     fetchData={fetchData}
                 />
             )}
-            {images.map((comment) => (
+            {isUserLoggedIn && images.map((comment) => (
                 <Comment
                     key={comment.id}
                     comment={comment}
@@ -88,12 +95,14 @@ const Post = ({ post, user, fetchData }) => {
                     updateLikesDislikes={updateLikesDislikes}
                 />
             ))}
-            <CommentForm
-                userId={user.appUserID}
-                posterusername={post.posterUsername}
-                postId={post.id}
-            />
-            {comments.map((comment) => (
+            {isUserLoggedIn && (
+                <CommentForm
+                    userId={user.appUserID}
+                    posterusername={post.posterUsername}
+                    postId={post.id}
+                />
+            )}
+            {isUserLoggedIn && comments.map((comment) => (
                 <Comment
                     key={comment.id}
                     comment={comment}

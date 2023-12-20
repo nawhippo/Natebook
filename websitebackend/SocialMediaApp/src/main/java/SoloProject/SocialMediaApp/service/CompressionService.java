@@ -33,8 +33,8 @@ public class CompressionService {
         }
 
         byte[] compressedImageBytes;
-        int compressedWidth = 800;
-        int compressedHeight = 800;
+        int compressedWidth = 300;
+        int compressedHeight = 300;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             Thumbnails.of(new ByteArrayInputStream(imageData))

@@ -36,25 +36,30 @@ const CommentForm = ({ posterusername, postId }) => {
     await createComment();
   };
 
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'darkgrey'
+  };
+
+
   return (
-    <div>
-      <AddCommentIcon onClick={() => setShowForm(!showForm)}>
-        {showForm ? "Or not..." : "Comment"}
-      </ AddCommentIcon>
-      {showForm && (
-        <form onSubmit={handleSubmit}>
-          <label>
-            Comment:
-            <input
-              type="text"
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-            />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
-      )}
-    </div>
+      <div>
+        <AddCommentIcon onClick={() => setShowForm(!showForm)}>
+          {showForm ? "Or not..." : "Comment"}
+        </AddCommentIcon>
+        {showForm && (
+            <form onSubmit={handleSubmit}>
+              <label>
+                Comment:
+                <input
+                    type="text"
+                    value={commentContent}
+                    onChange={(e) => setCommentContent(e.target.value)}
+                />
+              </label>
+              <button type="submit" style={buttonStyle}>Submit</button>
+            </form>
+        )}
+      </div>
   );
 };
 

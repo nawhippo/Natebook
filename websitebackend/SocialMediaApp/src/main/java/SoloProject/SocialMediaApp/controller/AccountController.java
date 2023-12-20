@@ -12,8 +12,10 @@ import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 
@@ -50,6 +52,7 @@ public class AccountController {
         return accountservice.getAccountDetails(userId);
     }
     @GetMapping("/account/{userId}/profilePicture")
+    @Transactional
     public ResponseEntity<CompressedImage> getProfilePicture(@PathVariable Long userId) {
         CompressedImage profileImage = accountservice.getProfilePicture(userId);
         if (profileImage != null) {
@@ -89,8 +92,16 @@ public class AccountController {
         return accountservice.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword);
     }
 
+
+    @GetMapping("/account/{userid}/getProfilePicture")
+    @Transactional
+public CompressedImage getProfilePictureFromUserId(@PathVariable Long userid){
+        return accountservice.getProfilePicture(userid);
+    }
+
     @PutMapping("/account/{userId}/uploadProfilePicture")
-    public ResponseEntity<?> uploadProfilePicture(@PathVariable Long userId, @RequestBody Map<String, String> formData) {
+    @Transactional
+    public Object uploadProfilePicture(@PathVariable Long userId, @RequestBody Map<String, String> formData) throws IOException {
         // Extract the Base64 image string from formData
         String base64Image = formData.get("image");
 

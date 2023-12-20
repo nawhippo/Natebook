@@ -74,7 +74,7 @@ public class PostController {
         Post createdPost = postService.createPost(userId, createPostRequest.getPost());
 
         if (createPostRequest.getImages() != null && !createPostRequest.getImages().isEmpty()) {
-            postService.addImagestoPost(createdPost.getId(), createPostRequest.getImages());
+            postService.addImagesToPost(createdPost.getId(), createPostRequest.getImages());
         }
 
         if (createdPost != null) {

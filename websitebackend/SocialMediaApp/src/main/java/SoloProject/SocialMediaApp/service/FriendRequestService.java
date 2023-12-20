@@ -115,20 +115,24 @@ public class FriendRequestService {
 
     public ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, Long senderId) {
         AppUser recipient = repository.findByAppUserID(recipientId);
+        AppUser sender = repository.findByAppUserID(senderId);
+
+        // Check if they are already friends
         if(recipient.getFriends().contains(senderId)){
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
         }
-        AppUser sender = repository.findByAppUserID(senderId);
-        List<Long> newRequests = recipient.getRequests();
-        newRequests.remove(senderId);
-        List<Long> recipientFriends = recipient.getFriends();
-        List<Long> senderFriends = sender.getFriends();
-        recipientFriends.add(senderId);
-        senderFriends.add(recipientId);
-        recipient.setFriends(recipientFriends);
-        sender.setFriends(senderFriends);
+
+        // Update friend requests and friend lists
+        recipient.getRequests().remove(senderId);
+        recipient.getFriends().add(senderId);
+        recipient.setFriendCount(recipient.getFriendCount() + 1);
+
+        sender.getFriends().add(recipientId);
+        sender.setFriendCount(sender.getFriendCount() + 1);
+
         repository.save(sender);
         repository.save(recipient);
+
         return new ResponseEntity<>(sender, HttpStatus.OK);
     }
 

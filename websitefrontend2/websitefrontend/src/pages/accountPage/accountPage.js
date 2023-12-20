@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useUserContext } from "../usercontext/UserContext";
 import UpdateAccountButton from "../../buttonComponents/updateAccountButton/updateAccountButton";
 import DeleteAccountButton from "../../buttonComponents/deleteAccountButton/deleteAccountButton";
+import ColorWheel from "../../buttonComponents/colorwheel/colorwheel";
+import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 const AccountPage = () => {
   const { user } = useUserContext();
   const [accountData, setAccountData] = useState(null);
@@ -50,6 +52,9 @@ const AccountPage = () => {
 
   return (
     <div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <ProfilePictureComponent userid={accountData.appUserID} />
+      </div>
       {overlay &&
       <overlay>
       <h2>Account Details</h2>
@@ -59,11 +64,11 @@ const AccountPage = () => {
       <p>Last Name: {accountData.lastname}</p>
       <p>Email: {accountData.email}</p>
       <p>Password: ****** </p>
-
       </overlay>
 }
       <UpdateAccountButton></UpdateAccountButton>
       <DeleteAccountButton></DeleteAccountButton>
+      <p>Choose Theme Color: <ColorWheel/></p>
     </div>
   );
 };

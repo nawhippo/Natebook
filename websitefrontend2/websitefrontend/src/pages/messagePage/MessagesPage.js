@@ -25,6 +25,12 @@ const MessagesPage = () => {
             .catch((error) => console.error('Error fetching messages:', error));
     }, [user]);
 
+
+    const buttonStyle = {
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+        color: '#FFFFFF',
+    };
+
     const handleSearchTextChange = (event) => {
         const textToSearch = event.target.value;
         setSearchText(textToSearch);
@@ -46,6 +52,7 @@ const MessagesPage = () => {
         filterMessages(searchText, allMessages);
     };
 
+
     return (
         <div>
             <h1>Messages</h1>
@@ -57,7 +64,7 @@ const MessagesPage = () => {
                     value={searchText}
                     onChange={handleSearchTextChange}
                 />
-                <button className="search-button" onClick={handleSearch}> {/* Apply the search button class */}
+                <button className="search-button" onClick={handleSearch} style={buttonStyle}> {/* Apply the search button class */}
                     <SearchIcon />
                 </button>
             </div>

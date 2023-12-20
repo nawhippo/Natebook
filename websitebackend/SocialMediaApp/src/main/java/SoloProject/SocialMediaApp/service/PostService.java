@@ -7,6 +7,7 @@ import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +40,7 @@ public class PostService {
         return postRepository.findByFriendsOnlyFalse();
     }
 
-    //all of the posts from a user's friends.
+
     public List<Post> getAllFriendPosts(Long userId) {
         AppUser appUser = appUserRepository.findByAppUserID(userId);
         List<Post> megalist = new ArrayList<>();
@@ -110,31 +111,30 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId) {
         postRepository.deleteById(postId);
-        for(CompressedImage compressedImage: compressedImageRepository.findByPostid(postId)){
+        for (CompressedImage compressedImage : compressedImageRepository.findByPostid(postId)) {
             compressedImageRepository.delete(compressedImage);
         }
-            postRepository.deleteById(postId);
+        postRepository.deleteById(postId);
     }
 
 
-    public ResponseEntity<Post> addImagestoPost(Long postId, List<String> base64Images) throws IOException, SQLException {
+    public ResponseEntity<Post> addImagesToPost(Long postId, List<String> base64Images) throws IOException, SQLException {
         Optional<Post> optionalPost = postRepository.findById(postId);
 
         if (optionalPost.isPresent() && base64Images != null && !base64Images.isEmpty()) {
             Post post = optionalPost.get();
             for (String base64Image : base64Images) {
-                // Decode the base64 string to a byte array
                 byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-                String filename = "image_" + System.currentTimeMillis() + ".jpg"; // Generate a filename
+                String filename = "image_" + System.currentTimeMillis() + ".jpg";
                 CompressedImage compressedImage = compressionService.compressImage(imageBytes, filename);
-                compressedImage.setPostid(postId); // Assuming you want to link the image to the post
+                post.addImage(compressedImage.getId());
+                compressedImage.setPostid(postId);
                 compressedImageRepository.save(compressedImage);
             }
-
-            postRepository.save(post); // Save the post if needed
-            return ResponseEntity.ok(post);
+            postRepository.save(post); // Save the updated post
+            return new ResponseEntity<>(post, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        return ResponseEntity.notFound().build();
     }
 }

@@ -14,7 +14,7 @@ public class AppUser implements UserDetails {
 
     public Long profilePicture;
 
-
+    private int friendCount = 0;
     public Long getProfilePicture() {
         return profilePicture;
     }
@@ -44,7 +44,13 @@ public class AppUser implements UserDetails {
     }
 
 
+    public int getFriendCount() {
+        return friendCount;
+    }
 
+    public void setFriendCount(int friendCount) {
+        this.friendCount = friendCount;
+    }
 
     @Column
     private List<Long> requests;

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Post from '../../objects/post';
-import { useUserContext } from '../../usercontext/UserContext';
 import CreatePostButton from '../../../buttonComponents/createPostButton/createPostButton';
-import IconButton from '@mui/material/IconButton'; // Make sure this is correctly imported
-import SearchIcon from '@mui/icons-material/Search'; // Make sure this is correctly imported
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
+import { useUserContext } from '../../usercontext/UserContext'; // Import the user context
 
 const PublicFeed = () => {
-    const { user } = useUserContext();
+    const { user } = useUserContext(); // Get the user context
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [inputValue, setInputValue] = useState(''); // This state seems unused, consider removing if not needed
+    const [inputValue, setInputValue] = useState('');
     const [allPostsData, setAllPostsData] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredPosts, setFilteredPosts] = useState([]);
@@ -18,6 +18,10 @@ const PublicFeed = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    const searchButtonStyle = {
+        backgroundColor: 'darkgrey'
+    };
 
     useEffect(() => {
         if (allPostsData && searchTerm) {
@@ -35,10 +39,6 @@ const PublicFeed = () => {
                 if (response.status === 404) {
                     setAllPostsData([]);
                     throw new Error('No posts present');
-                    if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                        setAllPostsData([]);
-                    }
                 }
                 return response.json();
             })
@@ -54,6 +54,10 @@ const PublicFeed = () => {
 
     const handleInputChange = (event) => setSearchTerm(event.target.value);
 
+    const buttonStyle = {
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+        color: '#FFFFFF',
+    };
 
     return (
         <div>
@@ -66,7 +70,7 @@ const PublicFeed = () => {
                     placeholder="Search by Username"
                     onChange={handleInputChange}
                 />
-                <button className="search-button" type="submit" onClick={() => handleInputChange({ target: { value: searchTerm } })}>
+                <button className="search-button" type="submit" onClick={() => handleInputChange({ target: { value: searchTerm } })} style={buttonStyle}>
                     <SearchIcon />
                 </button>
             </div>
@@ -76,6 +80,7 @@ const PublicFeed = () => {
                     <CreatePostButton />
                 </div>
             )}
+
             {isLoading ? (
                 <p>Loading...</p>
             ) : error ? (
@@ -85,7 +90,6 @@ const PublicFeed = () => {
                     <Post
                         key={post.id}
                         post={post}
-                        user={user}
                         fetchData={fetchData}
                     />
                 ))

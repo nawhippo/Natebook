@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../usercontext/UserContext';
 import SendFriendRequestButton from '../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton';
 import ViewProfileButton from '../../buttonComponents/viewProfileButton/viewProfileButton';
-import SearchIcon from '@mui/icons-material/Search'; // Import the search icon
-import './allUsersPage.css'
+import SearchIcon from '@mui/icons-material/Search';
+import './allUsersPage.css';
+import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
+import { useUserContext } from "../usercontext/UserContext";
+
 const AllUsersPage = () => {
   const [addressBookData, setAddressBookData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const { user } = useUserContext();
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add isLoggedIn state
+  const { user } = useUserContext(); // Get user from the user context
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,52 +42,52 @@ const AllUsersPage = () => {
     e.preventDefault();
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    color: '#FFFFFF',
+  };
 
   return (
       <div>
         <p>{addressBookData && addressBookData.message}</p>
-        {user && (
-            <>
-              <h2>Users</h2>
-              <form onSubmit={handleSearch} className="search-bar-container">
-                <input
-                    className="search-input"
-                    type="text"
-                    placeholder="Search by username"
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                />
-                <button className="search-button" type="submit">
-                  <SearchIcon />
-                </button>
-              </form>
+        <h2>Users</h2>
+        <form onSubmit={handleSearch} className="search-bar-container">
+          <input
+              className="search-input"
+              type="text"
+              placeholder="Search by username"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+          />
+          <button className="search-button" type="submit" style={buttonStyle}>
+            <SearchIcon />
+          </button>
+        </form>
+        {isLoading ? (
+            <div>Loading...</div>
+        ) : error ? (
+            <div>Error: {error}</div>
+        ) : (
+            <ul>
               {filteredUsers && filteredUsers.length > 0 ? (
-                  <ul>
-                    {filteredUsers.map(userItem => (
-                        <li key={userItem.appUserID} className="user-item">
-        <span className="user-name">
-            {userItem.username} - {userItem.firstname} {userItem.lastname}
-        </span>
-                          <div className="button-group">
-                            <ViewProfileButton userid={userItem.appUserID} />
-                            {user.username !== userItem.username && (
-                                <SendFriendRequestButton username={userItem.username} />
-                            )}
-                          </div>
-                        </li>
-                    ))}
-                  </ul>
+                  filteredUsers.map(userItem => (
+                      <li key={userItem.appUserID} className="user-item">
+                <span className="user-name">
+                  @{userItem.username} - {userItem.firstname} {userItem.lastname}
+                </span>
+
+                        <div className="button-group">
+                          <ProfilePictureComponent userid={userItem.appUserID} />
+                          {user && user.username && (
+                              <SendFriendRequestButton username={userItem.username} />
+                          )}
+                        </div>
+                      </li>
+                  ))
               ) : (
                   <p>No website users found.</p>
               )}
-            </>
+            </ul>
         )}
       </div>
   );

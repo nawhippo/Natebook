@@ -44,7 +44,7 @@ public class FriendRequestController {
 
     @PutMapping("/friendreqs/{userId}/acceptFriendRequest/{potentialFriendId}")
     public ResponseEntity<AppUser> acceptFriendRequest(@PathVariable Long userId, @PathVariable Long potentialFriendId) {
-        return friendRequestService.acceptFriendRequest(userId, potentialFriendId);
+      return friendRequestService.acceptFriendRequest(userId,potentialFriendId);
     }
 
     @PutMapping("/friendreqs/{userId}/declineFriendRequest/{potentialFriendId}")

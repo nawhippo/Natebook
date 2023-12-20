@@ -14,8 +14,7 @@ const CreateAccount = () => {
     username: "",
   });
   const [error, setError] = useState('');
-
-  const { setUser } = useUserContext();
+  const { updateUser, user } = useUserContext();
   const history = useHistory();
 
   const handleChange = (event) => {
@@ -23,6 +22,9 @@ const CreateAccount = () => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange'
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -51,9 +53,9 @@ const CreateAccount = () => {
           }
         })
         .then((userData) => {
-          setUser(userData);
+          updateUser(userData);
           Cookies.set('userData', JSON.stringify(userData));
-          history.push('/home');
+          history.push('/feed');
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -67,7 +69,7 @@ const CreateAccount = () => {
         {isVisible && (
             <div className={styles.overlay}>
               <div className={styles.createAccountFormContainer}>
-                <button className={styles.closeButton} onClick={() => setIsVisible(false)}>X</button>
+                <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={buttonStyle}>X</button>
                 <h2>Create Account</h2>
                 <form onSubmit={handleSubmit} className="createAccountForm">
                   <div className={styles.inputGroup}>
@@ -91,7 +93,7 @@ const CreateAccount = () => {
                     <input type="password" name="password" value={formData.password} onChange={handleChange} />
                   </div>
                   <div className={styles.buttonContainer}>
-                    <button type="submit">Submit</button>
+                    <button type="submit" style={buttonStyle}>Submit</button>
                   </div>
                   {error && <p style={{ color: 'red' }}>{error}</p>}
                 </form>

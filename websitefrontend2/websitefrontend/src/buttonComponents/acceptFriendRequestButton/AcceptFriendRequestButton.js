@@ -17,7 +17,7 @@ const AcceptFriendRequestButton = ({ friendId, triggerFetch }) => {
     }
   };
 
-  return <button onClick={handleClick}>Accept Friend Request</button>;
+  return <button onClick={handleClick}  className='button-common'>Accept Friend Request</button>;
 };
 
 export default AcceptFriendRequestButton;

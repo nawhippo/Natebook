@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUserContext } from "../../pages/usercontext/UserContext";
-
+import styles from './updateAccount.module.css';
 const UpdateAccountButton = () => {
   const { user } = useUserContext();
   const [isVisible, setIsVisible] = useState(false);
@@ -15,22 +15,27 @@ const UpdateAccountButton = () => {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState("");
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setBase64Image(reader.result);
-        } else {
-          console.error('FileReader result is not a string');
-          setError('Error reading file');
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => resolve(fileReader.result);
+            fileReader.onerror = (error) => reject(error);
+        });
+    };
 
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            try {
+                const base64 = await convertToBase64(file);
+                setBase64Image(base64.split(',')[1]); // Extract the base64 part only
+            } catch (error) {
+                console.error('Error converting file:', error);
+                setError('Error processing file');
+            }
+        }
+    };
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -49,6 +54,10 @@ const UpdateAccountButton = () => {
     setBase64Image('');
   };
 
+    const buttonStyle = {
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+        color: '#FFFFFF',
+    };
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -90,67 +99,71 @@ const UpdateAccountButton = () => {
     }
   };
 
-  return (
-      <div>
-        <button onClick={() => setIsVisible(!isVisible)}>Update Account</button>
-        {isVisible && (
-            <div>
-              <form onSubmit={handleSubmit}>
-                <div>
-                  <label htmlFor="firstname">First Name:</label>
-                  <input
-                      type="text"
-                      id="firstname"
-                      name="firstname"
-                      value={formData.firstname}
-                      onChange={handleChange}
-                      required
-                  />
+    return (
+        <div>
+            <button onClick={() => setIsVisible(!isVisible)} style={buttonStyle} className='button-common'>Update Account</button>
+            {isVisible && (
+                <div className={styles.overlay}>
+                    <div className={styles.loginFormContainer}>
+                        <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={buttonStyle}>X</button>
+                        <form onSubmit={handleSubmit} className="updateAccountForm">
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="firstname">First Name:</label>
+                                <input
+                                    type="text"
+                                    id="firstname"
+                                    name="firstname"
+                                    value={formData.firstname}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="lastname">Last Name:</label>
+                                <input
+                                    type="text"
+                                    id="lastname"
+                                    name="lastname"
+                                    value={formData.lastname}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="email">Email:</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="password">Password:</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="icon-button-file">Profile Picture:</label>
+                                <input accept="image/*" id="icon-button-file" type="file" onChange={handleFileChange}/>
+                            </div>
+                            <div className={styles.buttonContainer}>
+                                <button type="submit" className={styles.submitButton}   className='button-common' style={buttonStyle}>Submit</button>
+                            </div>
+                        </form>
+                        {message && <p>{message}</p>}
+                        {error && <p>{error}</p>}
+                    </div>
                 </div>
-                <div>
-                  <label htmlFor="lastname">Last Name:</label>
-                  <input
-                      type="text"
-                      id="lastname"
-                      name="lastname"
-                      value={formData.lastname}
-                      onChange={handleChange}
-                      required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email">Email:</label>
-                  <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="password">Password:</label>
-                  <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="icon-button-file">Profile Picture:</label>
-                  <input accept="image/*" id="icon-button-file" type="file" onChange={handleFileChange}/>
-                </div>
-                <button type="submit">Submit</button>
-              </form>
-              {message && <p>{message}</p>}
-              {error && <p>{error}</p>}
-            </div>
-        )}
-      </div>
-  );
+            )}
+        </div>
+    );
 };
-
 export default UpdateAccountButton;

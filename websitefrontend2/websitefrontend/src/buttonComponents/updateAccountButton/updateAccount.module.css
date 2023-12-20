@@ -34,11 +34,11 @@
 
 .closeButton:hover {
     background-color: #FF9E80; /* Color change on hover */
-    color:black;
+    color: black;
 }
 
-.loginFormContainer {
-    background-color: antiquewhite; /* White background for the form */
+.formContainer {
+    background-color: white; /* White background for the form */
     padding: 10px;
     border-radius: 10px; /* Soften the edges a bit */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* A slight shadow to give depth */
@@ -46,16 +46,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    position:relative;
+    position: relative;
 }
-
 
 .inputGroup {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    transform: translateX(-50px)
+    margin: 10px 0; /* Space between input fields */
 }
 
 .buttonContainer {
@@ -63,7 +62,7 @@
     flex-direction: column;
     padding: 10px 0;
     width: 250px;
-    transform: translateX(70px)
+    align-items: center; /* Center the buttons */
 }
 
 .inputGroup label {
@@ -72,6 +71,7 @@
     text-align: center;
     margin-right: 50px;
 }
+
 .button-common {
     padding: 10px 20px;
     margin: 5px;
@@ -81,22 +81,20 @@
     cursor: pointer;
     width: 100px;
     height: 50px;
-
 }
-
 
 .button-common:hover {
     background-color: #FF9E80;
 }
 
 .inputGroup input[type="text"],
-.inputGroup input[type="password"]{
+.inputGroup input[type="password"],
+.inputGroup input[type="email"] {
     all: initial;
     background: white;
-    flex-grow: 0;
-    width: 200px;
+    flex-grow: 1;
     padding: 5px;
     border: 1px solid #ccc;
-    align-items: center;
+    border-radius: 4px;
     margin-left: auto;
 }

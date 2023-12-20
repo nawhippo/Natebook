@@ -1,55 +1,64 @@
 .create-post-container {
-    align-items: center;
-    background-color: #f3f3f3;
-    border-radius: 8px;
-    padding: 5px;
-    width: 100%; /* Use full width or adjust as necessary */
-    max-width: 500px; /* Max width to contain the form */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    position: relative;
+    margin: 0;
+    padding: 0;
 }
 
-.create-post-container input,
-.create-post-container textarea {
-    width: calc(100% - 20px); /* Adjust width to account for padding */
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    display: block; /* Ensure inputs and textarea take up full width */
-}
-
-.create-post-container textarea {
-    height: 100px; /* Set a fixed height for the textarea */
-    resize: vertical; /* Allow vertical resizing */
-}
-
-/* Adjust the checkbox alignment */
-.create-post-container .public-checkbox-wrapper {
-    display: flex;
-    align-items: center; /* Align checkbox and label vertically */
-    margin: 10px 0; /* Consistent margin with other inputs */
-}
-
-.create-post-container .public-checkbox-wrapper input[type="checkbox"] {
-    margin-right: 8px; /* Add space between checkbox and label */
-}
-
-.create-post-container .public-checkbox-wrapper label {
-    margin: 0; /* Remove default margin from the label */
-}
-
-.create-post-button, .submit-post-button {
-    padding: 10px 15px;
+.button {
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    color: white;
     cursor: pointer;
-    display: block; /* Make buttons block level for full width */
-    width: calc(100% - 20px); /* Adjust width to account for padding */
-    margin: 10px 0;
+    transition: background-color 0.3s ease;
 }
 
-.create-post-button:hover, .submit-post-button:hover {
-    background-color: darkred;
-    transform: scale(1.025);
+.form-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    z-index: 1000;
+}
+
+.post-input, .post-textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.public-status-icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.post-image-upload {
+    display: none;
+}
+
+.image-upload-label {
+    display: block;
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.create-post-message {
+    color: #d9534f;
+    text-align: center;
+}
+.button:hover {
+    background-color: darken(#FF6D00, 10%);
 }

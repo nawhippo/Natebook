@@ -14,7 +14,11 @@ public class CompressedImage {
     private Long postid;
 
     @Column
-    private Long profileId;
+    private Long profileid;
+
+    public void setProfileid(Long profileid) {
+        this.profileid = profileid;
+    }
 
     @Lob
     private byte[] imageData; // Image data stored as a byte array
@@ -34,13 +38,12 @@ public class CompressedImage {
         // Default constructor
     }
 
-    public CompressedImage(byte[] imageData, int width, int height, String format, String base64EncodedImage,  Long profileId) {
+    public CompressedImage(byte[] imageData, int width, int height, String format, String base64EncodedImage) {
         this.imageData = imageData;
         this.width = width;
         this.height = height;
         this.format = format;
         this.base64EncodedImage = base64EncodedImage;
-        this.profileId = profileId;
     }
 
     public String getBase64EncodedImage() {

@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface CompressedImageRepository extends JpaRepository<CompressedImage, Long> {
     List<CompressedImage> findByPostid(Long postId);
+    CompressedImage findByProfileid(Long postId);
 }

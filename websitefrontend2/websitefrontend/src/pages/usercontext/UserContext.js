@@ -13,11 +13,19 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const cookieUserData = Cookies.get('userData');
     if (cookieUserData) {
-      setUser(JSON.parse(cookieUserData)); // Set user from cookie data
-    } else {
-      setUser(null); // Set user to null if no cookie data
+      setUser(JSON.parse(cookieUserData));
     }
-  }, []); // Empty dependency array, runs only on mount
+  }, []);
+
+  const updateUser = (newUserData) => {
+    setUser(newUserData);
+    Cookies.set('userData', JSON.stringify(newUserData));
+  };
+
+  const updateBackgroundColor = (color) => {
+    const updatedUser = { ...user, backgroundColor: color };
+    updateUser(updatedUser);
+  };
 
   const clearUserContext = () => {
     setUser(null);
@@ -25,7 +33,7 @@ export function UserProvider({ children }) {
   };
 
   return (
-      <UserContext.Provider value={{ user, setUser, clearUserContext }}>
+      <UserContext.Provider value={{ user, updateUser, updateBackgroundColor, clearUserContext }}>
         {children}
       </UserContext.Provider>
   );

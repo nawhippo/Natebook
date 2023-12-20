@@ -1,6 +1,12 @@
 import React from 'react';
+import {useUserContext} from "../../pages/usercontext/UserContext";
 
 export const DeletePostButton = ({ postId, fetchData }) => {
+  const user = useUserContext();
+  // const buttonStyle = {
+  //   backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+  //   color: '#FFFFFF',
+  // };
 
   const handleDelete = async () => {
     try {
@@ -17,7 +23,7 @@ export const DeletePostButton = ({ postId, fetchData }) => {
   };
 
   return (
-    <button onClick={handleDelete}>
+    <button onClick={handleDelete} style="buttonStyle">
       Delete Post
     </button>
   );

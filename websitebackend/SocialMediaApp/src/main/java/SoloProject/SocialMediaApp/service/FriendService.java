@@ -19,45 +19,26 @@ public class FriendService {
         this.repository = repository;
     }
 
-    public ResponseEntity<AppUser> removeFriend(Long userId, String username) {
+    public ResponseEntity<AppUser> removeFriend(Long userId, String friendUsername) {
         AppUser user = repository.findByAppUserID(userId);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
+        AppUser friend = repository.findByUsername(friendUsername);
+
+        if (user != null && friend != null) {
+            user.getFriends().remove(friend.getAppUserID());
+            user.setFriendCount(user.getFriendCount() - 1);
+
+            friend.getFriends().remove(userId);
+            friend.setFriendCount(friend.getFriendCount() - 1);
+
+            repository.save(user);
+            repository.save(friend);
+
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
 
-        List<Long> friends = user.getFriends();
-        AppUser friend = repository.findByUsername(username);
-        List<Long> friends2 = friend.getFriends();
-        if (friend == null) {
-            return ResponseEntity.notFound().build();
-        }
-        friends.remove(friend.getAppUserID());
-        friends2.remove(userId);
-        user.setFriends(friends);
-        friend.setFriends(friends2);
-        repository.save(user);
-        repository.save(friend);
-        return ResponseEntity.ok(user);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
-    public ResponseEntity<AppUser> removeFriend(Long userId, Long friendId) {
-        AppUser user = repository.findByAppUserID(userId);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        List<Long> friends = user.getFriends();
-        AppUser friend = repository.findByAppUserID(friendId);
-
-        if (friend == null) {
-            return ResponseEntity.notFound().build();
-        }
-        friends.remove(friend);
-        user.setFriends(friends);
-        repository.save(user);
-        return ResponseEntity.ok(user);
-    }
 
     public ResponseEntity<List<Long>> getFriends(Long userId) {
         AppUser appUser = repository.findByAppUserID(userId);

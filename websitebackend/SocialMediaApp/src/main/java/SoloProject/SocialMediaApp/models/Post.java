@@ -69,6 +69,7 @@ public class Post {
 
     public Post() {
         reactions = new HashMap<>();
+        images = new ArrayList<>();
     }
 
 
