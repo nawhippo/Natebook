@@ -3,10 +3,14 @@ import {useUserContext} from "../../pages/usercontext/UserContext";
 
 export const DeletePostButton = ({ postId, fetchData }) => {
   const user = useUserContext();
-  // const buttonStyle = {
-  //   backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
-  //   color: '#FFFFFF',
-  // };
+
+
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    color: '#FFFFFF',
+    border: '4px solid black',
+  };
+
 
   const handleDelete = async () => {
     try {
@@ -15,7 +19,7 @@ export const DeletePostButton = ({ postId, fetchData }) => {
         throw new Error('Failed to delete.');
       }
       if (fetchData) {
-        fetchData(); 
+        fetchData();
       }
     } catch (error) {
       console.error(error.message);
@@ -23,7 +27,7 @@ export const DeletePostButton = ({ postId, fetchData }) => {
   };
 
   return (
-    <button onClick={handleDelete} style="buttonStyle">
+    <button onClick={handleDelete} style={buttonStyle}>
       Delete Post
     </button>
   );
