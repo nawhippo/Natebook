@@ -1,6 +1,5 @@
-import LoginButton from "../../buttonComponents/loginButton/loginButton";
-import React, { useState } from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext';
+import React, {useState} from 'react';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
 
 const LoginPage = () => {
