@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext';
+import React, {useEffect, useState} from 'react';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 import '../../global.css';
 import './CreatePostButton.css';
 import PublicIcon from '@mui/icons-material/Public';
@@ -64,10 +64,10 @@ const CreatePostButton = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
     color: '#FFFFFF',
+    border: '4px solid black',
   };
-
   const handleCreatePost = async () => {
     const postBody = {
       post: {
@@ -112,13 +112,14 @@ const CreatePostButton = () => {
         {showForm && (
             <div className="form-container">
               <input
+                  style={{width: '475px'}}
                   className="post-input"
                   type="text"
                   placeholder="Title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
               />
-              <textarea
+              <textarea style={{width: '475px'}}
                   className="post-textarea"
                   placeholder="Description"
                   value={description}
@@ -128,7 +129,7 @@ const CreatePostButton = () => {
                 {publicStatus ? <PublicIcon /> : <PublicOffIcon />}
                 <span>{publicStatus ? 'Public' : 'Private'}</span>
               </div>
-              <input
+              <input style={{...buttonStyle}}
                   id="image-upload"
                   className="post-image-upload"
                   type="file"
@@ -137,7 +138,7 @@ const CreatePostButton = () => {
                   onChange={handleImageChange}
               />
               <label htmlFor="image-upload" className="image-upload-label">Upload Image</label>
-              <button className="button" onClick={() => setTriggerPostCreation(true)} style={buttonStyle}>Submit Post</button>
+              <button className="button" onClick={() => setTriggerPostCreation(true)} style={{...buttonStyle, transform: 'translateX(90px)'}}>Submit Post</button>
               {message && <p className="create-post-message">{message}</p>}
             </div>
         )}
