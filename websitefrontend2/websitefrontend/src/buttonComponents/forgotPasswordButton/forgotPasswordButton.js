@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext';
-import styles from './forgotpassword.css';
+import React, {useState} from 'react';
+import {useUserContext} from '../../pages/usercontext/UserContext';
+
 const ForgotPasswordButton = () => {
-    // Should display whether the operation was successful.
     const [buttonUsed, setButtonUsed] = useState('');
     const [email, setEmail] = useState('');
     const [visible, setVisible] = useState(false);
     const { user } = useUserContext();
-    // Implement email sending
 
     const buttonStyle = {
         backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange'
