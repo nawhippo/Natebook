@@ -1,33 +1,17 @@
-import React, { useState } from 'react';
-const Message = ({ message, user }) => {
-  const [showReplies, setShowReplies] = useState(false);
+import React from 'react';
+import {useUserContext} from '../usercontext/UserContext';
 
-  const toggleReplies = () => {
-    setShowReplies(!showReplies);
-  };
+const Message = ({ message }) => {
+    const user = useUserContext();
 
-  return (
-    <div>
-      <p>{message.title}</p>
-      <p>{message.content}</p>
-     <p>Sender: {message.senderusername}</p>
-      {message.recipients && (
-        <p>Recipients: {message.recipients.join(', ')}</p>
-      )}
-      <button onClick={toggleReplies}>Replies</button>
-      {showReplies && message.childMessages && (
-        <div>
-          <h4>Replies:</h4>
-          {message.childMessages.map((reply, index) => (
-            <div key={index}>
-              <p>Sender: {reply.senderusername}</p>
-              <p>{reply.content}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+    return (
+        <li
+            className={user.appUserID !== message.senderid ? 'other-user' : ''}
+            key={message.id}
+        >
+            {message.content}
+        </li>
+    );
 };
 
 export default Message;
