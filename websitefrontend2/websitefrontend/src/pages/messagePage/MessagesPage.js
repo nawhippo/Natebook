@@ -1,92 +1,187 @@
-import React, { useEffect, useState } from 'react';
-import { useUserContext } from '../usercontext/UserContext';
+import React, {useEffect, useState} from 'react';
+import './MessagesPage.css';
+import {useUserContext} from '../usercontext/UserContext';
 import Message from '../objects/message';
-import ReplyMessageForm from '../../buttonComponents/replyToMessageButton/replyToMessageButton';
-import CreateMessageForm from '../../buttonComponents/createMessageButton/createMessageButton';
-import SentList from './HelperComponents/OutgoingMessages';
-import RecList from './HelperComponents/IncomingMessages';
-import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
-import '../../global.css';
+import ProfilePictureComponent from '../../buttonComponents/ProfilePictureComponent';
+
 const MessagesPage = () => {
-    const { user } = useUserContext();
-    const [searchText, setSearchText] = useState('');
-    const [showIncoming, setShowIncoming] = useState(true);
-    const [allMessages, setAllMessages] = useState([]);
-    const [displayedMessages, setDisplayedMessages] = useState([]);
-
-    useEffect(() => {
-        fetch(`/api/message/${user.appUserID}/allMessages`)
-            .then((response) => response.json())
-            .then((data) => {
-                setAllMessages(data);
-                filterMessages(searchText, data);
-            })
-            .catch((error) => console.error('Error fetching messages:', error));
-    }, [user]);
-
+    const [userId, setUserId] = useState(1);
+    const [content, setContent] = useState('');
+    const [recipientUsernames, setRecipientUsernames] = useState([]);
+    const [threads, setThreads] = useState([]);
+    const [selectedThreadId, setSelectedThreadId] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const {user} = useUserContext();
 
     const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
         color: '#FFFFFF',
+        border: '4px solid black',
+    };
+    const getAllThreads = async () => {
+        try {
+            const response = await fetch(`/api/message/${user.appUserID}/getAllThreads`);
+            const data = await response.json();
+            setThreads(data);
+        } catch (error) {
+            console.error('Error fetchwithCsrfing threads:', error);
+        }
     };
 
-    const handleSearchTextChange = (event) => {
-        const textToSearch = event.target.value;
-        setSearchText(textToSearch);
-        filterMessages(textToSearch, allMessages);
+    const getAllMessagesByThread = async () => {
+        try {
+            const response = await fetch(`/api/message/${selectedThreadId}/getAllMessages`);
+            const data = await response.json();
+            setMessages(data);
+        } catch (error) {
+            console.error('Error fetchwithCsrfing messages:', error);
+        }
     };
 
-    const filterMessages = (textToSearch, messages) => {
-        const filtered = messages.filter((message) => {
-            return message.content.toLowerCase().includes(textToSearch.toLowerCase());
-        });
-        setDisplayedMessages(filtered);
+    const sendMessage = async () => {
+        try {
+            const response = await fetch(`/api/message/${user.appUserID}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content,
+                    recipientUsernames,
+                }),
+            });
+
+            if (response.ok) {
+                setContent('');
+                setRecipientUsernames([]);
+                getAllThreads();
+            } else {
+                console.error('Error sending message:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
     };
 
-    const messagesToDisplay = displayedMessages.filter((message) => {
-        return showIncoming ? message.isIncoming : !message.isIncoming;
-    });
-
-    const handleSearch = () => {
-        filterMessages(searchText, allMessages);
+    const replyToThread = async () => {
+        try {
+            await fetch(`/api/message/${selectedThreadId}/reply`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content,
+                    userId: Number(userId),
+                }),
+            });
+            getAllMessagesByThread(selectedThreadId);
+        } catch (error) {
+            console.error('Error replying to thread:', error);
+        }
     };
 
+    useEffect(() => {
+        getAllThreads();
+    }, [userId]);
+
+    useEffect(() => {
+        if (selectedThreadId) {
+            getAllMessagesByThread(selectedThreadId);
+        }
+    }, [selectedThreadId]);
 
     return (
-        <div>
-            <h1>Messages</h1>
-            <div className="search-bar-container"> {/* Use the same container class for consistent styling */}
-                <input
-                    className="search-input" // Apply the search input class
-                    type="text"
-                    placeholder="Search messages..."
-                    value={searchText}
-                    onChange={handleSearchTextChange}
-                />
-                <button className="search-button" onClick={handleSearch} style={buttonStyle}> {/* Apply the search button class */}
-                    <SearchIcon />
-                </button>
+            <div className="messages-container">
+                <div className="threads">
+                    <ul style={{ listStyleType: 'none', padding: 0 }}>
+                        {threads && threads.length > 0 ? (
+                            threads.map((thread) => (
+                                <li key={thread.id}>
+                                    <button
+                                        onClick={() => setSelectedThreadId(thread.id)}
+                                        style={buttonStyle}
+                                        className='button-common'
+                                    >
+                                        {thread.participants.map((participant) => (
+                                            <span key={participant}>
+                                            <p>{participant}</p>
+                                            <ProfilePictureComponent userid={participant.userId} sx={{ size: '100px !important' }}/>{' '}
+                                        </span>
+                                        ))}
+                                    </button>
+                                </li>
+                            ))
+                        ) : (
+                            <p>No threads available.</p>
+                        )}
+                    </ul>
+                </div>
+                {selectedThreadId && (
+                    <div className="messages-container">
+                        <div className="user-messages">
+                            <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                {messages && messages.length > 0 ? (
+                                    messages.map((message) => (
+                                        <li key={message.id}>
+                                            {message.senderId === userId ? (
+                                                <div className="my-message">
+                                                    <Message message={message} />
+                                                    <p>{message.content}</p>
+                                                </div>
+                                            ) : (
+                                                <div className="other-person-message">
+                                                    {message.senderId !== userId && (
+                                                        <ProfilePictureComponent userid={message.senderId} />
+                                                    )}
+                                                    <Message message={message} />
+                                                    <p>{message.content}</p>
+                                                </div>
+                                            )}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <p>No messages available for this thread.</p>
+                                )}
+                            </ul>
+                        </div>
+                    </div>
+                )}
+            <div className="send-message" style={{backgroundColor: 'ghostwhite', marginTop: '30px', width: '400px'}}>
+                <h2>Send a Message</h2>
+                <div>
+                    <input
+                        style={{width: '300px', height: '40px'}}
+                        type="text"
+                        placeholder="Recipient Usernames (comma-separated)"
+                        value={recipientUsernames.join(',')}
+                        onChange={(e) => setRecipientUsernames(e.target.value.split(','))}
+                    />
+                </div>
+                <div>
+                    <br/>
+                    <textarea
+                        style={{ width: '300px', height: '200px' }}
+                        placeholder="Enter your message"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                    />
+                    <br />
+                    <button
+                        onClick={sendMessage}
+                        style={{
+                            backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+                            border: '1px solid #ccc',
+                        }}
+                        className='button-common'
+                        style={buttonStyle}
+                    >
+                        Send
+                    </button>
+                </div>
             </div>
-
-            <CreateMessageForm userId={user.appUserID}><AddIcon /></CreateMessageForm>
-
-            <button onClick={() => setShowIncoming(!showIncoming)}>
-                {showIncoming ? 'Sent Messages' : 'Incoming Messages'}
-            </button>
-            {showIncoming ? (
-                <>
-                    <h2>Incoming Messages:</h2>
-                    <RecList messages={displayedMessages.filter(message => message.isIncoming)} />
-                </>
-            ) : (
-                <>
-                    <h2>Sent Messages:</h2>
-                    <SentList messages={displayedMessages.filter(message => !message.isIncoming)} />
-                </>
-            )}
         </div>
     );
-}
+};
 
 export default MessagesPage;
