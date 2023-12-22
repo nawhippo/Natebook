@@ -1,47 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { DeleteCommentButton } from '../../buttonComponents/deleteCommentButton/deleteCommentButton';
+import React, {useState} from 'react';
+import {DeleteCommentButton} from '../../buttonComponents/deleteCommentButton/deleteCommentButton';
 import ReactionButtons from '../../buttonComponents/reactCommentButtons/reactCommentButtons';
+import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
+import {useUserContext} from "../usercontext/UserContext";
 
-const Comment = ({ comment: initialComment, posterusername, user, postId, posterId, fetchData }) => {
-    const [comment, setComment] = useState(initialComment);
-
-    const updateLocalLikesDislikes = (newLikes, newDislikes) => {
-        const updatedComment = {
-            ...comment,
-            likesCount: newLikes,
-            dislikesCount: newDislikes
-        };
-
-        setComment(updatedComment);
-
-        fetchData();
+const Comment = ({ comment, fetchData }) => {
+    const { user } = useUserContext();
+    const[localLikes, setLocalLikes] = useState(comment.likesCount);
+    const[localDislikes, setLocalDislikes] = useState(comment.dislikesCount);
+    const updateLikesDislikes = (newLikes, newDislikes) => {
+        setLocalLikes(newLikes);
+        setLocalDislikes(newDislikes);
     };
 
-    useEffect(() => {
-        setComment(initialComment);
-    }, [initialComment]);
-
     return (
-        <div className='comment'>
-            <p>{comment.content}</p>
-            <p>By: {comment.commenterusername}</p>
-            <ReactionButtons
-                user={user}
-                postId={postId}
-                posterId={posterId}
-                commentId={comment.id}
-                updateCommentLikesDislikes={updateLocalLikesDislikes}
-            />
-            {comment && (comment.commenterusername === user.username || posterId === user.appUserID) &&
-                <DeleteCommentButton
-                    posterusername={posterusername}
-                    commenterusername={user.username}
-                    postId={postId}
+        <div key={comment.id}>
+            <div className='comment' style={{ backgroundColor: 'lightgray', borderRadius: '20px', padding: '10px', margin: '10px 0', width: '70%' }}>
+                <p style={{ fontSize: '20px' }}>{comment.content}</p>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ fontSize: '12px', marginRight: '5px' }}>By: {comment.commenterusername}</p>
+                    <ProfilePictureComponent userid={comment.commenterId} style={{ width: '20px', height: '20px', fontSize: '5px' }} />
+                </div>
+                <p>Likes: {localLikes} Dislikes: {localDislikes}</p>
+                <ReactionButtons
                     commentId={comment.id}
-                    targetUsername={comment.commenterusername}
-                    fetchData={fetchData}
+                    updateLikesDislikes={updateLikesDislikes}
                 />
-            }
+                {comment.commenterid === user.id &&
+                    <DeleteCommentButton
+                        commentId={comment.id}
+                    />
+                }
+            </div>
         </div>
     );
 };
