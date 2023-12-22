@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import SendFriendRequestButton from '../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton';
-import ViewProfileButton from '../../buttonComponents/viewProfileButton/viewProfileButton';
+import React, {useEffect, useState} from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import './allUsersPage.css';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
-import { useUserContext } from "../usercontext/UserContext";
+import {useUserContext} from "../usercontext/UserContext";
 
 const AllUsersPage = () => {
   const [addressBookData, setAddressBookData] = useState([]);
@@ -43,7 +41,7 @@ const AllUsersPage = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
     color: '#FFFFFF',
   };
 
@@ -77,10 +75,7 @@ const AllUsersPage = () => {
                 </span>
 
                         <div className="button-group">
-                          <ProfilePictureComponent userid={userItem.appUserID} />
-                          {user && user.username && (
-                              <SendFriendRequestButton username={userItem.username} />
-                          )}
+                          <ProfilePictureComponent userid={userItem.appUserID} style={{fontSize: '30px !important'}} />
                         </div>
                       </li>
                   ))
