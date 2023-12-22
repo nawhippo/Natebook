@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useUserContext } from "../../pages/usercontext/UserContext";
-import { useHistory } from "react-router-dom";
+import React, {useState} from "react";
+import {useUserContext} from "../../pages/usercontext/UserContext";
+import {useHistory} from "react-router-dom";
 import Cookies from 'js-cookie';
 const DeleteAccountButton = () => {
   const { user, setUser } = useUserContext();
@@ -37,8 +37,9 @@ const DeleteAccountButton = () => {
   }
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
     color: '#FFFFFF',
+    border: '4px solid black',
   };
 
   return (
