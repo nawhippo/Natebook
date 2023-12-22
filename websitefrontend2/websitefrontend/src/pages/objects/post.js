@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './PostStyle.css';
 import Comment from './comment';
-import postImage from './postimage';
 import CommentForm from '../../buttonComponents/createCommentButton/createCommentButton';
 import ReactionButtons from '../../buttonComponents/reactPostButtons/reactPostButtons';
-import { DeletePostButton } from '../../buttonComponents/deletePostButton/deletePostButton';
+import {DeletePostButton} from '../../buttonComponents/deletePostButton/deletePostButton';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 import {useUserContext} from "../usercontext/UserContext";
+
 const Post = ({ post, fetchData }) => {
     const user = useUserContext();
     const [localLikesCount, setLocalLikesCount] = useState(post.likesCount);
@@ -64,22 +64,26 @@ const Post = ({ post, fetchData }) => {
             <div className="post-title">{post.title}</div>
             <div className="post-description">{post.description}</div>
             <div className="post-content">{post.content}</div>
-            <div className="post-creator">@{post.posterUsername}</div>
-            <ProfilePictureComponent userid={post.posterId}/>
+            <div style={{display: 'flex'}}>
+                <div className="post-creator" style={{ transform: 'translateY(27.5px)' }}>By: {post.posterUsername}  </div>
+                <ProfilePictureComponent userid={post.posterId} style={{ transform: 'translateY(30px) !important' }} />
+            </div>
+                <br/>
+            {images.map((image) => (
+                <img
+                    key={image.id}
+                    src={`data:image/${image.format};base64,${image.base64EncodedImage}`}
+                    alt="Post"
+                    style={{ width: image.width, height: image.height }}
+                />
+            ))}
             <p>Likes: {localLikesCount} Dislikes: {localDislikesCount}</p>
 
             <ReactionButtons
                 postId={post.id}
                 updateLikesDislikes={updateLikesDislikes}
             />
-            {images.map((image) => (
-                <img
-                    key={image.id}
-                    src={`data:image/${image.format};base64,${image.base64EncodedImage}`} // Adjusted to use the correct field
-                    alt="Post"
-                    style={{ width: image.width, height: image.height }}
-                />
-            ))}
+
             {user && user.username === post.posterUsername && (
                 <DeletePostButton
                     postId={post.id}
@@ -97,6 +101,7 @@ const Post = ({ post, fetchData }) => {
                 <Comment
                     key={comment.id}
                     comment={comment}
+                    commenterId={comment.commenterid}
                     user={user}
                     postId={post.id}
                     posterId={post.posterId}
