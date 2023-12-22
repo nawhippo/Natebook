@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-const ReactionButtons = ({ user, postId, posterId, commentId }) => {
-  const [reactionState, setReactionState] = useState('None');
-  const [localLikesCount, setLocalLikesCount] = useState(0);
-  const [localDislikesCount, setLocalDislikesCount] = useState(0);
+import React, {useState} from 'react';
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+import {useUserContext} from "../../pages/usercontext/UserContext";
+import './reactCommentButtons.css';
 
-  const updateReactionOnServer = async (reactorId, posterId, postId, commentId, action) => {
-    const url = `/api/post/${reactorId}/${posterId}/${postId}/${commentId}/updateReactionComment`;
+const ReactionButtons = ({ commentId, updateLikesDislikes }) => {
+  const [reactionState, setReactionState] = useState('None');
+  const { user } = useUserContext();
+  const [isRateLimited, setIsRateLimited] = useState(false);
+
+  const updateReactionOnServer = async (commentId, action) => {
+    const url = `/api/comment/${commentId}/${user.appUserID}/updateReactionComment`;
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ action }),
+      body: JSON.stringify({ action })
     });
 
     if (response.ok) {
@@ -25,24 +28,31 @@ const ReactionButtons = ({ user, postId, posterId, commentId }) => {
   };
 
   const handleButtonClick = async (newReaction) => {
-    const updatedComment = await updateReactionOnServer(user.appUserID, posterId, postId, commentId, newReaction);
+    if (isRateLimited) return;
+    setIsRateLimited(true);
+    const updatedComment = await updateReactionOnServer(commentId, newReaction);
     if (updatedComment) {
       if (newReaction === reactionState) {
         setReactionState('None');
       } else {
         setReactionState(newReaction);
       }
-      setLocalLikesCount(updatedComment.likesCount);
-      setLocalDislikesCount(updatedComment.dislikesCount);
+      updateLikesDislikes(updatedComment.likesCount, updatedComment.dislikesCount);
+      setTimeout(() => setIsRateLimited(false), 3000);
     }
   };
 
   return (
-    <div>
-      <p>Likes: {localLikesCount} Dislikes: {localDislikesCount}</p>
-      <ThumbUpOffAltIcon onClick={() => handleButtonClick('Like')}/>
-      <ThumbDownOffAltIcon onClick={() => handleButtonClick('Dislike')} />
-    </div>
+      <div>
+        <ThumbUpOffAltIcon
+            className={`reaction-icon ${reactionState === 'Like' ? 'active' : ''}`}
+            onClick={() => handleButtonClick('Like')}
+        />
+        <ThumbDownOffAltIcon
+            className={`reaction-icon ${reactionState === 'Dislike' ? 'active' : ''}`}
+            onClick={() => handleButtonClick('Dislike')}
+        />
+      </div>
   );
 };
 
