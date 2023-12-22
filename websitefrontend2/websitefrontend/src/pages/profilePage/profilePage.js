@@ -1,10 +1,11 @@
-import { useUserContext } from "../usercontext/UserContext";
-import { useState, useEffect } from "react";
+import {useUserContext} from "../usercontext/UserContext";
+import {useEffect, useState} from "react";
 import UserPosts from "./helperComponents/displayAllUserPosts"
 import AddFriendButton from "../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton"
 import SendMessageButton from "../../buttonComponents/createMessageButton/createMessageButton"
-import { useParams } from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
+
 
 const ProfilePage = () => {
   const { userid } = useParams();
