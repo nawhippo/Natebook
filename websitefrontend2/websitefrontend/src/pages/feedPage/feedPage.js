@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import PublicFeed from './components/publicFeed';
 import FriendFeed from './components/friendFeed';
 
