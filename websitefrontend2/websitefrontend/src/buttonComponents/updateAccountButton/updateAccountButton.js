@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useUserContext } from "../../pages/usercontext/UserContext";
+import React, {useState} from "react";
+import {useUserContext} from "../../pages/usercontext/UserContext";
 import styles from './updateAccount.module.css';
 const UpdateAccountButton = () => {
   const { user } = useUserContext();
@@ -55,9 +55,11 @@ const UpdateAccountButton = () => {
   };
 
     const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
         color: '#FFFFFF',
+        border: '4px solid black',
     };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
