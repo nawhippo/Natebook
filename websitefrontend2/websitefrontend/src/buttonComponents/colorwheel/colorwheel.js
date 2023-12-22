@@ -1,6 +1,6 @@
 import React from 'react';
-import { CirclePicker } from 'react-color';
-import { useUserContext } from '../../pages/usercontext/UserContext';
+import {CirclePicker} from 'react-color';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 
 const ColorWheel = () => {
     const { updateBackgroundColor } = useUserContext();
