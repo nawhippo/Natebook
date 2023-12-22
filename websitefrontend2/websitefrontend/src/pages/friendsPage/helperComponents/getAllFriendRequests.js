@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../../usercontext/UserContext';
+import React, {useEffect, useState} from 'react';
+import {useUserContext} from '../../usercontext/UserContext';
 import AcceptFriendRequestButton from "../../../buttonComponents/acceptFriendRequestButton/AcceptFriendRequestButton"
 import DeclineFriendRequestButton from "../../../buttonComponents/declineFriendRequestButton/declineFriendRequestButton";
 
