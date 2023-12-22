@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../../usercontext/UserContext';
+import React, {useEffect, useState} from 'react';
+import {useUserContext} from '../../usercontext/UserContext';
 import CreateMessageForm from '../../../buttonComponents/createMessageButton/createMessageButton';
 import DeleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
 import SearchIcon from '@mui/icons-material/Search';
