@@ -29,4 +29,28 @@ public class Message {
         this.content = content;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Long getSenderid() {
+        return senderid;
+    }
+
+    public Long getThreadid() {
+        return threadid;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{id=" + this.id + ", content='" + this.content + "', sender='" + this.senderid + "', ...other fields...}";
+    }
+
+    public Message(){
+
+    }
 }
