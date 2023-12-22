@@ -1,4 +1,4 @@
-import { useUserContext } from "../../pages/usercontext/UserContext";
+import {useUserContext} from "../../pages/usercontext/UserContext";
 
 const DeleteFriendButton = ({ removeFriend }) => {
   const { user } = useUserContext();
