@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 const DeclineFriendRequestButton = ({ friendId, triggerFetch  }) => {
   const { user } = useUserContext();
   const handleClick = () => {
