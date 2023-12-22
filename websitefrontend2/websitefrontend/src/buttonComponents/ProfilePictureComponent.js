@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import '../global.css';
-import { useUserContext} from "../pages/usercontext/UserContext";
+import {useUserContext} from "../pages/usercontext/UserContext";
 
-const ProfilePictureComponent = ({ userid, user }) => {
+const ProfilePictureComponent = ({ userid }) => {
     const [profile, setProfile] = useState(null);
-    const [error, setError] = useState('');
     const appUser = useUserContext();
+
     useEffect(() => {
         if (!userid) {
             setProfile(null);
@@ -32,39 +32,29 @@ const ProfilePictureComponent = ({ userid, user }) => {
             })
             .catch(error => {
                 console.error('Fetch error:', error);
-                setError(error);
                 setProfile(null);
             });
     }, [userid]);
 
+    const profileLink = appUser && userid !== appUser.appUserID ? `/UserProfile/${userid}` : '/Account';
+
     return (
         <div>
             {userid && (
-                appUser && userid != appUser.appUserID ? (
-                    <Link to={`/UserProfile/${userid}`}>
-                        {profile ? (
-                            <img src={profile} className="profile-picture" alt="Profile"/>
-                        ) : (
-                            <AccountCircleIcon sx={{color: 'white'}} className="profile-picture"/>
-                        )}
-                    </Link>
-                ) : (
-                    // Default to /Account if user context is not provided or doesn't match
-                    <Link to="/Account">
-                        {profile ? (
-                            <img src={profile} className="profile-picture" alt="Profile"/>
-                        ) : (
-                            <AccountCircleIcon sx={{color: 'white'}} className="profile-picture"/>
-                        )}
-                    </Link>
-                )
+                <Link to={profileLink}>
+                    {profile ? (
+                        <img src={profile} className="profile-picture" alt="Profile" />
+                    ) : (
+                        <AccountCircleIcon sx={{ color: 'gray', fontSize: 200 }} className="profile-picture" />
+                    )}
+                </Link>
             )}
             {!userid && (
                 <>
                     {profile ? (
-                        <img src={profile} className="profile-picture" alt="Profile"/>
+                        <img src={profile} className="profile-picture" alt="Profile" />
                     ) : (
-                        <AccountCircleIcon sx={{color: 'white'}} className="profile-picture"/>
+                        <AccountCircleIcon sx={{ color: 'gray', fontSize: 50 }} className="profile-picture" />
                     )}
                 </>
             )}
