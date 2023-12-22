@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useHistory} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import {useUserContext} from "../../pages/usercontext/UserContext";
 import LogoutIcon from '@mui/icons-material/Logout';
-import styles from "./logoutButton.css"
+
+
 const LogoutButton = () => {
   const history = useHistory();
   const [error, setError] = useState('');
