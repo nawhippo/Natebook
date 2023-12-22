@@ -46,7 +46,7 @@ public class UserController {
         return appUserSearchService.getAllUsers();
     }
 
-    @PutMapping("/user/{userId}/{blockId}")
+    @PutMapping("/user/block/{userId}/{blockId}")
     public ResponseEntity<AppUser> BlockUser(@PathVariable Long userId, @PathVariable Long blockId) {
         return appUserSearchService.blockUser(userId, blockId);
     }
