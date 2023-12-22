@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Post from '../../objects/post';
 import CreatePostButton from '../../../buttonComponents/createPostButton/createPostButton';
-import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
-import { useUserContext } from '../../usercontext/UserContext';
+import {useUserContext} from '../../usercontext/UserContext';
 
 const FriendFeed = () => {
   const { user } = useUserContext();
