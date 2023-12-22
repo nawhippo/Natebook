@@ -1,0 +1,14 @@
+.reaction-icon {
+    color: #757575; /* Initial color */
+    transition: transform 0.2s, color 0.2s; /* Smooth transition for transform and color */
+    cursor: pointer;
+}
+
+.reaction-icon:hover {
+    transform: scale(1.1); /* Grow a bit on hover */
+    color: #0056b3; /* Color change on hover */
+}
+
+.reaction-icon.active {
+    color: #007bff; /* Color for active/clicked state */
+}
