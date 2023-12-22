@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useUserContext } from '../../pages/usercontext/UserContext'; // Adjust the path as necessary
+import React from 'react';
+import {useHistory} from 'react-router-dom';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 
 const ViewProfileButton = ({ userid }) => {
   const { user } = useUserContext();
