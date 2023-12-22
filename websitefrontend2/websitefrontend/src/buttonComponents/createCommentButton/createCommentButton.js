@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext';
+import React, {useState} from 'react';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 import AddCommentIcon from '@mui/icons-material/AddComment';
+
 const CommentForm = ({ posterusername, postId }) => {
   const { user } = useUserContext();
   const [commentContent, setCommentContent] = useState('');
@@ -43,7 +44,7 @@ const CommentForm = ({ posterusername, postId }) => {
 
   return (
       <div>
-        <AddCommentIcon onClick={() => setShowForm(!showForm)}>
+        <AddCommentIcon style={{fontSize: '50px'}} onClick={() => setShowForm(!showForm)}>
           {showForm ? "Or not..." : "Comment"}
         </AddCommentIcon>
         {showForm && (
