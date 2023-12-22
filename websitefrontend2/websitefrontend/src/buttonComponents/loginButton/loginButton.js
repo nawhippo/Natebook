@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext';
+import React, {useState} from 'react';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
-import GoogleSignInButton from "../googleSigninButton/googleSignInButton";
-import ForgotPasswordButton from "../forgotPasswordButton/forgotPasswordButton";
 import LoginIcon from '@mui/icons-material/Login';
 import styles from "./loginButton.module.css";
+
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState('');
@@ -47,9 +46,9 @@ const LoginButton = () => {
           }
         })
         .then((data) => {
-          console.log('Fetched data:', data);
-          updateUser(data); // Update the user context with the fetched data
-          Cookies.set('userData', JSON.stringify(data)); // Store user data in a cookie
+          console.log('fetch data:', data);
+          updateUser(data);
+          Cookies.set('userData', JSON.stringify(data));
         })
         .catch((error) => {
           console.error('Error logging in:', error);
@@ -57,18 +56,24 @@ const LoginButton = () => {
         });
   };
 
-
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange'
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange',
   };
 
   return (
       <div>
-        <LoginIcon className="button-common" onClick = {() => setIsVisible(!isVisible)} style={{ width: '50px', height: 'auto', background: 'none', color: 'white' }} /> {/* Toggle button */}
+        <LoginIcon
+            className="button-common"
+            onClick={() => setIsVisible(!isVisible)}
+            style={{ width: '50px', height: 'auto', background: 'none', color: 'white' }}
+        />{' '}
+        {/* Toggle button */}
         {isVisible && (
             <div className={styles.overlay}>
               <div className={styles.loginFormContainer}>
-                <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={buttonStyle}>X</button>
+                <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={buttonStyle}>
+                  X
+                </button>
                 <h2>Login</h2>
                 <form onSubmit={handleLogin}>
                   <div className={styles.inputGroup}>
@@ -77,11 +82,12 @@ const LoginButton = () => {
                   </div>
                   <div className={styles.inputGroup}>
                     <label>Password:</label>
-                    <input type="password" name="password" value={password} onChange={handleInputChange} autoComplete={"off"} />
+                    <input type="password" name="password" value={password} onChange={handleInputChange} autoComplete={'off'} />
                   </div>
                   <div className={styles.buttonContainer}>
-                    <button type="submit" style={buttonStyle}  className={`${styles['button-common']} ${styles['login-button']}`}> Login</button>
-                    <ForgotPasswordButton style={buttonStyle} />
+                    <button type="submit" style={{ ...buttonStyle, transform: 'translateX(10px)' }} className='button-common'>
+                      Login
+                    </button>
                   </div>
                   {error && <p style={{ color: 'red' }}>{error}</p>}
                 </form>
