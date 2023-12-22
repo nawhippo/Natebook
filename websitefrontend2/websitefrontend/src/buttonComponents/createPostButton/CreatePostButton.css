@@ -53,6 +53,8 @@
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 15px;
+    width: 300px;
+    transform: translateX(75px);
 }
 
 .create-post-message {
