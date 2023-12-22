@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Post from '../../objects/post';
-import { useUserContext } from '../../usercontext/UserContext';
+import {useUserContext} from '../../usercontext/UserContext';
 
 const UserPosts = ({ userid, profileUserId }) => {
   const [posts, setPosts] = useState([]);
