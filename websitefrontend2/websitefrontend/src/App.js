@@ -1,7 +1,6 @@
-import React, { Component, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import { UserProvider } from './pages/usercontext/UserContext';
-import { useUserContext } from './pages/usercontext/UserContext';
+import React, {Component} from 'react';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {UserProvider} from './pages/usercontext/UserContext';
 import SnowFlake from './FunSFX/snowflake';
 import FeedPage from './pages/feedPage/feedPage';
 import AccountPage from './pages/accountPage/accountPage';
@@ -11,8 +10,8 @@ import MessagesPage from './pages/messagePage/MessagesPage';
 import ProfilePage from './pages/profilePage/profilePage';
 import LoginPage from './pages/loginPage/loginPage';
 import Banner from "./banners/websiteBanner"
-import styles from "./global.css";
 import "./FunSFX/snowflake.css"
+
 class App extends Component {
   render() {
 
