@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useUserContext } from '../../pages/usercontext/UserContext';
+import React, {useState} from 'react';
+import {useUserContext} from '../../pages/usercontext/UserContext';
 
 const SendFriendRequestButton = ({ username }) => {
   const { user } = useUserContext();
@@ -11,11 +11,11 @@ const SendFriendRequestButton = ({ username }) => {
     }).then(() => setSent(true));
   };
 
-  // Use user's background color or default to dark grey
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'darkgrey'
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    color: '#FFFFFF',
+    border: '4px solid black',
   };
-
   return (
       <>
         {sent ? 'Friend request sent!' : <button onClick={handleAddFriendClick}   className='button-common' style={buttonStyle}>Add Friend</button>}
