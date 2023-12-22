@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Post from '../../objects/post';
 import CreatePostButton from '../../../buttonComponents/createPostButton/createPostButton';
-import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
-import { useUserContext } from '../../usercontext/UserContext'; // Import the user context
+import {useUserContext} from '../../usercontext/UserContext'; // Import the user context
 
 const PublicFeed = () => {
     const { user } = useUserContext(); // Get the user context
@@ -25,7 +24,7 @@ const PublicFeed = () => {
 
     useEffect(() => {
         if (allPostsData && searchTerm) {
-            setFilteredPosts(allPostsData.filter(post => post.posterusername.toLowerCase().includes(searchTerm.toLowerCase())));
+            setFilteredPosts(allPostsData.filter(post => post.posterUsername.toLowerCase().includes(searchTerm.toLowerCase())));
         } else if (allPostsData) {
             setFilteredPosts(allPostsData);
         }
@@ -55,7 +54,7 @@ const PublicFeed = () => {
     const handleInputChange = (event) => setSearchTerm(event.target.value);
 
     const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
         color: '#FFFFFF',
     };
 
@@ -90,6 +89,7 @@ const PublicFeed = () => {
                     <Post
                         key={post.id}
                         post={post}
+
                         fetchData={fetchData}
                     />
                 ))
