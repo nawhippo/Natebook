@@ -10,6 +10,8 @@ const LoginPage = () => {
 
     const { setUser, user } = useUserContext();
 
+
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (name === 'username') {

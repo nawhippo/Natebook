@@ -16,7 +16,7 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @PutMapping("/comment/{reactorId}/{commentId}/updateReactionComment")
+    @PutMapping("/comment/{commentId}/{reactorId}/updateReactionComment")
     public ResponseEntity<Comment> updateCommentReaction(
             @PathVariable Long reactorId,
             @PathVariable Long commentId,

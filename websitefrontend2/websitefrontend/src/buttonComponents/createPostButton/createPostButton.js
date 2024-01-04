@@ -76,7 +76,7 @@ const CreatePostButton = () => {
         friendsOnly: !publicStatus,
         posterUsername: user.username,
       },
-      images: images
+      images: images.length > 0 ? images : null, // Set images to null if no images selected
     };
 
     try {

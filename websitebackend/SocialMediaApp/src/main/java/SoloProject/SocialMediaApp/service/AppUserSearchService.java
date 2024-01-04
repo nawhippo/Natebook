@@ -1,7 +1,7 @@
 package SoloProject.SocialMediaApp.service;
 
 import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.UserDTO;
+import SoloProject.SocialMediaApp.models.AppUserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -98,14 +98,10 @@ public class AppUserSearchService {
         return ResponseEntity.ok(allUsers);
     }
     //to display user data extrapolated from longs.
-    private UserDTO convertToUserDTO(Long userId) {
+    private AppUserDTO convertToUserDTO(Long userId) {
         AppUser appUser = repository.findByAppUserID(userId);
-        return new UserDTO(
-                appUser.getAppUserID(),
-                appUser.getUsername(),
-                appUser.getFirstname(),
-                appUser.getLastname(),
-                appUser.getEmail()
+        return new AppUserDTO(
+                appUser
         );
     }
 }

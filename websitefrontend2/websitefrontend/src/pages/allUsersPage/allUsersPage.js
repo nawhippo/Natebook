@@ -3,7 +3,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import './allUsersPage.css';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 import {useUserContext} from "../usercontext/UserContext";
-
+import Cookies from 'js-cookie';
+import {fetchWithJWT} from '../../utility/fetchInterceptor'
 const AllUsersPage = () => {
   const [addressBookData, setAddressBookData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -14,7 +15,7 @@ const AllUsersPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/user/getAllWebsiteUsers');
+        const response = await fetchWithJWT('/api/user/getAllWebsiteUsers');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

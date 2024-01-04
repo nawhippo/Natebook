@@ -1,7 +1,7 @@
 package SoloProject.SocialMediaApp.service;
 
 import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.UserDTO;
+import SoloProject.SocialMediaApp.models.AppUserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class FriendRequestService {
 
 
 
-    public ResponseEntity<List<UserDTO>> getAllFriendRequestsDTOS(Long UserId) {
+    public ResponseEntity<List<AppUserDTO>> getAllFriendRequestsDTOS(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
 
         if (user == null) {
@@ -34,14 +34,14 @@ public class FriendRequestService {
         }
 
         List<Long> friendreqs = user.getRequests();
-        List<UserDTO> DTOList = convertToDTOList(friendreqs);
-        for (UserDTO dto : DTOList) {
+        List<AppUserDTO> DTOList = convertToDTOList(friendreqs);
+        for (AppUserDTO dto : DTOList) {
             System.out.println(dto);
         }
         return ResponseEntity.ok(DTOList);
     }
-    private List<UserDTO> convertToDTOList(List<Long> ids) {
-        List<UserDTO> result = new ArrayList<>();
+    private List<AppUserDTO> convertToDTOList(List<Long> ids) {
+        List<AppUserDTO> result = new ArrayList<>();
         if (ids != null) {
             for (long id : ids) {
                 result.add(convertToDTO(id));
@@ -50,11 +50,11 @@ public class FriendRequestService {
         return result;
     }
 
-    private UserDTO convertToDTO(Long id) {
+    private AppUserDTO convertToDTO(Long id) {
         AppUser user = repository.findByAppUserID(id);
         if (user != null) {
-            return new UserDTO(
-                    id, user.getUsername(), user.getFirstname(), user.getLastname(), user.getEmail()
+            return new AppUserDTO(
+                    user
             );
         }
         return null;

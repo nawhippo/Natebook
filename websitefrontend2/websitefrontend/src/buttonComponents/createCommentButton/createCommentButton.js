@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 
-const CommentForm = ({ posterusername, postId }) => {
+const CommentForm = ({ postId, updateComments }) => {
   const { user } = useUserContext();
   const [commentContent, setCommentContent] = useState('');
   const [showForm, setShowForm] = useState(false); 
@@ -27,6 +27,7 @@ const CommentForm = ({ posterusername, postId }) => {
 
     if (response.ok) {
       console.log('Comment created successfully');
+      updateComments();
     } else {
       console.error('Failed to create comment');
     }

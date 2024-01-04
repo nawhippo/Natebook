@@ -1,7 +1,7 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.UserDTO;
+import SoloProject.SocialMediaApp.models.AppUserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class FriendRequestController {
 
 
     @GetMapping("/friendreqs/{userId}/getFriendRequests")
-    public ResponseEntity<List<UserDTO>> getAllFriendRequests(@PathVariable Long userId) {
+    public ResponseEntity<List<AppUserDTO>> getAllFriendRequests(@PathVariable Long userId) {
         return friendRequestService.getAllFriendRequestsDTOS(userId);
     }
 

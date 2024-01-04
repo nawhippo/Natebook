@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { useUserContext } from "../../pages/usercontext/UserContext";
 import styles from './createAccount.module.css';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+
 const CreateAccount = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,13 +24,24 @@ const CreateAccount = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange'
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey'
   };
+
+  const isPasswordComplex = (password) => {
+    const regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    return regex.test(password);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     if (!formData.firstname || !formData.lastname || !formData.username || !formData.email || !formData.password) {
       setError("Please fill in all required fields.");
+      return;
+    }
+
+    if (!isPasswordComplex(formData.password)) {
+      setError("Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.");
       return;
     }
 
@@ -52,14 +64,45 @@ const CreateAccount = () => {
             throw new Error("Failed to create account.");
           }
         })
-        .then((userData) => {
-          updateUser(userData);
-          Cookies.set('userData', JSON.stringify(userData));
+        .then(() => {
+          loginAfterCreate(formData.username, formData.password);
           history.push('/feed');
         })
         .catch((error) => {
           console.error("Error:", error);
           setError('Error creating account. Please try again later.');
+        });
+  };
+
+  const loginAfterCreate = (username, password) => {
+    const requestBody = {
+      username: username,
+      password: password,
+    };
+
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Login failed');
+          }
+        })
+        .then((data) => {
+          updateUser(data.user);
+          Cookies.set('userData', JSON.stringify(data.user));
+          Cookies.set('jwt', data.jwt);
+          history.push('/feed');
+        })
+        .catch((error) => {
+          console.error('Error logging in:', error);
+          setError('Error logging in. Please try again later.');
         });
   };
 

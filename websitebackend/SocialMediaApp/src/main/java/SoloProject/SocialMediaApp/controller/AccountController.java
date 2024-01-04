@@ -10,7 +10,9 @@ import SoloProject.SocialMediaApp.service.AppUserSearchService;
 import SoloProject.SocialMediaApp.service.CompressionService;
 import SoloProject.SocialMediaApp.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,8 @@ import java.util.Map;
 public class AccountController {
 
     private final AccountService accountservice;
-    @Autowired
+
+
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -66,16 +69,7 @@ public class AccountController {
     @PostMapping("/account/createAccount")
     public ResponseEntity<AppUser> createAccount(@RequestBody Map<String, String> formData) {
         //no need for checking validity, as that is in the front end
-        String firstName = formData.get("firstname");
-        String lastName = formData.get("lastname");
-        String email = formData.get("email");
-        String password = formData.get("password");
-        String username = formData.get("username");
-
-        String encodedPassword = passwordEncoder.encode(password);
-        AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
-        accountservice.saveAccount(appUser, encodedPassword);
-        return ResponseEntity.ok(appUser);
+        return accountservice.createAccount(formData);
     }
     @PutMapping("/account/{userId}/ForgotPassword")
     public ResponseEntity<AppUser> ForgotPassword(@RequestBody Map<String, String> formData) {

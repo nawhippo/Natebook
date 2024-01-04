@@ -4,14 +4,10 @@ import ReactionButtons from '../../buttonComponents/reactCommentButtons/reactCom
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 import {useUserContext} from "../usercontext/UserContext";
 
-const Comment = ({ comment, fetchData }) => {
+const Comment = ({ comment, updateComments }) => {
     const { user } = useUserContext();
     const[localLikes, setLocalLikes] = useState(comment.likesCount);
     const[localDislikes, setLocalDislikes] = useState(comment.dislikesCount);
-    const updateLikesDislikes = (newLikes, newDislikes) => {
-        setLocalLikes(newLikes);
-        setLocalDislikes(newDislikes);
-    };
 
     return (
         <div key={comment.id}>
@@ -24,7 +20,7 @@ const Comment = ({ comment, fetchData }) => {
                 <p>Likes: {localLikes} Dislikes: {localDislikes}</p>
                 <ReactionButtons
                     commentId={comment.id}
-                    updateLikesDislikes={updateLikesDislikes}
+                    updateLikesDislikes={updateComments}
                 />
                 {comment.commenterid === user.id &&
                     <DeleteCommentButton

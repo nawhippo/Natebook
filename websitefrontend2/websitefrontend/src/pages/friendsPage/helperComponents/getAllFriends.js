@@ -59,10 +59,12 @@ const GetAllFriends = () => {
 
 
 
+
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
     color: '#FFFFFF',
   };
+
 
   return (
       <div>

@@ -8,12 +8,15 @@ import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,16 +28,19 @@ public class AccountService {
     private final EmailSenderService emailSenderService;
     private final CompressionService compressionService;
 
+    private PasswordEncoder passwordEncoder;
+
     public AccountService(AppUserRepository appUserRepository,
                           CommentRepository commentRepository,
                           CompressedImageRepository compressedImageRepository, PostRepository postRepository,
-                          EmailSenderService emailSenderService, CompressionService compressionService) {
+                          EmailSenderService emailSenderService, CompressionService compressionService, PasswordEncoder passwordEncoder) {
         this.appUserRepository = appUserRepository;
         this.commentRepository = commentRepository;
         this.compressedImageRepository = compressedImageRepository;
         this.postRepository = postRepository;
         this.emailSenderService = emailSenderService;
         this.compressionService = compressionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseEntity<AppUser> getAccountDetails(Long userid) {
@@ -84,26 +90,27 @@ public class AccountService {
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }
-    public ResponseEntity<AppUser> createAccountFromUser(OAuth2User principal){
-        String firstName = principal.getAttribute("given_name");
-        String lastName = principal.getAttribute("family_name");
-        String email = principal.getAttribute("email");
-        //username is email removed from it.
-        String username = email.split("@")[0];
-        //username must be added as a parameter
-        AppUser existingUser = appUserRepository.findByUsername(username);
 
-        if (existingUser != null) {
-            // User already exists, update if needed
-            return ResponseEntity.ok(existingUser);
-        }
-        //merely a placeholder, then again, how will users sign back in again if they've already logged in with google
-        String password = "defaultPassword";
-
-        AppUser newUser = new AppUser(firstName, lastName, username, email, password);
-        appUserRepository.save(newUser);
-        return ResponseEntity.ok(newUser);
-    }
+//    public ResponseEntity<AppUser> createAccountFromUser(OAuth2User principal){
+//        String firstName = principal.getAttribute("given_name");
+//        String lastName = principal.getAttribute("family_name");
+//        String email = principal.getAttribute("email");
+//        //username is email removed from it.
+//        String username = email.split("@")[0];
+//        //username must be added as a parameter
+//        AppUser existingUser = appUserRepository.findByUsername(username);
+//
+//        if (existingUser != null) {
+//            // User already exists, update if needed
+//            return ResponseEntity.ok(existingUser);
+//        }
+//        //merely a placeholder, then again, how will users sign back in again if they've already logged in with google
+//        String password = "defaultPassword";
+//
+//        AppUser newUser = new AppUser(firstName, lastName, username, email, password);
+//        appUserRepository.save(newUser);
+//        return ResponseEntity.ok(newUser);
+//    }
 
     //anyone can make a request to this endpoint, potential security concern
     @Transactional
@@ -146,6 +153,19 @@ public class AccountService {
     }
 
 
+    public ResponseEntity<AppUser> createAccount(Map<String, String> formData) {
+        String firstName = formData.get("firstname");
+        String lastName = formData.get("lastname");
+        String email = formData.get("email");
+        String password = formData.get("password");
+        String username = formData.get("username");
+
+        String encodedPassword = passwordEncoder.encode(password);
+        AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
+        appUser.addAuthority("USER");
+        appUserRepository.save(appUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
+    }
     public ResponseEntity<?> createAccountFromGoogle(String firstName, String lastName, String email) {
         String username = email.split("@")[0];
         String password = "password";

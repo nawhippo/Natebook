@@ -23,6 +23,7 @@ const Post = ({ post, fetchData }) => {
 
     const fetchComments = async () => {
         try {
+            console.log(user);
             const response = await fetch(`/api/post/${post.id}/comments`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -90,14 +91,15 @@ const Post = ({ post, fetchData }) => {
                     fetchData={fetchData}
                 />
             )}
-            {isUserLoggedIn && (
+            {user && (
                 <CommentForm
                     userId={user.appUserID}
                     posterusername={post.posterUsername}
                     postId={post.id}
+                    updateComments={fetchComments}
                 />
             )}
-            {isUserLoggedIn && comments.map((comment) => (
+            {user && comments.map((comment) => (
                 <Comment
                     key={comment.id}
                     comment={comment}
@@ -107,7 +109,7 @@ const Post = ({ post, fetchData }) => {
                     posterId={post.posterId}
                     posterusername={post.posterUsername}
                     fetchData={fetchData}
-                    updateLikesDislikes={updateLikesDislikes}
+                    updateComments={fetchComments}
                 />
             ))}
         </div>

@@ -47,8 +47,10 @@ const LoginButton = () => {
         })
         .then((data) => {
           console.log('fetch data:', data);
-          updateUser(data);
-          Cookies.set('userData', JSON.stringify(data));
+          updateUser(data.user);
+          Cookies.set('userData', JSON.stringify(data.user));
+          Cookies.set('jwt', data.jwt);
+
         })
         .catch((error) => {
           console.error('Error logging in:', error);
@@ -57,7 +59,7 @@ const LoginButton = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey'
   };
 
   return (
