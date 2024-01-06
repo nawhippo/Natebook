@@ -33,7 +33,9 @@ public class CustomTokenAuthenticationFilter implements Filter {
         String authToken = httpRequest.getHeader("Authorization");
 
         String path = httpRequest.getRequestURI();
-        if (path.equals("/api/login") || path.equals("/api/account/createAccount") || path.equals("/api/publicFeed")) {
+        System.out.println("Request Path: " + path);
+
+        if (path.equals("/api/login") || path.equals("/api/account/createAccount") || path.equals("/api/publicFeed") || path.equals("/api/user/getAllWebsiteUsers") || path.equals("/api/user/getAllWebsiteUsers") || path.endsWith("/logout") ||  path.endsWith("/images")) {
             System.out.println("Bypassing JWT auth requirement");
             chain.doFilter(request, response);
             return;

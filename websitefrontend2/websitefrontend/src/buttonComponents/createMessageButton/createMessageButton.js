@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import './CreateMessageForm.css';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 
 const CreateMessageForm = ({ userId, defaultRecipientName }) => {
@@ -14,7 +15,7 @@ const CreateMessageForm = ({ userId, defaultRecipientName }) => {
     const handleClose = () => setShowForm(false);
 
     const handleSubmit = () => {
-        fetch(`/api/message/${userId}/sendMessage`, {
+        fetchWithJWT(`/api/message/${userId}/sendMessage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, content, recipientNames: recipientNames.split(',').map(name => name.trim()) }),
@@ -41,7 +42,7 @@ const CreateMessageForm = ({ userId, defaultRecipientName }) => {
     }, [defaultRecipientName]);
 
     const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
         color: '#FFFFFF',
     };
 
@@ -75,7 +76,7 @@ const CreateMessageForm = ({ userId, defaultRecipientName }) => {
                             placeholder="Content"
                             required={true}
                         />
-                        <button onClick={handleSubmit} className="form-button">Send</button>
+                        <button onClick={handleSubmit} style={buttonStyle}  className="form-button">Send</button>
                     </div>
                 </div>
             )}

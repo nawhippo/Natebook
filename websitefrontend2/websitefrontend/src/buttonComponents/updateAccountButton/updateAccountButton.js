@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {useUserContext} from "../../pages/usercontext/UserContext";
 import styles from './updateAccount.module.css';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 const UpdateAccountButton = () => {
   const { user } = useUserContext();
   const [isVisible, setIsVisible] = useState(false);
@@ -80,7 +81,7 @@ const UpdateAccountButton = () => {
 
       // Upload profile picture
       if (base64Image) {
-        const pictureResponse = await fetch(`/api/account/${user.appUserID}/uploadProfilePicture`, {
+        const pictureResponse = fetchWithJWT(`/api/account/${user.appUserID}/uploadProfilePicture`, {
           method: "PUT",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Image }),

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Post from '../../objects/post';
 import {useUserContext} from '../../usercontext/UserContext';
+import {fetchWithJWT} from "../../../utility/fetchInterceptor";
 
 const UserPosts = ({ userid, profileUserId }) => {
   const [posts, setPosts] = useState([]);
@@ -10,7 +11,7 @@ const UserPosts = ({ userid, profileUserId }) => {
   const { user } = useUserContext();
 
   const fetchData = async () => {
-    const response = await fetch(`/api/user/${userid}/${profileUserId}`);
+    const response = await fetchWithJWT(`/api/user/${userid}/${profileUserId}`);
 
     if (response.status === 204) {
       setError('No posts found.');

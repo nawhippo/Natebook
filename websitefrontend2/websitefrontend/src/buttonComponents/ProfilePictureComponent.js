@@ -3,6 +3,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {Link} from 'react-router-dom';
 import '../global.css';
 import {useUserContext} from "../pages/usercontext/UserContext";
+import {fetchWithJWT} from "../utility/fetchInterceptor";
 
 const ProfilePictureComponent = ({ userid }) => {
     const [profile, setProfile] = useState(null);

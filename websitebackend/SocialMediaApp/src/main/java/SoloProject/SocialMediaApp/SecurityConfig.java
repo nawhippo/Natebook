@@ -1,5 +1,6 @@
 package SoloProject.SocialMediaApp;
 import SoloProject.SocialMediaApp.models.AppUser;
+import SoloProject.SocialMediaApp.models.AppUserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.MyUserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +51,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin()
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/api/login")
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .successHandler((request, response, authentication) -> {
@@ -64,12 +65,12 @@ public class SecurityConfig {
                     }
 
 
-
+                    AppUserDTO appUserDTO = new AppUserDTO(appUser);
                     String token = jwtUtil.generateToken(userDetails);
                     Map<String, Object> responseBody = new HashMap<>();
                     responseBody.put("message", "Login successful");
                     responseBody.put("jwt", token);
-
+                    responseBody.put("user", appUserDTO);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("application/json");
                     new ObjectMapper().writeValue(response.getOutputStream(), responseBody);
@@ -86,10 +87,33 @@ public class SecurityConfig {
                 .and()
                 .authenticationProvider(daoAuthenticationProvider(passwordEncoder))
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/api/${userid}/logout", "/api/login", "/api/publicFeed", "/api/account/createAccount", "/error").permitAll()
+                        .requestMatchers(
+                                "/api/account/*/getProfilePicture",
+                                "/api/account/createAccount",
+                                "/api/login",
+                                "/api/publicFeed",
+                                "/api/user/getAllWebsiteUsers",
+                                "/api/*/comments",
+                                "/api/*/logout",
+                                "/api/post/*/images",
+                                "/error"
+                        ).permitAll()
                         .anyRequest().hasRole("USER")
                 )
-                .addFilterBefore(new CustomTokenAuthenticationFilter(jwtUtil, myUserDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new CustomTokenAuthenticationFilter(jwtUtil, myUserDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .logout()
+                .logoutUrl("/api/logout")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID", "your-other-cookies") // Delete cookies as needed
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    // Customize the logout success behavior, e.g., redirect to a logout page or send a response message
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("application/json");
+                    Map<String, String> responseBody = new HashMap<>();
+                    responseBody.put("message", "Logout successful");
+                    new ObjectMapper().writeValue(response.getWriter(), responseBody);
+                });
 
         return http.build();
     }

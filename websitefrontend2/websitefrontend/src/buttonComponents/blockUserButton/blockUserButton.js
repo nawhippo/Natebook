@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const BlockUserButton = ({ blockId }) => {
   const { user } = useUserContext();
   const [blocked, setBlocked] = useState(false);
 
   const handleBlockClick = () => {
-    fetch(`/api/user/${user.appUserID}/${blockId}`, {
+    fetchWithJWT(`/api/user/${user.appUserID}/${blockId}`, {
       method: 'PUT'
     }).then(() => setBlocked(true));
   };

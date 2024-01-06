@@ -3,7 +3,6 @@ import Cookies from 'js-cookie';
 export const fetchWithJWT = (url, options = {}) => {
     let token = Cookies.get('jwt');
 
-    // Trim whitespace from the token
     if (token) {
         token = token.trim();
     }

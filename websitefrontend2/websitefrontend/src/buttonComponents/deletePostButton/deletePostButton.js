@@ -1,5 +1,6 @@
 import React from 'react';
 import {useUserContext} from "../../pages/usercontext/UserContext";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 export const DeletePostButton = ({ postId, fetchData }) => {
   const user = useUserContext();
@@ -14,7 +15,7 @@ export const DeletePostButton = ({ postId, fetchData }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/post/${postId}/deletePost`, { method: 'DELETE' });
+      const response = await fetchWithJWT(`/api/post/${postId}/deletePost`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error('Failed to delete.');
       }

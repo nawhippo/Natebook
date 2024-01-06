@@ -4,6 +4,7 @@ import CreateMessageForm from '../../../buttonComponents/createMessageButton/cre
 import DeleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
 import SearchIcon from '@mui/icons-material/Search';
 import ProfilePictureComponent from "../../../buttonComponents/ProfilePictureComponent";
+import {fetchWithJWT} from "../../../utility/fetchInterceptor";
 
 const GetAllFriends = () => {
   const { user } = useUserContext();
@@ -20,7 +21,7 @@ const GetAllFriends = () => {
     const fetchData = async () => {
       if (user) {
         try {
-          const response = await fetch(`/api/friends/${user.appUserID}/getAllFriends`);
+          const response = await fetchWithJWT(`/api/friends/${user.appUserID}/getAllFriends`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }

@@ -6,6 +6,7 @@ import ReactionButtons from '../../buttonComponents/reactPostButtons/reactPostBu
 import {DeletePostButton} from '../../buttonComponents/deletePostButton/deletePostButton';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 import {useUserContext} from "../usercontext/UserContext";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const Post = ({ post, fetchData }) => {
     const user = useUserContext();
@@ -37,7 +38,7 @@ const Post = ({ post, fetchData }) => {
 
     const fetchImages = async () => {
         try {
-            const response = await fetch(`/api/post/${post.id}/images`);
+            const response = await fetchWithJWT(`/api/post/${post.id}/images`);
             console.log(response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');

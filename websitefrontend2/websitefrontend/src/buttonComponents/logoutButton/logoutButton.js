@@ -3,7 +3,6 @@ import {useHistory} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import {useUserContext} from "../../pages/usercontext/UserContext";
 import LogoutIcon from '@mui/icons-material/Logout';
-import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 
 const LogoutButton = () => {
@@ -15,15 +14,16 @@ const LogoutButton = () => {
     const userId = userData ? JSON.parse(userData).appUserID : null;
 
     if (userId) {
-      fetchWithJWT(`/api/${userId}/logout`, { method: "POST" })
+      fetch(`/api/${userId}/logout`, { method: "POST" })
           .then(response => {
             if (!response.ok) {
               throw new Error('Response was not ok!');
             }
             console.log('Logged out successfully');
-            Cookies.remove('userData'); // Remove user data from cookie
+            Cookies.remove('userData');
               Cookies.remove('jwt');
-              history.push('/Feed');
+              history.push('/AllUsersPage');
+              clearUserContext();
             window.location.reload();
           })
           .catch(error => {

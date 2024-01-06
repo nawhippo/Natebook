@@ -32,15 +32,10 @@ public class AppUser implements UserDetails {
         isOnline = online;
     }
 
-    public Boolean isGoogleUser;
 
-    public void setGoogleUser(Boolean googleUser) {
-        isGoogleUser = googleUser;
-    }
 
-    public Boolean getGoogleUser() {
-        return isGoogleUser;
-    }
+
+
 
 
     public int getFriendCount() {
@@ -51,7 +46,7 @@ public class AppUser implements UserDetails {
         this.friendCount = friendCount;
     }
 
-    @Column
+
     private List<Long> requests;
 
     private List<Long> blockList;
@@ -72,7 +67,6 @@ public class AppUser implements UserDetails {
         this.username = username;
         this.blockList = new ArrayList<>();
         this.requests = new ArrayList<>();
-        this.isGoogleUser = false;
     }
 
     public List<Long> getRequests() {
@@ -83,7 +77,7 @@ public class AppUser implements UserDetails {
         this.requests = requests;
     }
 
-    @Column
+
     private String role;
 
     public String getRole() {
@@ -126,6 +120,18 @@ public class AppUser implements UserDetails {
     @Column
     private String password;
 
+    @Column
+    private Boolean verified;
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+
 
     @ElementCollection
     @CollectionTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_id"))
@@ -141,8 +147,7 @@ public class AppUser implements UserDetails {
         this.friends = friends;
         this.password = password;
         this.requests = requests;
-        this.role = "USER";
-        this.isGoogleUser = false;
+        this.verified = false;
     }
 
     public AppUser() {

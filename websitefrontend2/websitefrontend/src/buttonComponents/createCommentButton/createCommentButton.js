@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import AddCommentIcon from '@mui/icons-material/AddComment';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const CommentForm = ({ postId, updateComments }) => {
   const { user } = useUserContext();
@@ -14,7 +15,7 @@ const CommentForm = ({ postId, updateComments }) => {
       return;
     }
     console.log("User before creating comment:", user);
-    const response = await fetch(`/api/comment/${postId}/createComment`, {
+    const response = await fetchWithJWT(`/api/comment/${postId}/createComment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

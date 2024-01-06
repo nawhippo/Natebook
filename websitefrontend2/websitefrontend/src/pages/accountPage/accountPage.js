@@ -4,6 +4,7 @@ import UpdateAccountButton from "../../buttonComponents/updateAccountButton/upda
 import DeleteAccountButton from "../../buttonComponents/deleteAccountButton/deleteAccountButton";
 import ColorWheel from "../../buttonComponents/colorwheel/colorwheel";
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 const AccountPage = () => {
   const { user } = useUserContext();
   const [accountData, setAccountData] = useState(null);
@@ -24,7 +25,7 @@ const AccountPage = () => {
   useEffect(() => {
     console.log(user);
     if (user) {
-      fetch(`/api/account/${user.appUserID}/accountDetails`)
+      fetchWithJWT(`/api/account/${user.appUserID}/accountDetails`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');

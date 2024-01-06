@@ -3,13 +3,14 @@ import {useUserContext} from '../../pages/usercontext/UserContext';
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import './reactPostButtons.css';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 const ReactionButtons = ({ postId, updateLikesDislikes }) => {
   const [reactionState, setReactionState] = useState('None');
   const { user } = useUserContext();
   const [isRateLimited, setIsRateLimited] = useState(false);
   const updateReactionOnServer = async (postId, action) => {
     const url = `/api/post/${postId}/${user.appUserID}/updateReactionPost`;
-    const response = await fetch(url, {
+    const response = await fetchWithJWT(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

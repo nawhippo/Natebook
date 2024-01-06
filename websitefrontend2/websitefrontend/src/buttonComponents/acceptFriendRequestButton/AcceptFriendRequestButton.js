@@ -1,11 +1,12 @@
 import React from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 const AcceptFriendRequestButton = ({ friendId, triggerFetch }) => {
   const { user } = useUserContext();
 
   const handleClick = () => {
     if (user) {
-      fetch(`/api/friendreqs/${user.appUserID}/acceptFriendRequest/${friendId}`,{
+      fetchWithJWT(`/api/friendreqs/${user.appUserID}/acceptFriendRequest/${friendId}`,{
         method: 'PUT',
       })
       .then(response => {

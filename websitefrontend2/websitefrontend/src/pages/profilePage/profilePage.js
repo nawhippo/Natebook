@@ -1,11 +1,11 @@
-import {useUserContext} from "../usercontext/UserContext";
-import {useEffect, useState} from "react";
-import UserPosts from "./helperComponents/displayAllUserPosts"
-import AddFriendButton from "../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton"
-import SendMessageButton from "../../buttonComponents/createMessageButton/createMessageButton"
-import {useParams} from 'react-router-dom';
+import { useUserContext } from "../usercontext/UserContext";
+import { useEffect, useState } from "react";
+import UserPosts from "./helperComponents/displayAllUserPosts";
+import AddFriendButton from "../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton";
+import SendMessageButton from "../../buttonComponents/createMessageButton/createMessageButton";
+import { useParams } from 'react-router-dom';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
-
+import { fetchWithJWT } from "../../utility/fetchInterceptor";
 
 const ProfilePage = () => {
   const { userid } = useParams();
@@ -20,16 +20,14 @@ const ProfilePage = () => {
       try {
         setIsLoading(true);
 
-        
-        const accountDataResponse = await fetch(`/api/user/${userid}`);
+        const accountDataResponse = await fetchWithJWT(`/api/user/${userid}`);
         if (!accountDataResponse.ok) {
           throw new Error("Failed to fetch account data");
         }
         const accountDataJson = await accountDataResponse.json();
         setAccountData(accountDataJson);
 
-        
-        const friendListResponse = await fetch(`/api/friends/${user.appUserID}/getAllFriends`);
+        const friendListResponse = await fetchWithJWT(`/api/friends/${user.appUserID}/getAllFriends`);
         if (!friendListResponse.ok) {
           throw new Error("Failed to fetch friends");
         }
@@ -51,6 +49,8 @@ const ProfilePage = () => {
   };
 
   const isFriend = accountData && friendList ? friendList.includes(accountData.appUserID) : false;
+  const isCurrentUser = user && user.appUserID === parseInt(userid, 10);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -60,27 +60,31 @@ const ProfilePage = () => {
   }
 
   return (
-    <div>
-      <h2>Account Details</h2>
-      { accountData && (
-        <>
-          <ProfilePictureComponent userid={accountData.appUserID}/>
-          <p>ID: {accountData.appUserID}</p>
-          <p>First Name: {accountData.firstname}</p>
-          <p>Last Name: {accountData.lastname}</p>
-          <p>Email: {accountData.email}</p>
-        </>
-      )}
+      <div>
+        <h2>Account Details</h2>
+        { accountData && (
+            <>
+              <ProfilePictureComponent userid={accountData.appUserID}/>
+              <p>ID: {accountData.appUserID}</p>
+              <p>First Name: {accountData.firstname}</p>
+              <p>Last Name: {accountData.lastname}</p>
+              <p>Email: {accountData.email}</p>
+            </>
+        )}
 
-      {isFriend ? (
-        <deleteFriendButton username={accountData.username} removeFriend={() => removeFriend(accountData.appUserID)} />
-      ) : (
-        <AddFriendButton username={accountData.username} isLoading={isLoading} error={error} />
-      )}
+        {!isCurrentUser && (
+            <>
+              {isFriend ? (
+                  <deleteFriendButton username={accountData.username} removeFriend={() => removeFriend(accountData.appUserID)} />
+              ) : (
+                  <AddFriendButton username={accountData.username} isLoading={isLoading} error={error} />
+              )}
+              <SendMessageButton userId={user.appUserID} defaultRecipientName={accountData.username} />
+            </>
+        )}
 
-      <SendMessageButton userId={user.appUserID} defaultRecipientName={accountData.username} />
-      <UserPosts userid={userid} profileUserId={accountData ? accountData.appUserID : null} />
-    </div>
+        <UserPosts userid={userid} profileUserId={accountData ? accountData.appUserID : null} />
+      </div>
   );
 };
 

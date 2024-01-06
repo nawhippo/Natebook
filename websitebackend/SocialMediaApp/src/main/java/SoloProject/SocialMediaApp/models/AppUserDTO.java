@@ -1,5 +1,8 @@
 package SoloProject.SocialMediaApp.models;
 
+import org.hibernate.Hibernate;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 public class AppUserDTO {
@@ -131,8 +134,6 @@ public class AppUserDTO {
         this.lastname = appUser.getLastname();
         this.email = appUser.getEmail();
         this.username = appUser.getUsername();
-        this.friends = appUser.getFriends();
-        this.requests = appUser.getRequests();
         this.blockList = appUser.getBlockList();
         this.isOnline = appUser.isOnline();
         this.friendCount = appUser.getFriendCount();

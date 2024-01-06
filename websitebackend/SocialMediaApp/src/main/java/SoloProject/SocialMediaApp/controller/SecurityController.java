@@ -77,13 +77,13 @@ public class SecurityController {
 //                    .body("{\"message\": \"Invalid username or password\"}");
 //        }
 //    }
-//    @PostMapping("/{userid}/logout")
-//    public ResponseEntity<?> handleLogout(@PathVariable long userid) {
-//        AppUser user = appUserRepository.findByAppUserID(userid);
-//        user.setOnline(false);
-//        return ResponseEntity.ok(user);
-//    }
-//
+    @PostMapping("/{userid}/logout")
+    public ResponseEntity<?> handleLogout(@PathVariable long userid) {
+        AppUser user = appUserRepository.findByAppUserID(userid);
+        user.setOnline(false);
+        return ResponseEntity.ok(user);
+   }
+
 
 
     @GetMapping("/access-denied")

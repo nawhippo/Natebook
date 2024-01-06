@@ -3,6 +3,7 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import {useUserContext} from "../../pages/usercontext/UserContext";
 import './reactCommentButtons.css';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const ReactionButtons = ({ commentId, updateLikesDislikes }) => {
   const [reactionState, setReactionState] = useState('None');
@@ -12,7 +13,7 @@ const ReactionButtons = ({ commentId, updateLikesDislikes }) => {
   const updateReactionOnServer = async (commentId, action) => {
     const url = `/api/comment/${commentId}/${user.appUserID}/updateReactionComment`;
     try {
-      const response = await fetch(url, {
+      const response = await fetchWithJWT(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

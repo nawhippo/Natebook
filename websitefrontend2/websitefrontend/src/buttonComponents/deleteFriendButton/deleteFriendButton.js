@@ -1,9 +1,10 @@
 import {useUserContext} from "../../pages/usercontext/UserContext";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const DeleteFriendButton = ({ removeFriend }) => {
   const { user } = useUserContext();
     const handleClick = () => {
-      fetch(`/api/friends/${user.appUserID}/removeFriend/${removeFriend}`, {
+      fetchWithJWT(`/api/friends/${user.appUserID}/removeFriend/${removeFriend}`, {
         method: 'DELETE',
       })
       .then(response => {

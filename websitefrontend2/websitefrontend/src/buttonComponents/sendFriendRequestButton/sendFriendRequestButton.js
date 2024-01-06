@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const SendFriendRequestButton = ({ username }) => {
   const { user } = useUserContext();
   const [sent, setSent] = useState(false);
 
   const handleAddFriendClick = () => {
-    fetch(`/api/friendreqs/${user.appUserID}/sendFriendRequestByUsername/${username}`, {
+    fetchWithJWT(`/api/friendreqs/${user.appUserID}/sendFriendRequestByUsername/${username}`, {
       method: 'PUT'
     }).then(() => setSent(true));
   };

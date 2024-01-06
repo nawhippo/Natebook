@@ -162,7 +162,7 @@ public class AccountService {
 
         String encodedPassword = passwordEncoder.encode(password);
         AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
-        appUser.addAuthority("USER");
+        appUser.addAuthority("ROLE_USER");
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }

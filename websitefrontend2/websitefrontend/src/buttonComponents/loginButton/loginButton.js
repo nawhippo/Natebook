@@ -3,13 +3,13 @@ import {useUserContext} from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
 import LoginIcon from '@mui/icons-material/Login';
 import styles from "./loginButton.module.css";
-
+import { useHistory } from 'react-router-dom';
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
+  const history = useHistory();
   const { user, updateUser } = useUserContext();
 
   const handleInputChange = (event) => {
@@ -25,17 +25,16 @@ const LoginButton = () => {
   const handleLogin = (event) => {
     event.preventDefault();
 
-    const requestBody = {
-      username: username,
-      password: password,
-    };
+    const requestBody = new URLSearchParams();
+    requestBody.append('username', username);
+    requestBody.append('password', password);
 
     fetch('/api/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(requestBody),
+      body: requestBody.toString(),
     })
         .then((response) => {
           if (response.ok) {
@@ -50,7 +49,7 @@ const LoginButton = () => {
           updateUser(data.user);
           Cookies.set('userData', JSON.stringify(data.user));
           Cookies.set('jwt', data.jwt);
-
+          history.push('/AllUsersPage');
         })
         .catch((error) => {
           console.error('Error logging in:', error);
