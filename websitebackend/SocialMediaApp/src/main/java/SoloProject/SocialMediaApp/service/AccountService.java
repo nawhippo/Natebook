@@ -8,7 +8,9 @@ import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -144,7 +146,7 @@ public class AccountService {
 
             appUser.setProfilePicture(compressedImage.getId());
             compressedImage.setProfileid(appUser.getAppUserID());
-            appUserRepository.save(appUser); // Assuming you have a save method to persist changes
+            appUserRepository.save(appUser);
             compressedImageRepository.save(compressedImage);
             return new ResponseEntity<>(appUser, HttpStatus.OK);
         } else {
@@ -180,6 +182,12 @@ public class AccountService {
         return ResponseEntity.ok(user);
     }
 
-
+    public boolean checkAuthenticationMatch(String username, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String authenticatedUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+            return username.equals(authenticatedUsername);
+        }
+        return false;
+    }
 
 }
