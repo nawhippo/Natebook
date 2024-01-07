@@ -91,7 +91,7 @@ const CreatePostButton = () => {
         display:'flex',
         width: '495px',
         flexDirection:'column',
-        border: '2px dotted',
+        border: '3px dashed',
         borderRadius: '5px',
         borderColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
         marginBottom: '30px'
