@@ -35,7 +35,17 @@ public class CustomTokenAuthenticationFilter implements Filter {
         String path = httpRequest.getRequestURI();
         System.out.println("Request Path: " + path);
 
-        if (path.equals("/api/login") || path.equals("/api/account/createAccount") || path.equals("/api/publicFeed") || path.equals("/api/user/getAllWebsiteUsers") || path.equals("/api/user/getAllWebsiteUsers") || path.endsWith("/logout") ||  path.endsWith("/images")) {
+        if (path.equals("/api/login")
+                || path.equals("/api/account/createAccount")
+                || path.equals("/api/publicFeed")
+                || path.equals("/api/user/getAllWebsiteUsers")
+                || path.matches("/api/account/.*/getProfilePicture") // Use regex for dynamic segments
+                || path.matches("/api/.*/comments") // Use regex for comments on dynamic paths
+                || path.equals("/api/post/.*/comments") // Assuming this is dynamic, use regex if needed
+                || path.endsWith("/logout")
+                || path.endsWith("/images")
+                || path.equals("/error")
+                || path.equals("/api/user/*")){
             System.out.println("Bypassing JWT auth requirement");
             chain.doFilter(request, response);
             return;
