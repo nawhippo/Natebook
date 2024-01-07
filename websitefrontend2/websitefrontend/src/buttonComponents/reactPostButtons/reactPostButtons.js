@@ -4,7 +4,7 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import './reactPostButtons.css';
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
-const ReactionButtons = ({ postId, updateLikesDislikes }) => {
+const ReactionButtons = ({ postId, updateLikesDislikes, likesCount, dislikesCount }) => {
   const [reactionState, setReactionState] = useState('None');
   const { user } = useUserContext();
   const [isRateLimited, setIsRateLimited] = useState(false);
@@ -43,16 +43,18 @@ const ReactionButtons = ({ postId, updateLikesDislikes }) => {
 
 
   return (
-    <div>
-      <ThumbUpOffAltIcon
-          className={`reaction-icon ${reactionState === 'Like' ? 'active' : ''}`}
-          onClick={() => handleButtonClick('Like')}
-      />
-      <ThumbDownOffAltIcon
-          className={`reaction-icon ${reactionState === 'Dislike' ? 'active' : ''}`}
-          onClick={() => handleButtonClick('Dislike')}
-      />
-    </div>
+      <div className="reaction-buttons-container">
+        <ThumbUpOffAltIcon
+            className={`reaction-icon ${reactionState === 'Like' ? 'active' : ''}`}
+            onClick={() => handleButtonClick('Like')}
+        />
+        <span style={{transform: 'translateY(30px)'}}>{likesCount}</span>
+        <ThumbDownOffAltIcon
+            className={`reaction-icon ${reactionState === 'Dislike' ? 'active' : ''}`}
+            onClick={() => handleButtonClick('Dislike')}
+        />
+        <span style={{transform: 'translateY(30px)'}}>{dislikesCount}</span>
+      </div>
   );
 };
 

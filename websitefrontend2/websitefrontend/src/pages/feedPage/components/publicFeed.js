@@ -3,10 +3,10 @@ import Post from '../../objects/post';
 import CreatePostButton from '../../../buttonComponents/createPostButton/createPostButton';
 import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
-import {useUserContext} from '../../usercontext/UserContext'; // Import the user context
+import {useUserContext} from '../../usercontext/UserContext';
 
 const PublicFeed = () => {
-    const { user } = useUserContext(); // Get the user context
+    const { user } = useUserContext();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [inputValue, setInputValue] = useState('');
@@ -18,9 +18,7 @@ const PublicFeed = () => {
         fetchData();
     }, []);
 
-    const searchButtonStyle = {
-        backgroundColor: 'darkgrey'
-    };
+
 
     useEffect(() => {
         if (allPostsData && searchTerm) {
@@ -53,8 +51,9 @@ const PublicFeed = () => {
 
     const handleInputChange = (event) => setSearchTerm(event.target.value);
 
+
     const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+        backgroundColor: user?.backgroundColor || 'grey',
         color: '#FFFFFF',
     };
 
@@ -75,11 +74,20 @@ const PublicFeed = () => {
             </div>
 
             {user && (
-                <div className="create-post-section">
+                <div className="create-post-section" style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center'}}>
                     <CreatePostButton />
                 </div>
             )}
-
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
             {isLoading ? (
                 <p>Loading...</p>
             ) : error ? (
@@ -96,6 +104,7 @@ const PublicFeed = () => {
             ) : (
                 <p>No posts found.</p>
             )}
+            </div>
         </div>
     );
 };

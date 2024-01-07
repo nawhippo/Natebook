@@ -7,7 +7,7 @@ export const DeletePostButton = ({ postId, fetchData }) => {
 
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'light-gray',
     color: '#FFFFFF',
     border: '4px solid black',
   };

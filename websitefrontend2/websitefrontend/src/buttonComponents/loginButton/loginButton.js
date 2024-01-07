@@ -3,6 +3,7 @@ import {useUserContext} from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
 import LoginIcon from '@mui/icons-material/Login';
 import styles from "./loginButton.module.css";
+import '../../global.css';
 import { useHistory } from 'react-router-dom';
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false);

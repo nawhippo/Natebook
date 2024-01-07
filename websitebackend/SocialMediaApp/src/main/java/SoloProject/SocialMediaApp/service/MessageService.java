@@ -37,6 +37,7 @@ public class MessageService {
 
             MessageThread currentThread = new MessageThread();
             currentThread.setParticipants(recipientIds);
+            currentThread.getParticipants().add(senderId);
             currentThread.setParticipantsNames(recipientusernames);
             currentThread = messageThreadRepository.save(currentThread);
 

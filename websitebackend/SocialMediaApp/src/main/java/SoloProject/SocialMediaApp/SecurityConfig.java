@@ -94,9 +94,11 @@ public class SecurityConfig {
                                 "/api/publicFeed",
                                 "/api/user/getAllWebsiteUsers",
                                 "/api/*/comments",
+                                "/api/post/*/comments",
                                 "/api/*/logout",
                                 "/api/post/*/images",
-                                "/error"
+                                "/error",
+                                "/api/user/*"
                         ).permitAll()
                         .anyRequest().hasRole("USER")
                 )

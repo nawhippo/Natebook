@@ -60,7 +60,7 @@
 .button-common {
     padding: 10px 10px;
     margin: 10px;
-    background-color: #FF6D00;
+    background-color: lightgrey;
     color: white;
     cursor: pointer;
     width: 200px;
@@ -69,14 +69,12 @@
 }
 
 .button-common:hover {
-    background-color: #FF9E80;
     transform: scale(0.5) translateY(-5px);
     color: white;
 }
 
 
 .button-common:hover {
-    background-color: #FF9E80;
     transform: scale(1.05) translateY(-5px);
     background-image: linear-gradient(
             to right,
@@ -109,17 +107,12 @@
 button {
     padding: 10px 20px;
     margin: 5px;
-    border: none;
-    background-color: #FF6D00; /* Or any color you prefer */
     color: black;
     cursor: pointer;
     width: 80%;
     max-width: 300px;
 }
 
-button:hover {
-    background-color: #FF9E80; /* Lighter shade for hover effect */
-}
 img {
     width: 10px;
     length: 10px;

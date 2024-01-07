@@ -76,7 +76,7 @@ const AllUsersPage = () => {
                 </span>
 
                         <div className="button-group">
-                          <ProfilePictureComponent userid={userItem.appUserID} style={{fontSize: '30px !important'}} />
+                          <ProfilePictureComponent userid={userItem.appUserID} style={{fontSize: '50px !important'}} />
                         </div>
                       </li>
                   ))

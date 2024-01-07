@@ -46,7 +46,7 @@ const ProfilePictureComponent = ({ userid }) => {
                     {profile ? (
                         <img src={profile} className="profile-picture" alt="Profile" />
                     ) : (
-                        <AccountCircleIcon sx={{ color: 'gray', fontSize: 200 }} className="profile-picture" />
+                        <AccountCircleIcon sx={{ color: 'gray', fontSize: 50 }} className="profile-picture" />
                     )}
                 </Link>
             )}

@@ -3,6 +3,7 @@ import './MessagesPage.css';
 import {useUserContext} from '../usercontext/UserContext';
 import Message from '../objects/message';
 import ProfilePictureComponent from '../../buttonComponents/ProfilePictureComponent';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const MessagesPage = () => {
     const [userId, setUserId] = useState(1);
@@ -20,7 +21,7 @@ const MessagesPage = () => {
     };
     const getAllThreads = async () => {
         try {
-            const response = await fetch(`/api/message/${user.appUserID}/getAllThreads`);
+            const response = await fetchWithJWT(`/api/message/${user.appUserID}/getAllThreads`);
             const data = await response.json();
             setThreads(data);
         } catch (error) {
@@ -30,7 +31,7 @@ const MessagesPage = () => {
 
     const getAllMessagesByThread = async () => {
         try {
-            const response = await fetch(`/api/message/${selectedThreadId}/getAllMessages`);
+            const response = await fetchWithJWT(`/api/message/${selectedThreadId}/getAllMessages`);
             const data = await response.json();
             setMessages(data);
         } catch (error) {
@@ -40,7 +41,7 @@ const MessagesPage = () => {
 
     const sendMessage = async () => {
         try {
-            const response = await fetch(`/api/message/${user.appUserID}/sendMessage`, {
+            const response = await fetchWithJWT(`/api/message/${user.appUserID}/sendMessage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ const MessagesPage = () => {
 
     const replyToThread = async () => {
         try {
-            await fetch(`/api/message/${selectedThreadId}/reply`, {
+            await fetchWithJWT(`/api/message/${selectedThreadId}/reply`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -148,12 +149,12 @@ const MessagesPage = () => {
                     </div>
                 )}
             <div className="send-message" style={{backgroundColor: 'ghostwhite', marginTop: '30px', width: '400px'}}>
-                <h2>Send a Message</h2>
+                <h2>Create a new Thread</h2>
                 <div>
                     <input
                         style={{width: '300px', height: '40px'}}
                         type="text"
-                        placeholder="Recipient Usernames (comma-separated)"
+                        placeholder="Enter Recipient Usernames"
                         value={recipientUsernames.join(',')}
                         onChange={(e) => setRecipientUsernames(e.target.value.split(','))}
                     />

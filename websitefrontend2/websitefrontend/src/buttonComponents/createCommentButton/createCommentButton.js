@@ -2,11 +2,11 @@ import React, {useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
-
+import '../../global.css';
 const CommentForm = ({ postId, updateComments }) => {
-  const { user } = useUserContext();
+  const {user} = useUserContext();
   const [commentContent, setCommentContent] = useState('');
-  const [showForm, setShowForm] = useState(false); 
+  const [showForm, setShowForm] = useState(false);
 
 
   const createComment = async () => {
@@ -40,26 +40,38 @@ const CommentForm = ({ postId, updateComments }) => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'darkgrey'
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    color: '#FFFFFF',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '10px 0'
   };
 
 
   return (
       <div>
-        <AddCommentIcon style={{fontSize: '50px'}} onClick={() => setShowForm(!showForm)}>
-          {showForm ? "Or not..." : "Comment"}
-        </AddCommentIcon>
+        {/* Wrapper div for the icon with flex styles */}
+        <div style={{ transform: 'TranslateX(350px)' }}>
+          <AddCommentIcon
+              style={{fontSize: '50px', cursor: 'pointer', color: user && user.backgroundColor ? user.backgroundColor : 'grey' }}
+              onClick={() => setShowForm(!showForm)}
+          />
+        </div>
+
         {showForm && (
-            <form onSubmit={handleSubmit}>
-              <label>
-                Comment:
+            <form onSubmit={handleSubmit} style={{ transform:"translateX(30px)",display: "flex", flexDirection: "column", alignItems: "center", width: "300px" }}>
+              <div>
                 <input
                     type="text"
+                    placeholder={'Share your thoughts..'}
                     value={commentContent}
                     onChange={(e) => setCommentContent(e.target.value)}
+                    style={{ width: '300px' }}
                 />
-              </label>
-              <button type="submit" style={buttonStyle}>Submit</button>
+              </div>
+              <button type="submit" style={{ ...buttonStyle, width: '300px' }}>Submit</button>
             </form>
         )}
       </div>

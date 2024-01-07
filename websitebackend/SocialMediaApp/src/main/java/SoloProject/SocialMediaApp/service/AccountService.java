@@ -185,6 +185,7 @@ public class AccountService {
     public boolean checkAuthenticationMatch(String username, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             String authenticatedUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+            System.out.println("USERNAME:  " + authenticatedUsername);
             return username.equals(authenticatedUsername);
         }
         return false;
