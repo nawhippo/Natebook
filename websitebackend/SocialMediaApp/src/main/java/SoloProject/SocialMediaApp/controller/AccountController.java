@@ -54,7 +54,7 @@ public class AccountController {
         return accountService.createAccount(formData);
     }
 
-    @PutMapping("/account/{userId}/ForgotPassword")
+    @PutMapping("/account/ForgotPassword")
     public ResponseEntity<AppUser> forgotPassword(@RequestBody Map<String, String> formData) {
         String email = formData.get("email");
         return accountService.forgotPassword(email);
@@ -72,8 +72,13 @@ public class AccountController {
         String newLastName = formData.get("lastname");
         String newEmail = formData.get("email");
         String newPassword = formData.get("password");
-        return accountService.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword);
+        String newOccupation = formData.get("occupation");
+        String newBiography = formData.get("biography");
+        Boolean newIsPrivate = Boolean.parseBoolean(formData.get("isPrivate"));
+        return accountService.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword, newOccupation, newBiography, newIsPrivate);
     }
+
+
 
     @GetMapping("/account/{userid}/getProfilePicture")
     @Transactional

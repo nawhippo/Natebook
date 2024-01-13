@@ -1,14 +1,8 @@
 .banner {
-    outline: black;
-    outline-style: solid;
-    outline-width: 5px;
-    padding: 5px;
-    box-shadow: black;
     text-align: left;
     text-decoration-color: bisque;
     font-size: 11px;
     font-weight: bold;
-    border-radius: 0.5px;
     display: flex;
     flex-direction: row !important;
     position: relative;
@@ -31,9 +25,8 @@
 }
 .title {
     font-size: 70px;
-    font-family: "Fira Code";
+    font-family: "Courier New";
     padding-right: 80px;
-
 }
 
 .dropdown {
@@ -66,24 +59,17 @@
     width: 200px;
     height: 50px;
     transition: transform 0.5s ease-in-out;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
 .button-common:hover {
-    transform: scale(0.5) translateY(-5px);
     color: white;
 }
 
 
 .button-common:hover {
-    transform: scale(1.05) translateY(-5px);
-    background-image: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.2),
-            rgba(255, 255, 255, 0.8),
-            rgba(255, 255, 255, 0.2)
-    );
-    background-size: 200% 100%;
-    animation: shine 1s linear infinite;
+    transform: scale(1.5);
 }
 
 @keyframes shine {
@@ -111,6 +97,7 @@ button {
     cursor: pointer;
     width: 80%;
     max-width: 300px;
+    border-radius: 15px;
 }
 
 img {

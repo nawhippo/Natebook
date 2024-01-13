@@ -70,21 +70,7 @@ public class AppUserSearchService {
     }
 
 
-    public ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname) {
-        List<AppUser> appUsers;
 
-        if (firstname != null && lastname != null) {
-            appUsers = repository.findByFirstnameAndLastname(firstname, lastname);
-        } else if (firstname != null) {
-            appUsers = repository.findByFirstname(firstname);
-        } else if (lastname != null) {
-            appUsers = repository.findByLastname(lastname);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok(appUsers);
-    }
     public ResponseEntity<List<Long>> getAllFriendRequests(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
         if (user == null) {

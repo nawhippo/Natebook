@@ -7,9 +7,20 @@ import java.util.List;
 
 public class AppUserDTO {
 
+    private boolean isPrivate;
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
+    }
+
     public AppUserDTO() {
     }
 
+    private int MessageCount;
     private Long appUserID;
     private String firstname;
     private String lastname;
@@ -21,6 +32,24 @@ public class AppUserDTO {
     private boolean isOnline;
     private Boolean isGoogleUser;
     private int friendCount;
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    private String occupation;
+    private String biography;
     private String role;
     private Long profilePicture;
 
@@ -128,6 +157,16 @@ public class AppUserDTO {
         this.profilePicture = profilePicture;
     }
 
+
+    public int getMessageCount() {
+        return MessageCount;
+    }
+
+    public void setMessageCount(int messageCount) {
+        MessageCount = messageCount;
+    }
+
+
     public AppUserDTO(AppUser appUser) {
         this.appUserID = appUser.getAppUserID();
         this.firstname = appUser.getFirstname();
@@ -139,5 +178,6 @@ public class AppUserDTO {
         this.friendCount = appUser.getFriendCount();
         this.role = appUser.getRole();
         this.profilePicture = appUser.getProfilePicture();
+        this.isPrivate = appUser.isPrivate();
     }
 }

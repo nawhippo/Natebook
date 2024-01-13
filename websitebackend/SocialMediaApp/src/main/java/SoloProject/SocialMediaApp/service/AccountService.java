@@ -9,10 +9,8 @@ import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +62,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String newPassword) {
+    public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String newPassword, String newOccupation, String newBiography, Boolean newPrivate) {
         AppUser user = appUserRepository.findByAppUserID(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -82,6 +80,18 @@ public class AccountService {
 
         if (newPassword != null) {
             user.setPassword(newPassword);
+        }
+
+        if(newOccupation != null){
+            user.setOccupation(newOccupation);
+        }
+
+        if(newBiography != null){
+            user.setBiography(newBiography);
+        }
+
+        if(newPrivate != null){
+            user.setPrivate(newPrivate);
         }
         appUserRepository.save(user);
         return ResponseEntity.ok(user);
@@ -165,6 +175,7 @@ public class AccountService {
         String encodedPassword = passwordEncoder.encode(password);
         AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
         appUser.addAuthority("ROLE_USER");
+        appUser.setFriendCount(0);
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }

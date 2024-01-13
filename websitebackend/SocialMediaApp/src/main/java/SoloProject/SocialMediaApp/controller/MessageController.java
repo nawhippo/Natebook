@@ -49,13 +49,7 @@ public class MessageController {
         String content = (String) requestBody.get("content");
         List<String> recipientUsernames = (List<String>) requestBody.get("recipientUsernames");
 
-        Optional<Message> sentMessage = messageService.sendMessage(content, userId, recipientUsernames);
-
-        if (sentMessage.isPresent()) {
-            return ResponseEntity.ok(sentMessage.get());
-        } else {
-            return ResponseEntity.badRequest().body("Message could not be sent.");
-        }
+        return messageService.sendMessage(content, userId, recipientUsernames);
     }
 
     @GetMapping("/message/{userId}/getAllThreads")
@@ -70,20 +64,37 @@ public class MessageController {
     }
 
     @GetMapping("/message/{threadId}/getAllMessages")
-    public ResponseEntity<?> getAllMessageByThread(@PathVariable Long threadId,
-                                                               Authentication authentication) {
-
+    public ResponseEntity<?> getAllMessageByThread(@PathVariable Long threadId, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
         Long appUserID = appUserRepository.findByUsername(username).getAppUserID();
 
         Optional<MessageThread> thread = messageThreadRepository.findById(threadId);
+
         if (thread.isPresent() && thread.get().getParticipants().contains(appUserID)) {
             List<Message> messages = messageService.getAllMessagesByThreadId(threadId);
+
+
+            messageService.updateUserLastChecked(appUserID);
+
             return new ResponseEntity<>(messages, HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied or Thread Not Found");
         }
+    }
+
+    @GetMapping("/message/{userId}/getMessageNotifications")
+    public ResponseEntity<?> getUserMessageCount(@PathVariable Long userId,
+                                                   Authentication authentication) {
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String authenticatedUsername = userDetails.getUsername();
+        Long authenticatedUserId = appUserRepository.findByUsername(authenticatedUsername).getAppUserID();
+        if (!authenticatedUserId.equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+
+        return messageService.getNewMessagesForUserLength(userId);
     }
 
     @PutMapping("/message/{threadId}/reply")

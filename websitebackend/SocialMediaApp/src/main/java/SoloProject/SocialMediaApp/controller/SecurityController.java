@@ -81,6 +81,7 @@ public class SecurityController {
     public ResponseEntity<?> handleLogout(@PathVariable long userid) {
         AppUser user = appUserRepository.findByAppUserID(userid);
         user.setOnline(false);
+        appUserRepository.save(user);
         return ResponseEntity.ok(user);
    }
 

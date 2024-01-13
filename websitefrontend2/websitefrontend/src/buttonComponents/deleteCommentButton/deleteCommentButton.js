@@ -1,13 +1,14 @@
 import React from 'react';
 import {useUserContext} from "../../pages/usercontext/UserContext";
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 
 export const DeleteCommentButton = ({ commentId }) => {
   const user = useUserContext();
 
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
     color: '#FFFFFF',
     border: '4px solid black',
   };

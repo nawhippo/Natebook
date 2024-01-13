@@ -5,6 +5,13 @@ button:active {
 }
 
 
+button {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
 
 
 .search-bar-container {
@@ -69,7 +76,6 @@ input[type="text"]:focus {
     object-fit: cover;
     margin: 5px;
     border: none;
-    font-size: 150px;
     marginLeft: 'auto';
     position: relative;
     right: 0;

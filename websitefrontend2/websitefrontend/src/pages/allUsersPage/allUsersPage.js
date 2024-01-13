@@ -1,17 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import './allUsersPage.css';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
-import {useUserContext} from "../usercontext/UserContext";
-import Cookies from 'js-cookie';
-import {fetchWithJWT} from '../../utility/fetchInterceptor'
+import { useUserContext } from "../usercontext/UserContext";
+import { fetchWithJWT } from '../../utility/fetchInterceptor';
+import UserStatus from "../../buttonComponents/getStatus/getStatus";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+
 const AllUsersPage = () => {
   const [addressBookData, setAddressBookData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add isLoggedIn state
-  const { user } = useUserContext(); // Get user from the user context
+  const { user } = useUserContext();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,35 +35,45 @@ const AllUsersPage = () => {
 
   const filteredUsers = searchTerm
       ? addressBookData.filter(userItem =>
-          userItem.username.toLowerCase().includes(searchTerm.toLowerCase())
+          userItem.username.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+          userItem.firstname.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+          userItem.lastname.toLowerCase().includes(searchTerm.toLowerCase().trim())
       )
       : addressBookData;
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-  };
+  const handleInputChange = (event) => setSearchTerm(event.target.value);
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    backgroundColor: user?.backgroundColor || getRandomColor(),
     color: '#FFFFFF',
   };
+
+  const getOnlineStatusStyle = (isOnline) => ({
+    transform: 'translateY(60px) translateX(30px)',
+    display: 'inline-block',
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    zIndex: '1000',
+    backgroundColor: isOnline ? 'green' : 'red',
+  });
 
   return (
       <div>
         <p>{addressBookData && addressBookData.message}</p>
-        <h2>Users</h2>
-        <form onSubmit={handleSearch} className="search-bar-container">
+        <h2 style={{textAlign: 'center', fontSize: '30px'}}>Users</h2>
+        <div className="search-bar-container">
           <input
               className="search-input"
               type="text"
-              placeholder="Search by username"
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              placeholder="Search users..."
+              onChange={handleInputChange}
           />
-          <button className="search-button" type="submit" style={buttonStyle}>
+          <button className="search-button" type="submit" onClick={() => setSearchTerm(searchTerm)} style={buttonStyle}>
             <SearchIcon />
           </button>
-        </form>
+        </div>
         {isLoading ? (
             <div>Loading...</div>
         ) : error ? (
@@ -71,12 +83,20 @@ const AllUsersPage = () => {
               {filteredUsers && filteredUsers.length > 0 ? (
                   filteredUsers.map(userItem => (
                       <li key={userItem.appUserID} className="user-item">
-                <span className="user-name">
-                  @{userItem.username} - {userItem.firstname} {userItem.lastname}
-                </span>
-
+                      <span className="user-name">
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{fontSize:"30px"}}>
+                            @{userItem.username} - {userItem.firstname} {userItem.lastname}
+                            <UserStatus appUserId={userItem.appUserID}/>
+                            {userItem.online}
+                          </div>
+                          <div>
+                            <div style={getOnlineStatusStyle(userItem.online)} />
+                          </div>
+                        </div>
+                      </span>
                         <div className="button-group">
-                          <ProfilePictureComponent userid={userItem.appUserID} style={{fontSize: '50px !important'}} />
+                          <ProfilePictureComponent userid={userItem.appUserID} style={{ width: '150px', height: '150px' }} />
                         </div>
                       </li>
                   ))

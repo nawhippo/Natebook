@@ -21,6 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +65,8 @@ public class SecurityConfig {
                         return;
                     }
 
-
+                    appUser.setOnline(true);
+                    appUserRepository.save(appUser);
                     AppUserDTO appUserDTO = new AppUserDTO(appUser);
                     String token = jwtUtil.generateToken(userDetails);
                     Map<String, Object> responseBody = new HashMap<>();
@@ -95,10 +97,14 @@ public class SecurityConfig {
                                 "/api/user/getAllWebsiteUsers",
                                 "/api/*/comments",
                                 "/api/post/*/comments",
+                                "/api/posts/*",
                                 "/api/*/logout",
                                 "/api/post/*/images",
                                 "/error",
-                                "/api/user/*"
+                                "/api/account/ForgotPassword",
+                                "/api/user/*",
+                                "/api/status/getByUser/*",
+                                "/api/post/*/posts/*"
                         ).permitAll()
                         .anyRequest().hasRole("USER")
                 )
@@ -107,15 +113,25 @@ public class SecurityConfig {
                 .logoutUrl("/api/logout")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "your-other-cookies") // Delete cookies as needed
+                .deleteCookies("JSESSIONID", "your-other-cookies")
                 .logoutSuccessHandler((request, response, authentication) -> {
-                    // Customize the logout success behavior, e.g., redirect to a logout page or send a response message
+
+                    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                    String username = userDetails.getUsername();
+                    AppUser appUser = appUserRepository.findByUsername(username);
+                    if (appUser != null) {
+                        appUser.setOnline(false);
+                        appUserRepository.save(appUser);
+                    }
+
+
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("application/json");
                     Map<String, String> responseBody = new HashMap<>();
                     responseBody.put("message", "Logout successful");
                     new ObjectMapper().writeValue(response.getWriter(), responseBody);
                 });
+
 
         return http.build();
     }

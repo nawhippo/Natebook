@@ -1,188 +1,156 @@
-import React, {useEffect, useState} from 'react';
-import './MessagesPage.css';
-import {useUserContext} from '../usercontext/UserContext';
-import Message from '../objects/message';
-import ProfilePictureComponent from '../../buttonComponents/ProfilePictureComponent';
-import {fetchWithJWT} from "../../utility/fetchInterceptor";
+    import React, { useEffect, useState } from 'react';
+    import './MessagesPage.css';
+    import { useLocation } from 'react-router-dom';
+    import { useUserContext } from '../usercontext/UserContext';
+    import Message from '../objects/message';
+    import ProfilePictureComponent from '../../buttonComponents/ProfilePictureComponent';
+    import { fetchWithJWT } from "../../utility/fetchInterceptor";
+    import CreateMessageForm from "../../buttonComponents/createMessageButton/createMessageButton";
+    import ReplyToThreadForm from "../../buttonComponents/replyToThreadForm/ReplyToThreadForm";
+    const MessagesPage = ({ recipientUsername }) => {
+        console.log("Recipient name: " + recipientUsername);
+        const [userId, setUserId] = useState(1);
+        const [threads, setThreads] = useState([]);
+        const [selectedThreadId, setSelectedThreadId] = useState(null);
+        const [messages, setMessages] = useState([]);
+        const { user } = useUserContext();
+        const location = useLocation();
+        const [currentThreadParticipants, setCurrentThreadParticipants] = useState([]);
+        const [localRecipientUsername, setLocalRecipientUsername] = useState("");
 
-const MessagesPage = () => {
-    const [userId, setUserId] = useState(1);
-    const [content, setContent] = useState('');
-    const [recipientUsernames, setRecipientUsernames] = useState([]);
-    const [threads, setThreads] = useState([]);
-    const [selectedThreadId, setSelectedThreadId] = useState(null);
-    const [messages, setMessages] = useState([]);
-    const {user} = useUserContext();
-
-    const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
-        color: '#FFFFFF',
-        border: '4px solid black',
-    };
-    const getAllThreads = async () => {
-        try {
-            const response = await fetchWithJWT(`/api/message/${user.appUserID}/getAllThreads`);
-            const data = await response.json();
-            setThreads(data);
-        } catch (error) {
-            console.error('Error fetchwithCsrfing threads:', error);
-        }
-    };
-
-    const getAllMessagesByThread = async () => {
-        try {
-            const response = await fetchWithJWT(`/api/message/${selectedThreadId}/getAllMessages`);
-            const data = await response.json();
-            setMessages(data);
-        } catch (error) {
-            console.error('Error fetchwithCsrfing messages:', error);
-        }
-    };
-
-    const sendMessage = async () => {
-        try {
-            const response = await fetchWithJWT(`/api/message/${user.appUserID}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content,
-                    recipientUsernames,
-                }),
-            });
-
-            if (response.ok) {
-                setContent('');
-                setRecipientUsernames([]);
-                getAllThreads();
-            } else {
-                console.error('Error sending message:', response.statusText);
+        const getAllThreads = async () => {
+            try {
+                const response = await fetchWithJWT(`/api/message/${user.appUserID}/getAllThreads`);
+                const data = await response.json();
+                setThreads(data);
+            } catch (error) {
+                console.error('Error fetching threads:', error);
             }
-        } catch (error) {
-            console.error('Error sending message:', error);
-        }
-    };
+        };
 
-    const replyToThread = async () => {
-        try {
-            await fetchWithJWT(`/api/message/${selectedThreadId}/reply`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content,
-                    userId: Number(userId),
-                }),
-            });
-            getAllMessagesByThread(selectedThreadId);
-        } catch (error) {
-            console.error('Error replying to thread:', error);
-        }
-    };
+        const handleThreadClick = async (threadId) => {
+            setSelectedThreadId(threadId);
+            await getAllMessagesByThread(threadId);
+        };
 
-    useEffect(() => {
-        getAllThreads();
-    }, [userId]);
+        const profilePicStyle = {
+            width: '30px',
+            height: '30px',
+            position: 'relative',
+            zIndex: 1,
+        };
 
-    useEffect(() => {
-        if (selectedThreadId) {
-            getAllMessagesByThread(selectedThreadId);
-        }
-    }, [selectedThreadId]);
+        const overlapStyle = {
+            ...profilePicStyle,
+            marginLeft: '-30px',
+        };
 
-    return (
-            <div className="messages-container">
-                <div className="threads">
-                    <ul style={{ listStyleType: 'none', padding: 0 }}>
-                        {threads && threads.length > 0 ? (
-                            threads.map((thread) => (
-                                <li key={thread.id}>
-                                    <button
-                                        onClick={() => setSelectedThreadId(thread.id)}
-                                        style={buttonStyle}
-                                        className='button-common'
-                                    >
-                                        {thread.participants.map((participant) => (
-                                            <span key={participant}>
-                                            <p>{participant}</p>
-                                            <ProfilePictureComponent userid={participant.userId} sx={{ size: '100px !important' }}/>{' '}
-                                        </span>
-                                        ))}
-                                    </button>
-                                </li>
-                            ))
-                        ) : (
-                            <p>No threads available.</p>
-                        )}
-                    </ul>
-                </div>
+        const sentMessageStyle = {
+            textAlign: 'right',
+            backgroundColor: '#ADD8E6',
+            color: 'black',
+            padding: '10px',
+            borderRadius: '10px',
+            margin: '5px 0',
+            maxWidth: '80%',
+            alignSelf: 'flex-end',
+        };
+
+        const receivedMessageStyle = {
+            textAlign: 'left',
+            backgroundColor: '#f0f0f0',
+            color: 'black',
+            padding: '10px',
+            borderRadius: '10px',
+            margin: '5px 0',
+            maxWidth: '80%',
+            alignSelf: 'flex-start',
+        };
+        const getAllMessagesByThread = async (threadId) => {
+            try {
+                const response = await fetchWithJWT(`/api/message/${threadId}/getAllMessages`);
+                const data = await response.json();
+                setMessages(data);
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        };
+
+
+        useEffect(() => {
+            getAllThreads();
+            console.log("Location object:", location.state);
+            if (location.state && location.state.recipientUsername) {
+                console.log("Setting localRecipientUsername:", location.state.recipientUsername);
+                setLocalRecipientUsername(location.state.recipientUsername);
+            }
+        }, [location, location.state]);
+
+
+        useEffect(() => {
+            if (selectedThreadId) {
+                const currentThread = threads.find(thread => thread.id === selectedThreadId);
+                if (currentThread) {
+                    setCurrentThreadParticipants(currentThread.participantsNames);
+                    getAllMessagesByThread(selectedThreadId);
+                }
+            }
+        }, [selectedThreadId, threads]);
+    
+    
+        const formatParticipants = (participants) => {
+    
+            return participants.filter(name => name !== user.username).join(', ');
+        };
+    
+        return (
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '20px' }}>
+                <ul style={{ listStyleType: 'none', padding: 0, margin: 0, width: '20%' }}>
+                    {threads && threads.length > 0 ? (
+                        threads.map((thread) => (
+                            <div key={thread.id} className="profile-picture-container" onClick={() => handleThreadClick(thread.id)}>
+                                {thread.participants
+                                    .filter(participant => participant !== user.appUserID)
+                                    .map((participant, index) => {
+                                        const isNotFirst = index > 0;
+                                        return (
+                                            <ProfilePictureComponent
+                                                key={participant}
+                                                userid={participant}
+                                                style={isNotFirst ? overlapStyle : profilePicStyle}
+                                            />
+                                        );
+                                    })}
+                            </div>
+                        ))
+                    ) : (
+                        <p>No threads available.</p>
+                    )}
+                </ul>
                 {selectedThreadId && (
-                    <div className="messages-container">
-                        <div className="user-messages">
-                            <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                {messages && messages.length > 0 ? (
-                                    messages.map((message) => (
-                                        <li key={message.id}>
-                                            {message.senderId === userId ? (
-                                                <div className="my-message">
-                                                    <Message message={message} />
-                                                    <p>{message.content}</p>
-                                                </div>
-                                            ) : (
-                                                <div className="other-person-message">
-                                                    {message.senderId !== userId && (
-                                                        <ProfilePictureComponent userid={message.senderId} />
-                                                    )}
-                                                    <Message message={message} />
-                                                    <p>{message.content}</p>
-                                                </div>
-                                            )}
-                                        </li>
-                                    ))
-                                ) : (
-                                    <p>No messages available for this thread.</p>
-                                )}
-                            </ul>
-                        </div>
+                    <div style={{ width: '75%', marginLeft: '5%' }}>
+                        <h3 style={{textAlign: "center"}}>Conversation with: {formatParticipants(currentThreadParticipants)}</h3>
+                        <ul style={{ listStyleType: 'none', padding: 0 }}>
+                            {messages && messages.length > 0 ? (
+                                messages.map((message) => (
+                                    <Message
+                                        key={message.id}
+                                        message={message}
+                                        style={message.senderid === user.appUserID ? sentMessageStyle : receivedMessageStyle}
+                                    />
+                                ))
+                            ) : (
+                                <p>No messages available for this thread.</p>
+                            )}
+                        </ul>
+                        <ReplyToThreadForm threadId={selectedThreadId} />
                     </div>
                 )}
-            <div className="send-message" style={{backgroundColor: 'ghostwhite', marginTop: '30px', width: '400px'}}>
-                <h2>Create a new Thread</h2>
-                <div>
-                    <input
-                        style={{width: '300px', height: '40px'}}
-                        type="text"
-                        placeholder="Enter Recipient Usernames"
-                        value={recipientUsernames.join(',')}
-                        onChange={(e) => setRecipientUsernames(e.target.value.split(','))}
-                    />
-                </div>
-                <div>
-                    <br/>
-                    <textarea
-                        style={{ width: '300px', height: '200px' }}
-                        placeholder="Enter your message"
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    />
-                    <br />
-                    <button
-                        onClick={sendMessage}
-                        style={{
-                            backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
-                            border: '1px solid #ccc',
-                        }}
-                        className='button-common'
-                        style={buttonStyle}
-                    >
-                        Send
-                    </button>
+                <div style={{ width: '25%' }}>
+                    <CreateMessageForm recipientUsername={localRecipientUsername} />
                 </div>
             </div>
-        </div>
-    );
-};
-
-export default MessagesPage;
+        );
+    };
+    
+    export default MessagesPage;

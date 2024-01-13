@@ -4,12 +4,23 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black for overlay */
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loginFormContainer {
+    background-color: lightgrey;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    z-index: 1000; /* Ensures overlay is on top */
 }
 
 .closeButton {
@@ -23,78 +34,45 @@
     padding: 5px 10px;
     cursor: pointer;
     z-index: 3;
-    box-shadow: 0 3px black;
-    /* Add transition effect */
-    transition: transform 0.5s ease;
-
-    /* Button size and layout */
-    width: auto; /* or a specific width, e.g., 50px */
-    height: auto; /* or a specific height, e.g., 30px */
+    width: auto;
+    height: auto;
 }
 
 .closeButton:hover {
-    background-color: #FF9E80; /* Color change on hover */
+    background-color: #FF9E80;
     color: black;
-}
-
-.formContainer {
-    background-color: white; /* White background for the form */
-    padding: 10px;
-    border-radius: 10px; /* Soften the edges a bit */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* A slight shadow to give depth */
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
 }
 
 .inputGroup {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    margin: 10px 0; /* Space between input fields */
-}
-
-.buttonContainer {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-    width: 250px;
-    align-items: center; /* Center the buttons */
+    justify-content: left;
+    width: 300px;
+    margin-bottom: 10px;
 }
 
 .inputGroup label {
-    width: 50px;
-    font-size: 15px;
-    text-align: center;
-    margin-right: 50px;
-}
-
-.button-common {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    background-color: #FF6D00;
-    color: white;
-    cursor: pointer;
     width: 100px;
-    height: 50px;
+    font-size: 15px;
+    text-align: left;
+    margin-right: 15px;
+
 }
 
-.button-common:hover {
-    background-color: #FF9E80;
-}
-
-.inputGroup input[type="text"],
-.inputGroup input[type="password"],
-.inputGroup input[type="email"] {
+.inputGroup textarea {
     all: initial;
     background: white;
     flex-grow: 1;
     padding: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-left: auto;
+    resize: vertical; /* Allow vertical resizing of textarea */
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.button-common:hover {
+    background-color: #FF9E80;
 }

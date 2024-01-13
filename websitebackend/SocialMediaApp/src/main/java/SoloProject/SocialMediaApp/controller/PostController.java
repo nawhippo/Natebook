@@ -70,11 +70,15 @@ public class PostController {
 
 
     @PostMapping("/post/{userId}/createPost")
-    public ResponseEntity<Post> createPost(
+    public ResponseEntity<?> createPost(
             @PathVariable Long userId,
             @RequestBody CreatePostRequest createPostRequest
     ) throws IOException, SQLException {
-        Post createdPost = postService.createPost(userId, createPostRequest.getPost());
+        Post createdPost = postService.createPost(userId, createPostRequest);
+
+        if (createdPost == null) {
+            return new ResponseEntity<>("Failed to create post", HttpStatus.BAD_REQUEST);
+        }
 
         if (createPostRequest.getImages() != null && !createPostRequest.getImages().isEmpty()) {
             postService.addImagesToPost(createdPost.getId(), createPostRequest.getImages());
@@ -130,32 +134,31 @@ public class PostController {
 
 
 
-    @GetMapping("/post/{userId}/friendPosts")
-    public ResponseEntity<?> getAllFriendPosts(
-            @PathVariable Long userId,
-            Authentication authentication) {
 
-        AppUser appUser = appUserRepository.findByAppUserID(userId);
-        if (!accountService.checkAuthenticationMatch(appUser.getUsername(), authentication)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
-        }
-
-        List<Post> posts = postService.getAllFriendPosts(userId);
-        if (posts != null && !posts.isEmpty()) {
-            return new ResponseEntity<>(posts, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
     @GetMapping("/post/{userId}/posts/{targetUserId}")
     public ResponseEntity<List<Post>> getAllPostsByUserId(@PathVariable Long userId, @PathVariable Long targetUserId) {
         List<Post> posts = postService.getPostsByPosterId(userId, targetUserId);
+
         if (posts != null && !posts.isEmpty()) {
             return new ResponseEntity<>(posts, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/posts/{targetUserId}")
+    public ResponseEntity<List<Post>> getAllPublicPosts(@PathVariable Long targetUserId) {
+        List<Post> posts = postService.getAllUserPublicPosts(targetUserId);
+
+        if (posts != null && !posts.isEmpty()) {
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+
 
 
         @GetMapping("/post/{userId}/postsByUsername/{posterUsername}")

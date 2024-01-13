@@ -1,8 +1,8 @@
 .user-item {
      display: flex;
      justify-content: space-between;
-     align-items: center; /* Aligns items vertically */
-     padding: 20px; /* Optional for spacing */
+     align-items: center;
+     padding: 20px;
      background-color: antiquewhite;
      border-radius: 25px;
      outline: black;
@@ -16,17 +16,17 @@
 }
 
 .user-name {
-    flex-grow: 1; /* Allows the username to take up available space */
+    flex-grow: 1;
 }
 
 .button-group {
-    /* If you need specific styling for the buttons container */
+
 }
 
 .user-item:nth-child(odd) {
-    background-color: whitesmoke; /* Light grey for odd items */
+    background-color: whitesmoke;
 }
 
 .user-item:nth-child(even) {
-    background-color: lightgrey; /* White for even items */
+    background-color: lightgrey;
 }

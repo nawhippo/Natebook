@@ -5,6 +5,8 @@ import DeleteAccountButton from "../../buttonComponents/deleteAccountButton/dele
 import ColorWheel from "../../buttonComponents/colorwheel/colorwheel";
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import StatusForm from "../../buttonComponents/statusButton/createStatusButton";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 const AccountPage = () => {
   const { user } = useUserContext();
   const [accountData, setAccountData] = useState(null);
@@ -19,6 +21,12 @@ const AccountPage = () => {
       setOverlay(true);
     }
   }
+
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
+    color: '#FFFFFF',
+    border: '4px solid black',
+  };
 
 
 
@@ -59,14 +67,16 @@ const AccountPage = () => {
       {overlay &&
       <overlay>
       <h2>Account Details</h2>
-      <p>ID: {accountData.appUserID}</p>
       <p>Username: {accountData.username}</p>
       <p>First Name: {accountData.firstname}</p>
       <p>Last Name: {accountData.lastname}</p>
       <p>Email: {accountData.email}</p>
+        <p>Occupation: {accountData.occupation || "none"}</p>
+        <p>Biography: {accountData.biography || "none"}</p>
       <p>Password: ****** </p>
       </overlay>
 }
+<StatusForm/>
       <UpdateAccountButton></UpdateAccountButton>
       <DeleteAccountButton></DeleteAccountButton>
       <p>Choose Theme Color: <ColorWheel/></p>

@@ -4,6 +4,7 @@ import CreatePostButton from '../../../buttonComponents/createPostButton/createP
 import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
 import {useUserContext} from '../../usercontext/UserContext';
+import {getRandomColor} from "../../../FunSFX/randomColorGenerator";
 
 const PublicFeed = () => {
     const { user } = useUserContext();
@@ -22,7 +23,11 @@ const PublicFeed = () => {
 
     useEffect(() => {
         if (allPostsData && searchTerm) {
-            setFilteredPosts(allPostsData.filter(post => post.posterUsername.toLowerCase().includes(searchTerm.toLowerCase())));
+            const searchTermLower = searchTerm.toLowerCase();
+            setFilteredPosts(allPostsData.filter(post =>
+                post.posterUsername.toLowerCase().includes(searchTermLower) ||
+                post.title.toLowerCase().includes(searchTermLower)
+            ));
         } else if (allPostsData) {
             setFilteredPosts(allPostsData);
         }
@@ -53,7 +58,7 @@ const PublicFeed = () => {
 
 
     const buttonStyle = {
-        backgroundColor: user?.backgroundColor || 'grey',
+        backgroundColor: user?.backgroundColor || getRandomColor(),
         color: '#FFFFFF',
     };
 
@@ -65,7 +70,7 @@ const PublicFeed = () => {
                     className="search-input"
                     type="text"
                     value={searchTerm}
-                    placeholder="Search by Username"
+                    placeholder="Search by username, or subject"
                     onChange={handleInputChange}
                 />
                 <button className="search-button" type="submit" onClick={() => handleInputChange({ target: { value: searchTerm } })} style={buttonStyle}>
@@ -97,7 +102,7 @@ const PublicFeed = () => {
                     <Post
                         key={post.id}
                         post={post}
-
+                        posterid={post.posterAppUserId}
                         fetchData={fetchData}
                     />
                 ))

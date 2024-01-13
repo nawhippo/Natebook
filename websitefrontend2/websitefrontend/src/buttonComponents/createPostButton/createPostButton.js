@@ -6,6 +6,7 @@ import { fetchWithJWT } from "../../utility/fetchInterceptor";
 import '../../global.css';
 import './CreatePostButton.css';
 import ProfilePictureComponent from "../ProfilePictureComponent";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 
 const CreatePostButton = () => {
   const { user } = useUserContext();
@@ -43,20 +44,23 @@ const CreatePostButton = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
     color: '#FFFFFF',
     border: 'none',
     padding: '10px 20px',
     borderRadius: '4px',
     cursor: 'pointer',
     margin: '10px 0'
+
   };
 
   const handleCreatePost = async () => {
     const postBody = {
-      title,
-      description,
-      publicStatus,
+      post: {
+        title,
+        description,
+        publicStatus
+      },
       images
     };
 
@@ -97,8 +101,8 @@ const CreatePostButton = () => {
         marginBottom: '30px'
       }}>
         <div style={{display: 'flex', justifyContent: "center", marginBottom: '15px'}}>
-          <div style={{ transform: 'translateY(27.5px)', fontSize: '20px' }}>{user.username} </div>
-          <ProfilePictureComponent userid={user.appUserID} style={{transform: 'translateY(30px) !important'}}/>
+          <div style={{ transform: 'translateY(50px)', fontSize: '20px' }}>{user.username} </div>
+          <ProfilePictureComponent userid={user.appUserID}/>
         </div>
         <input style={{width:'400px', transform:"translateX(30px)"}}
             className="post-input"
@@ -126,7 +130,7 @@ const CreatePostButton = () => {
             onChange={handleImageChange}
         />
         <label htmlFor="image-upload" className="image-upload-label">Upload Image</label>
-        <button className="button" onClick={handleCreatePost} style={{...buttonStyle, transform:'translateX(95px)'}} >Submit Post</button>
+        <button className="button" onClick={handleCreatePost} style={{...buttonStyle, transform:'translateX(95px)',  border: '3px solid black', }} >Submit Post</button>
         {message && <p className="create-post-message">{message}</p>}
       </div>
   );

@@ -2,6 +2,7 @@ package SoloProject.SocialMediaApp.service;
 
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.CompressedImage;
+import SoloProject.SocialMediaApp.models.CreatePostRequest;
 import SoloProject.SocialMediaApp.models.Post;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
@@ -74,8 +75,9 @@ public class PostService {
 
 
     @Transactional
-    public Post createPost(Long userId, Post post) {
+    public Post createPost(Long userId, CreatePostRequest createPostRequest) {
         System.out.println("CREATING POST");
+        Post post = createPostRequest.getPost();
         AppUser appUser = appUserRepository.findByAppUserID(userId);
         post.setPosterUsername(appUser.getUsername());
         post.setPosterAppUserId(appUser.getAppUserID());
@@ -135,6 +137,15 @@ public class PostService {
             return new ResponseEntity<>(post, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public List<Post> getAllUserPublicPosts(Long posterid) {
+        AppUser appUser = appUserRepository.findByAppUserID(posterid);
+        if (appUser.getFriends().contains(posterid)) {
+            return postRepository.findByPosterId(posterid);
+        } else {
+            return postRepository.findByPosterIdAndFriendsOnlyFalse(posterid);
         }
     }
 }

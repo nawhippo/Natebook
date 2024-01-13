@@ -39,16 +39,16 @@ const GetAllFriendRequests = () => {
             <div>Error: {error}</div>
         ) : allFriendRequestsData.length > 0 ? (
             <ul>
-              {allFriendRequestsData.map(friend => (
-                  <li key={friend.id}>
-                    <h2>{friend.firstname} {friend.lastname}</h2>
-                    <p>{friend.email}</p>
-                    <AcceptFriendRequestButton friendId={friend.id}
-                                               triggerFetch={() => setShouldFetchData(true)} />
-                    <DeclineFriendRequestButton friendId={friend.id}
-                                                triggerFetch={() => setShouldFetchData(true)} />
-                  </li>
-              ))}
+                {allFriendRequestsData.map(friend => (
+                    <li key={friend.appUserID}>
+                        <h2>{friend.firstname} {friend.lastname}</h2>
+                        <p>{friend.email}</p>
+                        <AcceptFriendRequestButton friendId={friend.appUserID}
+                                                   triggerFetch={() => setShouldFetchData(true)} />
+                        <DeclineFriendRequestButton friendId={friend.appUserID}
+                                                    triggerFetch={() => setShouldFetchData(true)} />
+                    </li>
+                ))}
             </ul>
         ) : (
             <p>No friend requests found.</p>

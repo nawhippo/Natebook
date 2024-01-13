@@ -1,9 +1,21 @@
 import React from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 const DeclineFriendRequestButton = ({ friendId, triggerFetch  }) => {
   const { user } = useUserContext();
+
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
+    color: '#FFFFFF',
+    cursor: 'pointer',
+    outline: "3px solid black",
+    width: '150px',
+    height: '50px'
+  };
+
   const handleClick = () => {
-    fetch(`/api/friendreqs/${user.appUserID}/declineFriendRequest/${friendId}`,{
+    fetchWithJWT(`/api/friendreqs/${user.appUserID}/declineFriendRequest/${friendId}`,{
       method: 'PUT',
     })
     .then(response => {
@@ -14,7 +26,7 @@ const DeclineFriendRequestButton = ({ friendId, triggerFetch  }) => {
     });
   };
 
-  return <button onClick={handleClick}>Decline Friend Request</button>;
+  return <button style={{...buttonStyle}} onClick={handleClick}>Decline Friend Request</button>;
 };
 
 export default DeclineFriendRequestButton;

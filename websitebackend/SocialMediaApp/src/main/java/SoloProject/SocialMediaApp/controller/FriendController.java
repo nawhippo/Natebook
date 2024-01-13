@@ -48,6 +48,9 @@ public class FriendController {
         return friendService.getAllFriendsAppUsers(userId);
     }
 
+
+
+
     @GetMapping("/friends/{userId}/{friendId}")
     public ResponseEntity<?> getFriendById(@PathVariable Long userId,
                                                  @PathVariable Long friendId,

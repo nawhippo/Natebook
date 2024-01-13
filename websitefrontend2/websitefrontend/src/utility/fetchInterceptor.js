@@ -1,17 +1,36 @@
 import Cookies from 'js-cookie';
-
-export const fetchWithJWT = (url, options = {}) => {
+import { showSessionExpiredOverlay } from './sessionExpiredOverlay';
+const fetchWithJWT = async (url, options = {}) => {
     let token = Cookies.get('jwt');
 
     if (token) {
         token = token.trim();
     }
 
-    console.log(token);
     const headers = {
         ...options.headers,
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
     };
 
-    return fetch(url, { ...options, headers });
+    try {
+        const response = await fetch(url, { ...options, headers });
+
+        if (!response.ok) {
+            const responseBody = await response.json();
+            console.error('Response not ok:', responseBody);
+            if (responseBody.message && responseBody.message.includes('JWT expired')) {
+                showSessionExpiredOverlay();
+                return Promise.reject('Session expired');
+            }
+
+            throw new Error('Response was not ok!');
+        }
+
+        return response;
+    } catch (error) {
+        console.error('Fetch failed:', error);
+        throw error;
+    }
 };
+
+export {fetchWithJWT};

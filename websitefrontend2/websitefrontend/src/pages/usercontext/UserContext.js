@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 
 const UserContext = createContext();
@@ -30,10 +30,16 @@ export function UserProvider({ children }) {
   const clearUserContext = () => {
     setUser(null);
     Cookies.remove('userData');
+    Cookies.set('sessionExpired', 'true');
   };
 
   return (
-      <UserContext.Provider value={{ user, updateUser, updateBackgroundColor, clearUserContext }}>
+      <UserContext.Provider value={{
+        user,
+        updateUser,
+        updateBackgroundColor,
+        clearUserContext
+      }}>
         {children}
       </UserContext.Provider>
   );

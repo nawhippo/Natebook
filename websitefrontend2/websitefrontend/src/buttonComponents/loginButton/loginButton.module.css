@@ -4,72 +4,84 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black for overlay */
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 1000; /* Ensures overlay is on top */
+    z-index: 1000;
 }
 
 .closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     top: 10px;
     right: 10px;
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+    border: 3px solid black;
     color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
     cursor: pointer;
     z-index: 3;
-    box-shadow: 0 3px black;
-    /* Add transition effect */
-    transition: transform 0.5s ease;
-
-    /* Button size and layout */
-    width: auto; /* or a specific width, e.g., 50px */
-    height: auto; /* or a specific height, e.g., 30px */
 }
 
 .closeButton:hover {
-    background-color: #FF9E80; /* Color change on hover */
-    color:black;
+    background-color: #FF9E80;
+    color: black;
+}
+
+.buttonScale:hover {
+    transform: scale(1.5);
+    transition: transform 0.2s;
 }
 
 .loginFormContainer {
-    background-color: lightgrey; /* White background for the form */
+    background-color: lightgrey;
     padding: 10px;
-    border-radius: 10px; /* Soften the edges a bit */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* A slight shadow to give depth */
     width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
-    position:relative;
+    position: relative;
 }
-
 
 .inputGroup {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    width: 100%;
-    padding-bottom: 10px;
-
+    align-items: center;
+    width: 125%;
+    margin-bottom: 10px;
+    padding: 0 20px;
+    transform: translateX(-117.7px);
 }
+
+.inputGroup label {
+    flex-basis: 30%;
+    text-align: right;
+    padding-right: 15px;
+}
+.inputGroup input[type="text"],
+.inputGroup input[type="password"] {
+    flex-basis: 70%;
+    margin: 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 0px;
+}
+
 
 .buttonContainer {
     display: flex;
     flex-direction: column;
-    transform: translateX(35px)
+    align-items: center;
 }
 
-.inputGroup label {
-    width: 50px;
-    font-size: 15px;
-    margin-right: 50px;
-    transform: translateX(-50px)
-}
 .button-common {
     padding: 10px 20px;
     margin: 5px;
@@ -78,25 +90,9 @@
     color: white;
     cursor: pointer;
     height: 50px;
+    border-radius: 40px;
 }
 
-.login-button {
-     width: 250px !important;
-    transform:translateX(-10px);
- }
 .button-common:hover {
     background-color: #FF9E80;
-}
-
-.inputGroup input[type="text"],
-.inputGroup input[type="password"]{
-    all: initial;
-    background: white;
-    flex-grow: 0;
-    width: 200px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    align-items: center;
-    margin-left: auto;
-    transform: translateX(-50px)
 }

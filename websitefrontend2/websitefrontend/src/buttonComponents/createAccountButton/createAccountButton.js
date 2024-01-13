@@ -4,7 +4,8 @@ import Cookies from 'js-cookie';
 import { useUserContext } from "../../pages/usercontext/UserContext";
 import styles from './createAccount.module.css';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-
+import '../../global.css';
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 const CreateAccount = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ const CreateAccount = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey'
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
   };
 
   const isPasswordComplex = (password) => {
@@ -75,17 +76,16 @@ const CreateAccount = () => {
   };
 
   const loginAfterCreate = (username, password) => {
-    const requestBody = {
-      username: username,
-      password: password,
-    };
+    const requestBody = new URLSearchParams();
+    requestBody.append('username', username);
+    requestBody.append('password', password);
 
     fetch('/api/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(requestBody),
+      body: requestBody.toString(),
     })
         .then((response) => {
           if (response.ok) {
@@ -113,7 +113,7 @@ const CreateAccount = () => {
             <div className={styles.overlay}>
               <div className={styles.createAccountFormContainer}>
                 <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={buttonStyle}>X</button>
-                <h2>Create Account</h2>
+                <h2 style={{fontSize:"30px"}}>Create Account</h2>
                 <form onSubmit={handleSubmit} className="createAccountForm">
                   <div className={styles.inputGroup}>
                     <label>First Name:</label>
@@ -136,7 +136,7 @@ const CreateAccount = () => {
                     <input type="password" name="password" value={formData.password} onChange={handleChange} />
                   </div>
                   <div className={styles.buttonContainer}>
-                    <button type="submit" style={buttonStyle}>Submit</button>
+                    <button type="submit" style={{...buttonStyle, border: '3px solid black', color:'white'}}>Submit</button>
                   </div>
                   {error && <p style={{ color: 'red' }}>{error}</p>}
                 </form>

@@ -5,15 +5,40 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
 @Table(name = "app_users")
 public class AppUser implements UserDetails {
 
+    private LocalDateTime lastChecked;
+
+    public LocalDateTime getLastChecked() {
+        return lastChecked;
+    }
+
+    public void setLastChecked(LocalDateTime lastChecked) {
+        this.lastChecked = lastChecked;
+    }
+
+    public int getMessageCount() {
+        return messageCount;
+    }
+
+    public void setMessageCount(int messageCount) {
+        this.messageCount = messageCount;
+    }
+
+    public Boolean getPrivate() {
+        return isPrivate;
+    }
+
     public Long profilePicture;
 
     private int friendCount = 0;
+
+    private int messageCount = 0;
     public Long getProfilePicture() {
         return profilePicture;
     }
@@ -23,6 +48,17 @@ public class AppUser implements UserDetails {
     }
 
     public boolean isOnline;
+
+    @Column
+    public Boolean isPrivate = false;
+
+    public Boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(Boolean aPrivate) {
+        isPrivate = aPrivate;
+    }
 
     public boolean isOnline() {
         return isOnline;
@@ -67,6 +103,8 @@ public class AppUser implements UserDetails {
         this.username = username;
         this.blockList = new ArrayList<>();
         this.requests = new ArrayList<>();
+        this.isPrivate = false;
+        this.messageCount = 0;
     }
 
     public List<Long> getRequests() {
@@ -112,6 +150,11 @@ public class AppUser implements UserDetails {
     private String lastname;
 
     @Column
+    private String occupation;
+
+    @Column
+    private String biography;
+    @Column
     private String email;
 
     @Column(unique = true)
@@ -150,6 +193,20 @@ public class AppUser implements UserDetails {
         this.verified = false;
     }
 
+    public AppUser(String firstname, String lastname, String email, String username, List<Long> friends, String password, List<Long> requests, String occupation, String biography) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.friends = friends;
+        this.password = password;
+        this.requests = requests;
+        this.verified = false;
+        this.occupation = occupation;
+        this.biography = biography;
+        this.messageCount = 0;
+    }
+
     public AppUser() {
         this.friends = new ArrayList<>();
         this.requests = new ArrayList<>();
@@ -180,7 +237,21 @@ public class AppUser implements UserDetails {
         return grantedAuthorities;
     }
 
+    public String getBiography() {
+        return biography;
+    }
 
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
 
     public Long getAppUserID() {
         return appUserID;

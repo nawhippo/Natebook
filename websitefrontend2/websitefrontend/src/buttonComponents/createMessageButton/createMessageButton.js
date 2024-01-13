@@ -1,85 +1,112 @@
-import React, {useEffect, useState} from 'react';
-import {useUserContext} from '../../pages/usercontext/UserContext';
-import './CreateMessageForm.css';
-import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import React, { useEffect, useState } from 'react';
+import { useUserContext } from "../../pages/usercontext/UserContext";
+import { fetchWithJWT } from "../../utility/fetchInterceptor";
+import "./CreateMessageForm.css"
+import { getRandomColor } from "../../FunSFX/randomColorGenerator";
 
-
-const CreateMessageForm = ({ userId, defaultRecipientName }) => {
-    const [showForm, setShowForm] = useState(false);
+const CreateMessageForm = ({ recipientUsername }) => {
     const [content, setContent] = useState('');
-    const [recipientNames, setRecipientNames] = useState('');
-    const [title, setTitle] = useState('');
-    const user = useUserContext();
+    const [recipientUsernames, setRecipientUsernames] = useState(recipientUsername ? [recipientUsername] : []);
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [error, setError] = useState('');
+    const [submitAttempted, setSubmitAttempted] = useState(false);
+    const { user } = useUserContext();
 
-    const handleToggle = () => setShowForm(!showForm);
-    const handleClose = () => setShowForm(false);
-
-    const handleSubmit = () => {
-        fetchWithJWT(`/api/message/${userId}/sendMessage`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, content, recipientNames: recipientNames.split(',').map(name => name.trim()) }),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Failed to send message');
-            })
-            .then((data) => {
-                console.log('Message sent:', data);
-                handleClose(); // Close form after sending message
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+    const buttonStyle = {
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
+        color: '#FFFFFF',
+        border: '4px solid black',
     };
 
     useEffect(() => {
-        if (defaultRecipientName){
-            setRecipientNames(defaultRecipientName);
-        }
-    }, [defaultRecipientName]);
+        setRecipientUsernames(recipientUsername ? [recipientUsername] : []);
+    }, [recipientUsername]);
 
-    const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
-        color: '#FFFFFF',
+    const handleRecipientUsernamesChange = (e) => {
+        const usernames = e.target.value.split(',');
+        setRecipientUsernames(usernames);
+        validateForm(usernames, content);
+        setError('');
+        setSubmitAttempted(false);
+    };
+
+    const handleContentChange = (e) => {
+        const messageContent = e.target.value;
+        setContent(messageContent);
+        validateForm(recipientUsernames, messageContent);
+        setError('');
+        setSubmitAttempted(false);
+    };
+
+    const validateForm = (usernames, messageContent) => {
+        const isValid = usernames.length > 0 && messageContent.trim() !== '';
+        setIsFormValid(isValid);
+    };
+
+    const sendMessage = async () => {
+        setSubmitAttempted(true);
+
+        if (isFormValid) {
+            setError('');
+            try {
+                const response = await fetchWithJWT(`/api/message/${user.appUserID}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content,
+                        recipientUsernames,
+                    }),
+                });
+
+                if (response.ok) {
+                    setContent('');
+                    setRecipientUsernames([]);
+                    setIsFormValid(false);
+                    setSubmitAttempted(false);
+                } else {
+                    const errorText = await response.text();
+                    setError(`Failed to send message: ${errorText}`);
+                }
+            } catch (error) {
+                setError(`Error sending message: ${error.message}`);
+            }
+        }
     };
 
     return (
-        <div className="create-message-container">
-            <button onClick={handleToggle} className="button" style={buttonStyle} >Create Message</button>
-            {showForm && (
-                <div className="overlay">
-                    <div className="create-message-form">
-                        <button onClick={handleClose} className="closeButton" style={buttonStyle} >X</button>
-                        <input
-                            className="form-field"
-                            type="text"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Title"
-                            required={true}
-                        />
-                        <input
-                            className="form-field"
-                            type="text"
-                            value={recipientNames}
-                            onChange={(e) => setRecipientNames(e.target.value)}
-                            placeholder="Recipients (comma separated)"
-                            required={true}
-                        />
-                        <textarea
-                            className="form-textarea"
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder="Content"
-                            required={true}
-                        />
-                        <button onClick={handleSubmit} style={buttonStyle}  className="form-button">Send</button>
-                    </div>
-                </div>
-            )}
+        <div className="send-message-form">
+            <p className="form-title">Start a new Thread</p>
+            {error && <p className="error-message">{error}</p>}
+            <div className="form-field">
+                <input
+                    className="input-field"
+                    type="text"
+                    placeholder="Enter Recipient Usernames"
+                    value={recipientUsernames.join(',')}
+                    onChange={handleRecipientUsernamesChange}
+                />
+            </div>
+            <div className="form-field">
+                <textarea
+                    className="textarea-field"
+                    placeholder="Enter your message"
+                    value={content}
+                    onChange={handleContentChange}
+                />
+            </div>
+            <div className="form-field">
+                <button
+                    className="send-button"
+                    onClick={sendMessage}
+                    style={buttonStyle}
+                    disabled={!isFormValid}
+                >
+                    Send
+                </button>
+            </div>
+            {submitAttempted && !isFormValid && <p className="error-message">Invalid Message</p>}
         </div>
     );
 };

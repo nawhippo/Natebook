@@ -3,6 +3,7 @@ import {useUserContext} from "../../pages/usercontext/UserContext";
 import {useHistory} from "react-router-dom";
 import Cookies from 'js-cookie';
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 const DeleteAccountButton = () => {
   const { user, setUser } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +39,7 @@ const DeleteAccountButton = () => {
   }
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
     color: '#FFFFFF',
     border: '4px solid black',
   };

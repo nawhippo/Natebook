@@ -1,29 +1,37 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Post from '../../objects/post';
-import {useUserContext} from '../../usercontext/UserContext';
-import {fetchWithJWT} from "../../../utility/fetchInterceptor";
+import { useUserContext } from '../../usercontext/UserContext';
+import { fetchWithJWT } from '../../../utility/fetchInterceptor';
 
 const UserPosts = ({ userid, profileUserId }) => {
   const [posts, setPosts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useUserContext();
 
   const fetchData = async () => {
-    const response = await fetchWithJWT(`/api/user/${userid}/${profileUserId}`);
+    const response = await fetch(`/api/posts/${profileUserId}`);
 
-    if (response.status === 204) {
-      setError('No posts found.');
+    if (response.status === 404) {
+      setError("User's posts not found.");
+    } else if (response.status === 204) {
+      setError("User hasn't posted anything yet.");
     } else {
-      const data = await response.json();
-      setPosts(data);
+      try {
+        const data = await response.json();
+        setPosts(data);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+        console.error('Response Data:', response.data);
+        setError('An error occurred while parsing the response.');
+      }
     }
 
     setIsLoading(false);
   };
 
-  const filteredPosts = posts.filter(post => {
+  const filteredPosts = posts.filter((post) => {
     return post.description.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -42,23 +50,28 @@ const UserPosts = ({ userid, profileUserId }) => {
   return (
     <div>
       <h1>User Posts</h1>
-      <input 
-        type="text" 
-        placeholder="Search posts..." 
+      <input
+        type="text"
+        placeholder="Search posts..."
         value={searchTerm}
-        onChange={e => setSearchTerm(e.target.value)}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {filteredPosts.length > 0 ? (
-        filteredPosts.map((post) => (
-          <Post 
-            key={post.id}
-            post={post}
-            user={user} 
-            fetchData={fetchData}
-          />
-        ))
+      {user ? (
+        filteredPosts.length > 0 ? (
+          filteredPosts.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+              user={user}
+              posterid={profileUserId}
+              fetchData={fetchData}
+            />
+          ))
+        ) : (
+          <p>User hasn't posted anything yet.</p>
+        )
       ) : (
-        <p>No posts found.</p>
+        <p>User is not available. Please log in.</p>
       )}
     </div>
   );

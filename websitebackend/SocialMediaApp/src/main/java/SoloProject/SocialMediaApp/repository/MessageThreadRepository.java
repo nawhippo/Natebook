@@ -10,4 +10,6 @@ import java.util.Optional;
 
 public interface MessageThreadRepository extends JpaRepository<MessageThread, Long> {
     List<MessageThread> findByParticipantsContains(Long participantId);
+    @Query("SELECT COUNT(m) FROM Message m WHERE m.threadid = :threadId AND m.senderid != :userId")
+    int countMessagesInThreadByOtherUsers(Long threadId, Long userId);
 }

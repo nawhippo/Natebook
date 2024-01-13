@@ -27,7 +27,7 @@ const ReactionButtons = ({ postId, updateLikesDislikes, likesCount, dislikesCoun
   };
 
   const handleButtonClick = async (newReaction) => {
-    if (isRateLimited) return;
+    if (isRateLimited || !user) return;
     setIsRateLimited(true);
     const updatedPost = await updateReactionOnServer(postId, newReaction);
     if (updatedPost) {
@@ -45,11 +45,12 @@ const ReactionButtons = ({ postId, updateLikesDislikes, likesCount, dislikesCoun
   return (
       <div className="reaction-buttons-container">
         <ThumbUpOffAltIcon
+            style={{fontSize:'50px'}}
             className={`reaction-icon ${reactionState === 'Like' ? 'active' : ''}`}
             onClick={() => handleButtonClick('Like')}
         />
         <span style={{transform: 'translateY(30px)'}}>{likesCount}</span>
-        <ThumbDownOffAltIcon
+        <ThumbDownOffAltIcon style={{fontSize:'50px'}}
             className={`reaction-icon ${reactionState === 'Dislike' ? 'active' : ''}`}
             onClick={() => handleButtonClick('Dislike')}
         />
