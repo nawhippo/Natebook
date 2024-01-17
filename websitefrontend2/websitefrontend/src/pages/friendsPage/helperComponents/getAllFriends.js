@@ -93,6 +93,7 @@ const GetAllFriends = () => {
     justifyContent: 'flex-start',
   };
   return (
+
       <div>
         <h1>Friends</h1>
         <div className="search-bar-container">
@@ -119,9 +120,6 @@ const GetAllFriends = () => {
                       <ProfilePictureComponent userid={friend.appUserID}/>
                       <div className="user-details">
                         <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
-                      </div>
-                      <div className="user-status">
-                        <div style={getOnlineStatusStyle(friend.online)} />
                       </div>
                     </div>
                     <div className="button-group">

@@ -1,14 +1,26 @@
 package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
 @Table(name = "posts")
 public class Post {
     private ArrayList<Long> images;
+
+    ArrayList<Long> taggedUsers;
+
+    public ArrayList<Long> getTaggedUsers() {
+        return taggedUsers;
+    }
+
+    public void setTaggedUsers(ArrayList<Long> taggedUsers) {
+        this.taggedUsers = taggedUsers;
+    }
 
     private boolean isFriendsOnly(){
         return friendsOnly;
@@ -35,8 +47,6 @@ public class Post {
         }
         return Collections.emptyList();
     }
-
-
 
 
     public ArrayList<Long> getImages() {

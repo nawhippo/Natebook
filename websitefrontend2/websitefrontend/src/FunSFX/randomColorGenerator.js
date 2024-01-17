@@ -1,15 +1,12 @@
-export function getRandomColor() {
-
-    let color = localStorage.getItem('randomColor');
-    if (!color) {
-
+export function getRandomColor(param) {
+        let color = localStorage.getItem('randomColor');
         const letters = '0123456789ABCDEF';
-        color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
+        if (!color) {
+            color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            localStorage.setItem('randomColor', color);
         }
-
-        localStorage.setItem('randomColor', color);
+        return color;
     }
-    return color;
-}

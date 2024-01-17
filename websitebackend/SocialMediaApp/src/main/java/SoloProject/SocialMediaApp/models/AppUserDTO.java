@@ -1,5 +1,6 @@
 package SoloProject.SocialMediaApp.models;
 
+import jakarta.persistence.Column;
 import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,18 @@ public class AppUserDTO {
     private boolean isOnline;
     private Boolean isGoogleUser;
     private int friendCount;
+
+    @Column
+    private String profileColor;
+
+    public String getProfileColor() {
+        return profileColor;
+    }
+
+    public void setProfileColor(String profileColor) {
+        this.profileColor = profileColor;
+    }
+
     public String getOccupation() {
         return occupation;
     }
@@ -179,5 +192,6 @@ public class AppUserDTO {
         this.role = appUser.getRole();
         this.profilePicture = appUser.getProfilePicture();
         this.isPrivate = appUser.isPrivate();
+        this.profileColor = appUser.getProfileColor();
     }
 }

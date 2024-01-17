@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -83,6 +84,17 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(posts, HttpStatus.OK);
+        }
+    }
+
+
+    @GetMapping("/checkExistence/{userName}")
+    public ResponseEntity<Long> checkUserExistence(@PathVariable String userName) {
+        AppUser appUser = appUserRepository.findByUsername(userName);
+        if (appUser != null) {
+            return ResponseEntity.ok(appUser.getId());
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }

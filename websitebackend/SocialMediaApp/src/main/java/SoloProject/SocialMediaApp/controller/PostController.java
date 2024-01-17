@@ -1,10 +1,7 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.*;
-import SoloProject.SocialMediaApp.repository.AppUserRepository;
-import SoloProject.SocialMediaApp.repository.CommentRepository;
-import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
-import SoloProject.SocialMediaApp.repository.PostRepository;
+import SoloProject.SocialMediaApp.repository.*;
 import SoloProject.SocialMediaApp.service.AccountService;
 import SoloProject.SocialMediaApp.service.CompressionService;
 import SoloProject.SocialMediaApp.service.PostService;
@@ -18,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,11 +30,13 @@ public class PostController {
     private final CompressedImageRepository compressedImageRepository;
     private final PostRepository postRepository;
 
+    private final NotificationRepository notificationRepository;
+
     private final AccountService accountService;
 
     private final AppUserRepository appUserRepository;
     @Autowired
-    public PostController(PostService postService, PostRepository postRepository, CompressionService compressionService, CompressedImageRepository compressedImageRepository, CommentRepository commentRepository, AccountService accountService, AppUserRepository appUserRepository) {
+    public PostController(PostService postService, NotificationRepository notificationRepository, PostRepository postRepository, CompressionService compressionService, CompressedImageRepository compressedImageRepository, CommentRepository commentRepository, AccountService accountService, AppUserRepository appUserRepository) {
         this.postService = postService;
         this.compressedImageRepository = compressedImageRepository;
         this.commentRepository = commentRepository;
@@ -44,6 +44,7 @@ public class PostController {
         this.postRepository = postRepository;
         this.accountService = accountService;
         this.appUserRepository = appUserRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @GetMapping("/post/{postId}/comments")
@@ -150,15 +151,43 @@ public class PostController {
     public ResponseEntity<List<Post>> getAllPublicPosts(@PathVariable Long targetUserId) {
         List<Post> posts = postService.getAllUserPublicPosts(targetUserId);
 
-        if (posts != null && !posts.isEmpty()) {
-            return new ResponseEntity<>(posts, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (posts == null) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
         }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
+    @GetMapping("/notifications/posts/{userId}/getPostsNotification")
+    public ResponseEntity<?> getUserPostNotificationCount(@PathVariable Long userId, Authentication authentication) {
+        System.out.println("Request userid: " + userId);
+        String username = appUserRepository.findByAppUserID(userId).getUsername();
+        if (!accountService.checkAuthenticationMatch(username, authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
 
+        return postService.getPostNotificationCount(userId);
+    }
 
+    @GetMapping("/notifications/posts/{userId}/{postId}/getIndividualPostNotification")
+    public ResponseEntity<?> getUserPostNotification(@PathVariable Long userId, @PathVariable Long postId, Authentication authentication){
+        System.out.println("Request userid: " + userId);
+        String username = appUserRepository.findByAppUserID(userId).getUsername();
+        if (!accountService.checkAuthenticationMatch(username, authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+
+        return postService.getPostNotification(userId, postId);
+    }
+
+    @DeleteMapping("/notifications/posts/{userId}/delete/{postId}")
+    public ResponseEntity<?> deletePostNotification(@PathVariable Long userId, @PathVariable Long postId, Authentication authentication){
+        String username = appUserRepository.findByAppUserID(userId).getUsername();
+        if (!accountService.checkAuthenticationMatch(username, authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+        notificationRepository.deleteByObjectIdAndUserIdAndType(postId, userId, "Tag");
+        return ResponseEntity.ok().build();
+    }
 
 
         @GetMapping("/post/{userId}/postsByUsername/{posterUsername}")

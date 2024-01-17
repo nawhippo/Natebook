@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { fetchWithJWT } from "../../utility/fetchInterceptor";
 import { useUserContext } from "../../pages/usercontext/UserContext";
 
-const MessageNotifications = () => {
+const ThreadNotification = ({ threadId }) => {
     const { user } = useUserContext();
-    const [messageCount, setMessageCount] = useState(0);
+    const [threadNotificationCount, setThreadNotificationCount] = useState(0);
     const [error, setError] = useState(null);
 
-
     useEffect(() => {
-        if (!user || !user.appUserID) {
+        if (!user || !user.appUserID || !threadId) {
             return;
         }
 
-        const url = `/api/message/${user.appUserID}/getMessageNotifications`;
+        const url = `/api/message/${threadId}/getThreadNotificationsCount`;
 
-        const fetchMessages = async () => {
+        const fetchThreadNotifications = async () => {
             try {
                 const response = await fetchWithJWT(url);
 
@@ -23,19 +22,17 @@ const MessageNotifications = () => {
                     throw new Error('Network response was not ok');
                 }
 
-                const data = await response.json();
-                setMessageCount(data);
+                const count = await response.json();
+                setThreadNotificationCount(count);
             } catch (error) {
                 setError(error.message);
             }
         };
 
-        const interval = setInterval(() => {
-            fetchMessages();
-        }, 10000);
+        fetchThreadNotifications();
 
-        return () => clearInterval(interval);
-    }, [user]);
+
+    }, [user, threadId]);
 
     const notificationStyle = {
         backgroundColor: 'red',
@@ -47,18 +44,16 @@ const MessageNotifications = () => {
         justifyContent: 'center',
         alignItems: 'center',
         fontWeight: 'bold',
-        position: 'absolute',
-        transform: 'translateX(55px) translateY(10px)'
     };
 
     return (
         <div>
             {error ? (
-                <div>Error fetching messages: {error}</div>
+                <div>Error fetching thread notifications: {error}</div>
             ) : (
-                messageCount > 0 && (
+                threadNotificationCount > 0 && (
                     <div style={notificationStyle}>
-                        {messageCount}
+                        {threadNotificationCount}
                     </div>
                 )
             )}
@@ -66,4 +61,4 @@ const MessageNotifications = () => {
     );
 };
 
-export default MessageNotifications;
+export default ThreadNotification;

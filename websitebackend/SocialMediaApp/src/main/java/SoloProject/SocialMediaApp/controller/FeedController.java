@@ -49,6 +49,7 @@ public class FeedController {
         } else {
             return new ResponseEntity<>("No public posts found", HttpStatus.NOT_FOUND);
         }
+
     }
 
     @GetMapping("/{userId}/friendPosts")

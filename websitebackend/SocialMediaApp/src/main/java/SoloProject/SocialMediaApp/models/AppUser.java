@@ -12,33 +12,53 @@ import java.util.*;
 @Table(name = "app_users")
 public class AppUser implements UserDetails {
 
-    private LocalDateTime lastChecked;
-
-    public LocalDateTime getLastChecked() {
-        return lastChecked;
-    }
-
-    public void setLastChecked(LocalDateTime lastChecked) {
-        this.lastChecked = lastChecked;
-    }
-
-    public int getMessageCount() {
-        return messageCount;
-    }
-
-    public void setMessageCount(int messageCount) {
-        this.messageCount = messageCount;
+    public AppUser(String firstName, String lastName, String email, String encodedPassword, String username) {
+    this.firstname = firstName;
+    this.lastname = lastName;
+    this.email = email;
+    this.password = encodedPassword;
+    this.username = username;
     }
 
     public Boolean getPrivate() {
         return isPrivate;
     }
 
+    public List<Long> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<Long> followers) {
+        this.followers = followers;
+    }
+
+    public List<Long> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<Long> following) {
+        this.following = following;
+    }
+
+    private List<Long> followers;
+    private List<Long> following;
     public Long profilePicture;
 
     private int friendCount = 0;
 
-    private int messageCount = 0;
+    @Column
+    private String profileColor;
+
+
+    public String getProfileColor() {
+        return profileColor;
+    }
+
+    public void setProfileColor(String profileColor) {
+        this.profileColor = profileColor;
+    }
+
+
     public Long getProfilePicture() {
         return profilePicture;
     }
@@ -95,7 +115,7 @@ public class AppUser implements UserDetails {
         this.blockList = blockList;
     }
 
-    public AppUser(String firstName, String lastName, String email, String password, String username) {
+    public AppUser(String firstName, String lastName, String email, String password, String username, String profileColor) {
         this.firstname = firstName;
         this.lastname = lastName;
         this.email=  email;
@@ -103,8 +123,10 @@ public class AppUser implements UserDetails {
         this.username = username;
         this.blockList = new ArrayList<>();
         this.requests = new ArrayList<>();
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
         this.isPrivate = false;
-        this.messageCount = 0;
+        this.profileColor = profileColor;
     }
 
     public List<Long> getRequests() {
@@ -191,6 +213,8 @@ public class AppUser implements UserDetails {
         this.password = password;
         this.requests = requests;
         this.verified = false;
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
     }
 
     public AppUser(String firstname, String lastname, String email, String username, List<Long> friends, String password, List<Long> requests, String occupation, String biography) {
@@ -204,12 +228,15 @@ public class AppUser implements UserDetails {
         this.verified = false;
         this.occupation = occupation;
         this.biography = biography;
-        this.messageCount = 0;
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
     }
 
     public AppUser() {
         this.friends = new ArrayList<>();
         this.requests = new ArrayList<>();
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
         this.role = "USER";
     }
 

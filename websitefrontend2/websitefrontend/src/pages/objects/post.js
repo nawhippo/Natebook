@@ -10,20 +10,42 @@ import {fetchWithJWT} from "../../utility/fetchInterceptor";
 import CommentIcon from '@mui/icons-material/Comment';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+import PostNotification from "../../buttonComponents/IndividualPostNotification/IndividualPostNotfication";
 const Post = ({ post, fetchData, posterid }) => {
     const {user} = useUserContext();
     const [localLikesCount, setLocalLikesCount] = useState(post.likesCount);
     const [localDislikesCount, setLocalDislikesCount] = useState(post.dislikesCount);
     const [comments, setComments] = useState([]);
     const [images, setImages] = useState([]);
-    const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!user); // Check if user is logged in
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!user);
     const [areCommentsCollapsed, setAreCommentsCollapsed] = useState(true);
-
+    const [processedDescription, setProcessedDescription] = useState('');
     const updateLikesDislikes = (newLikes, newDislikes) => {
         setLocalLikesCount(newLikes);
         setLocalDislikesCount(newDislikes);
     };
 
+
+    const processDescription = async (description) => {
+        const words = description.split(/\s/);
+        const processedWords = await Promise.all(words.map(async (word) => {
+            if (word.startsWith('@')) {
+                const username = word.substring(1);
+                try {
+                    const response = await fetchWithJWT(`/api/checkExistence/${username}`);
+                    if (response.ok) {
+                        const userId = await response.json();
+                        return <><a href={`/UserProfile/${userId}`} style={{ color: 'blue'}}>{word}</a>{' '}</>;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user ID:', error);
+                    return word + ' ';
+                }
+            }
+            return word + ' ';
+        }));
+        return processedWords;
+    };
     const fetchComments = async () => {
         try {
             const response = await fetch(`/api/post/${post.id}/comments`);
@@ -56,7 +78,8 @@ const Post = ({ post, fetchData, posterid }) => {
         setLocalDislikesCount(post.dislikesCount);
         fetchComments();
         fetchImages();
-    }, [post]);
+        processDescription(post.description).then(setProcessedDescription);
+    }, [post, post.description]);
 
     const toggleButtonStyle = {
         border: 'none',
@@ -72,12 +95,13 @@ const Post = ({ post, fetchData, posterid }) => {
 
     return (
         <div className="post-container">
+            <PostNotification postId={post.id}/>
             <div style={{display: 'flex', justifyContent: "center"}}>
-                <div style={{ transform: 'translateY(50px)', fontSize: '20px' }}>{post.posterUsername} </div>
+                <div style={{ transform: 'translateY(35px)', fontSize: '20px' }}>{post.posterUsername} </div>
                 <ProfilePictureComponent userid={posterid}/>
             </div>
             <div className="post-title">{post.title}</div>
-            <div className="post-description">{post.description}</div>
+            <div className="post-description">{processedDescription}</div>
             <div className="post-content">{post.content}</div>
             <div className="post-datetime">{post.datetime}</div>
                 <br/>

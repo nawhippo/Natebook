@@ -104,7 +104,9 @@ public class SecurityConfig {
                                 "/api/account/ForgotPassword",
                                 "/api/user/*",
                                 "/api/status/getByUser/*",
-                                "/api/post/*/posts/*"
+                                "/api/post/*/posts/*",
+                                "/api/*/followers",
+                                "/api/*/following"
                         ).permitAll()
                         .anyRequest().hasRole("USER")
                 )

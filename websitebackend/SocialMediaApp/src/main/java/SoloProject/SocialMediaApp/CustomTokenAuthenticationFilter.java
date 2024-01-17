@@ -49,7 +49,10 @@ public class CustomTokenAuthenticationFilter implements Filter {
                 || path.matches("/api/posts/.*")
                 || path.matches("/api/user/.*/.*")
                 || path.matches("/api/user/.*")
-                || path.matches("/api/status/getByUser/.*")) {
+                || path.matches("/api/status/getByUser/.*")
+                || path.matches("/api/.*/following")
+                || path.matches("/api/.*/followers")
+        ) {
             System.out.println("Bypassing JWT auth requirement");
             chain.doFilter(request, response);
             return;

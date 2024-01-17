@@ -11,6 +11,8 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
     const [initials, setInitials] = useState("");
     const appUser = useUserContext();
     const [initialsError, setInitialsError] = useState(false);
+    const [profileColor, setProfileColor] = useState('#ffffff');
+    const [isOnline, setIsOnline] = useState(false);
     useEffect(() => {
         console.log('useEffect triggered for userid:', userid);
 
@@ -24,12 +26,23 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
         fetch(`/api/user/${userid}`)
             .then(response => response.json())
             .then(userData => {
+
+                if (userData.isOnline !== undefined) {
+                    setIsOnline(userData.isOnline);
+                }
+
                 console.log('Fetched user data:', userData);
                 if (userData && userData.firstname && userData.lastname) {
                     const userInitials = `${userData.firstname[0].toUpperCase()} ${userData.lastname[0].toUpperCase()}`;
                     console.log('Setting initials:', userInitials);
                     setInitials(userInitials);
                     setInitialsError(false);
+                    if (userData.profileColor) {
+                        setProfileColor(userData.profileColor);
+                    }
+                    if (userData.isOnline !== undefined) {
+                        setIsOnline(userData.isOnline);
+                    }
                 } else {
                     throw new Error('User data is incomplete');
                 }
@@ -84,14 +97,25 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '50%',
-        backgroundColor: 'gray',
-        color: getRandomColor(),
+        backgroundColor: profileColor,
         position: 'relative',
+    };
+
+    const onlineStatusStyle = {
+        position: 'absolute',
+        width: '30%',
+        height: '30%',
+        top: '70%',
+        left: '65%',
+        borderRadius: '50%',
+        backgroundColor: isOnline ? 'green' : 'red',
+        bottom: '5px',
+        border: '2px solid white',
     };
 
     const circleStyle = {
         ...customStyle,
-        backgroundColor: '#c0c0c0',
+        backgroundColor: profileColor,
     };
 
     const calculateFontSize = () => {
@@ -123,25 +147,27 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
                 <Link to={profileLink}>
                     <div style={customStyle} className={`profile-picture ${className}`}>
                         {profile ? (
-                            <img src={profile} alt="Profile" style={customStyle}/>
+                            <img src={profile} alt="Profile" style={customStyle} />
                         ) : (
                             <>
                                 <div style={circleStyle}></div>
                                 <p style={initialsStyle}>{initials}</p>
                             </>
                         )}
+                        <div style={onlineStatusStyle}></div>
                     </div>
                 </Link>
             ) : (
                 <div style={customStyle} className={`profile-picture ${className}`}>
                     {profile ? (
-                        <img src={profile} alt="Profile"/>
+                        <img src={profile} alt="Profile" />
                     ) : (
                         <>
                             <div style={circleStyle}></div>
                             <p style={initialsStyle}>{initials}</p>
                         </>
                     )}
+                    <div style={onlineStatusStyle}></div>
                 </div>
             )}
         </div>

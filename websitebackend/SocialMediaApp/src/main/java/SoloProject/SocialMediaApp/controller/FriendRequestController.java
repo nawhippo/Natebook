@@ -80,4 +80,16 @@ public class FriendRequestController {
         return friendRequestService.declineFriendRequest(userId, potentialFriendId);
     }
 
+
+    @GetMapping("/notifications/{userId}")
+    public ResponseEntity<?> getAllNotifications(@PathVariable Long userId, Authentication authentication) {
+        String authenticatedUsername = appUserRepository.findByAppUserID(userId).getUsername();
+        if (!accountService.checkAuthenticationMatch(authenticatedUsername, authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+
+        return friendRequestService.getAllFriendRequestNotifications(userId);
+    }
+
+
 }

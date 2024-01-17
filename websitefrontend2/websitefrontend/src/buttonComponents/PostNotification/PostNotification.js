@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { fetchWithJWT } from "../../utility/fetchInterceptor";
 import { useUserContext } from "../../pages/usercontext/UserContext";
 
-const MessageNotifications = () => {
+const PostNotification = () => {
     const { user } = useUserContext();
-    const [messageCount, setMessageCount] = useState(0);
+    const [postNotificationCount, setPostNotificationCount] = useState(0);
     const [error, setError] = useState(null);
-
 
     useEffect(() => {
         if (!user || !user.appUserID) {
             return;
         }
 
-        const url = `/api/message/${user.appUserID}/getMessageNotifications`;
+        const url = `/api/notifications/posts/${user.appUserID}/getPostsNotification`;
 
-        const fetchMessages = async () => {
+        const fetchPostNotifications = async () => {
             try {
                 const response = await fetchWithJWT(url);
 
@@ -23,21 +22,23 @@ const MessageNotifications = () => {
                     throw new Error('Network response was not ok');
                 }
 
-                const data = await response.json();
-                setMessageCount(data);
+                const count = await response.json();
+                setPostNotificationCount(count);
             } catch (error) {
                 setError(error.message);
             }
         };
 
         const interval = setInterval(() => {
-            fetchMessages();
+            fetchPostNotifications();
         }, 10000);
 
         return () => clearInterval(interval);
+
     }, [user]);
 
     const notificationStyle = {
+        transform: 'translateX(90px) translateY(-20px)',
         backgroundColor: 'red',
         color: 'white',
         borderRadius: '50%',
@@ -47,18 +48,16 @@ const MessageNotifications = () => {
         justifyContent: 'center',
         alignItems: 'center',
         fontWeight: 'bold',
-        position: 'absolute',
-        transform: 'translateX(55px) translateY(10px)'
     };
 
     return (
         <div>
             {error ? (
-                <div>Error fetching messages: {error}</div>
+                <div>Error fetching post notifications: {error}</div>
             ) : (
-                messageCount > 0 && (
+                postNotificationCount > 0 && (
                     <div style={notificationStyle}>
-                        {messageCount}
+                        {postNotificationCount}
                     </div>
                 )
             )}
@@ -66,4 +65,4 @@ const MessageNotifications = () => {
     );
 };
 
-export default MessageNotifications;
+export default PostNotification;

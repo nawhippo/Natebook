@@ -7,13 +7,16 @@ import ProfilePictureComponent from "../../buttonComponents/ProfilePictureCompon
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
 import StatusForm from "../../buttonComponents/statusButton/createStatusButton";
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+import GetAllFollowing, {GetAllFollowingPage} from "../../buttonComponents/getAllFollowing/getAllFollowing";
+import GetAllFollowers from "../../buttonComponents/getAllFollowers/getAllFollowers";
 const AccountPage = () => {
   const { user } = useUserContext();
   const [accountData, setAccountData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [overlay, setOverlay] = useState(true);
-
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const toggleOverlay = () =>{
     if (overlay == true){
     setOverlay(false);
@@ -62,7 +65,6 @@ const AccountPage = () => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <ProfilePictureComponent userid={accountData.appUserID} />
       </div>
       {overlay &&
       <overlay>

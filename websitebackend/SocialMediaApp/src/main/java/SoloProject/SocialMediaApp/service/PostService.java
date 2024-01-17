@@ -1,22 +1,23 @@
 package SoloProject.SocialMediaApp.service;
 
-import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.CompressedImage;
-import SoloProject.SocialMediaApp.models.CreatePostRequest;
-import SoloProject.SocialMediaApp.models.Post;
+import SoloProject.SocialMediaApp.models.*;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
+import SoloProject.SocialMediaApp.repository.NotificationRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class PostService {
@@ -24,15 +25,16 @@ public class PostService {
     private final AppUserRepository appUserRepository;
     private final PostRepository postRepository;
     private final CompressedImageRepository compressedImageRepository;
-
+    private final NotificationRepository notificationRepository;
     private final CompressionService compressionService;
 
     @Autowired
-    public PostService(AppUserRepository repository, PostRepository postRepository, CompressedImageRepository compressedImageRepository, CompressionService compressionService) {
+    public PostService(AppUserRepository repository, NotificationRepository notificationRepository, PostRepository postRepository, CompressedImageRepository compressedImageRepository, CompressionService compressionService) {
         this.appUserRepository = repository;
         this.postRepository = postRepository;
         this.compressedImageRepository = compressedImageRepository;
         this.compressionService = compressionService;
+        this.notificationRepository = notificationRepository;
     }
 
 
@@ -41,6 +43,30 @@ public class PostService {
         return postRepository.findByFriendsOnlyFalse();
     }
 
+
+
+    public List<Post> getAllPublicPosts(Long userid) {
+        AppUser user = appUserRepository.findByAppUserID(userid);
+        Set<Long> following = new HashSet<>(user.getFollowing());
+        Set<Long> friends = new HashSet<>(user.getFriends());
+
+        List<Post> allPosts = postRepository.findAll();
+        Collections.sort(allPosts, (post1, post2) -> {
+            boolean isFriend1 = friends.contains(post1.getPosterAppUserId());
+            boolean isFriend2 = friends.contains(post2.getPosterAppUserId());
+            boolean isFollowing1 = following.contains(post1.getPosterAppUserId());
+            boolean isFollowing2 = following.contains(post2.getPosterAppUserId());
+
+            if ((isFriend1 && isFriend2) || (isFollowing1 && isFollowing2)) {
+                return post1.getDateTime().compareTo(post2.getDateTime());
+            }
+            if (isFriend1 || isFollowing1) return -1;
+            if (isFriend2 || isFollowing2) return 1;
+            return post1.getDateTime().compareTo(post2.getDateTime());
+        });
+
+        return allPosts;
+    }
 
     public List<Post> getAllFriendPosts(Long userId) {
         AppUser appUser = appUserRepository.findByAppUserID(userId);
@@ -81,8 +107,41 @@ public class PostService {
         AppUser appUser = appUserRepository.findByAppUserID(userId);
         post.setPosterUsername(appUser.getUsername());
         post.setPosterAppUserId(appUser.getAppUserID());
-        return postRepository.save(post);
+
+        String description = post.getDescription();
+        ArrayList<String> usernames = parseUsernames(description);
+        ArrayList<Long> userids = new ArrayList<>();
+
+        for (String username : usernames) {
+            AppUser taggedUser = appUserRepository.findByUsername(username);
+            if (taggedUser != null) {
+                userids.add(taggedUser.getAppUserID());
+                Notification notification = new Notification(taggedUser.getAppUserID(), "Post", post.getId());
+                notificationRepository.save(notification);
+            }
+        }
+
+        postRepository.save(post);
+        for(Long userid : appUser.getFollowers()){
+            Notification notification = new Notification(userId, "Post", post.getId());
+            notificationRepository.save(notification);
+        }
+        return post;
     }
+
+
+    private ArrayList<String> parseUsernames(String text) {
+        ArrayList<String> usernames = new ArrayList<>();
+        Pattern pattern = Pattern.compile("@(\\w+)");
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find()) {
+            usernames.add(matcher.group(1));
+        }
+
+        return usernames;
+    }
+
 
 
     public Post handlePostReaction(Long postId, Long reactorId, String action) {
@@ -133,12 +192,22 @@ public class PostService {
                 compressedImage.setPostid(postId);
                 compressedImageRepository.save(compressedImage);
             }
-            postRepository.save(post); // Save the updated post
+            postRepository.save(post);
             return new ResponseEntity<>(post, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+    public ResponseEntity<?> getPostNotificationCount(Long userId){
+        return ResponseEntity.ok(notificationRepository.countByUserIdAndNotificationType(userId, "Post"));
+    }
+
+    public ResponseEntity<?> getPostNotification(Long userId, Long postId){
+        return ResponseEntity.ok(notificationRepository.findByUserIdAndObjectIdAndNotificationType(userId, postId, "Post"));
+    }
+
 
     public List<Post> getAllUserPublicPosts(Long posterid) {
         AppUser appUser = appUserRepository.findByAppUserID(posterid);

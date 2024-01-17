@@ -32,10 +32,17 @@ const Message = ({ message, style }) => {
         padding: "0 10px",
     };
 
+    const formatTimestamp = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleString();
+    };
+
+
     return (
         <li style={messageContainerStyle}>
             <ProfilePictureComponent userid={message.senderid} style={profilePicStyle} />
             <p style={messageTextStyle}>{message.content}</p>
+            <p style={{fontSize:"10px"}}> {formatTimestamp(message.timestamp)} </p>
         </li>
     );
 };

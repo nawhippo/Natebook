@@ -7,6 +7,7 @@
     import { fetchWithJWT } from "../../utility/fetchInterceptor";
     import CreateMessageForm from "../../buttonComponents/createMessageButton/createMessageButton";
     import ReplyToThreadForm from "../../buttonComponents/replyToThreadForm/ReplyToThreadForm";
+    import ThreadNotification from "../../buttonComponents/MessageThreadNotification/MessageThreadNotification";
     const MessagesPage = ({ recipientUsername }) => {
         console.log("Recipient name: " + recipientUsername);
         const [userId, setUserId] = useState(1);
@@ -17,12 +18,22 @@
         const location = useLocation();
         const [currentThreadParticipants, setCurrentThreadParticipants] = useState([]);
         const [localRecipientUsername, setLocalRecipientUsername] = useState("");
+        const [threadNotifications, setThreadNotifications] = useState({});
+
+
+
 
         const getAllThreads = async () => {
             try {
                 const response = await fetchWithJWT(`/api/message/${user.appUserID}/getAllThreads`);
                 const data = await response.json();
+                const newThreadNotifications = {};
+                await Promise.all(data.map(async (thread) => {
+                    const count = await getNotificationsCountByThread(thread.id);
+                    newThreadNotifications[thread.id] = count;
+                }));
                 setThreads(data);
+                setThreadNotifications(newThreadNotifications);
             } catch (error) {
                 console.error('Error fetching threads:', error);
             }
@@ -76,6 +87,17 @@
             }
         };
 
+        const getNotificationsCountByThread = async (threadId) => {
+            try {
+                const response = await fetchWithJWT(`/api/message/${threadId}/getThreadNotificationsCount`);
+                const notifications = await response.json();
+                return notifications.length;
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+                return 0;
+            }
+        };
+
 
         useEffect(() => {
             getAllThreads();
@@ -88,15 +110,26 @@
 
 
         useEffect(() => {
+            let interval;
+
             if (selectedThreadId) {
                 const currentThread = threads.find(thread => thread.id === selectedThreadId);
                 if (currentThread) {
                     setCurrentThreadParticipants(currentThread.participantsNames);
                     getAllMessagesByThread(selectedThreadId);
                 }
+
+                interval = setInterval(() => {
+                    getAllMessagesByThread(selectedThreadId);
+                }, 5000); 
             }
-        }, [selectedThreadId, threads]);
-    
+
+            return () => {
+                if (interval) {
+                    clearInterval(interval);
+                }
+            };
+        }, [selectedThreadId]);
     
         const formatParticipants = (participants) => {
     
@@ -109,6 +142,7 @@
                     {threads && threads.length > 0 ? (
                         threads.map((thread) => (
                             <div key={thread.id} className="profile-picture-container" onClick={() => handleThreadClick(thread.id)}>
+
                                 {thread.participants
                                     .filter(participant => participant !== user.appUserID)
                                     .map((participant, index) => {
@@ -121,6 +155,15 @@
                                             />
                                         );
                                     })}
+                                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: -40,
+                                        right: -15,
+                                    }}>
+                                        <ThreadNotification threadId={thread.id} />
+                                    </div>
+                                </div>
                             </div>
                         ))
                     ) : (

@@ -1,7 +1,7 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.StatusCreationRequest;
+import SoloProject.SocialMediaApp.models.CreateStatusRequest;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.AccountService;
 import SoloProject.SocialMediaApp.service.StatusService;
@@ -30,7 +30,7 @@ public class StatusController {
 
     @PostMapping("/status/create")
     public ResponseEntity<?> createStatus(@RequestParam Long appUserId,
-                                          @RequestBody StatusCreationRequest request,
+                                          @RequestBody CreateStatusRequest request,
                                           Authentication authentication)  {
         String content = request.getContent();
         int lifespan = request.getLifespan();

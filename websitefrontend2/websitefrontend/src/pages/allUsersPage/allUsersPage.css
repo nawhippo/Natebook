@@ -4,8 +4,9 @@
      align-items: center;
      padding: 20px;
      background-color: antiquewhite;
-     border-radius: 25px;
      outline: black;
+    border-radius: 25px;
+    border: 3px solid black;
      border-color: black;
      outline-width: 3px;
     margin-bottom: 20px;

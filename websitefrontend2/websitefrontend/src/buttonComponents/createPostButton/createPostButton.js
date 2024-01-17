@@ -64,6 +64,18 @@ const CreatePostButton = () => {
       images
     };
 
+
+    const createDescriptionWithLinks = (description, usernames) => {
+      const descriptionWords = description.split(/(\s+)/);
+      return descriptionWords.map((word, index) => {
+        if (usernames.includes(word.replace('@', ''))) {
+          return <a key={index} href={`/profile/${word.replace('@', '')}`} style={{ color: 'blue', textDecoration: 'underline' }}>{word}</a>;
+        } else {
+          return word;
+        }
+      });
+    };
+
     try {
       const response = await fetchWithJWT(`/api/post/${user.appUserID}/createPost`, {
         method: 'POST',
@@ -73,7 +85,7 @@ const CreatePostButton = () => {
         body: JSON.stringify(postBody)
       });
 
-      const responseData = await response.json();
+
       if (response.ok) {
         setMessage('Post created successfully!');
         setTitle('');

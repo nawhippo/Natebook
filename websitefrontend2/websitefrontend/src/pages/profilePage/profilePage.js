@@ -2,22 +2,37 @@ import { useUserContext } from "../usercontext/UserContext";
 import React, { useEffect, useState } from "react";
 import UserPosts from "./helperComponents/displayAllUserPosts";
 import AddFriendButton from "../../buttonComponents/sendFriendRequestButton/sendFriendRequestButton";
-import SendMessageButton from "../../buttonComponents/createMessageButton/createMessageButton";
 import DeleteFriendButton from "../../buttonComponents/deleteFriendButton/deleteFriendButton";
 import { useHistory, useParams } from 'react-router-dom';
 import ProfilePictureComponent from "../../buttonComponents/ProfilePictureComponent";
 import { fetchWithJWT } from "../../utility/fetchInterceptor";
 import { getRandomColor } from "../../FunSFX/randomColorGenerator";
 import UserStatus from "../../buttonComponents/getStatus/getStatus";
-
+import getAllFollowers from "../../buttonComponents/getAllFollowers/getAllFollowers";
+import getAllFollowing from "../../buttonComponents/getAllFollowing/getAllFollowing";
+import FollowButton from "../../buttonComponents/followButton/followButton";
+import UnfollowButton from "../../buttonComponents/unfollowButton/unfollowButton";
+import GetAllFollowing from "../../buttonComponents/getAllFollowing/getAllFollowing";
+import GetAllFollowers from "../../buttonComponents/getAllFollowers/getAllFollowers";
 const ProfilePage = () => {
-  const { userid } = useParams();
-  const { user } = useUserContext();
+  const {userid} = useParams();
+  const {user} = useUserContext();
   const [accountData, setAccountData] = useState(null);
   const [friendList, setFriendList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [postsCount, setPostsCount] = useState(0);
+  const [visibleSection, setVisibleSection] = useState(null);
+
+
+  const togglePosts = () => setVisibleSection(visibleSection !== 'posts' ? 'posts' : null);
+  const toggleFollowers = () => setVisibleSection(visibleSection !== 'followers' ? 'followers' : null);
+  const toggleFollowing = () => setVisibleSection(visibleSection !== 'following' ? 'following' : null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,14 +45,19 @@ const ProfilePage = () => {
         }
         const accountDataJson = await accountDataResponse.json();
         setAccountData(accountDataJson);
-
         if (user) {
           const friendListResponse = await fetchWithJWT(`/api/friends/${user.appUserID}/getAllFriends`);
+          const followingResponse = await fetchWithJWT(`/api/${user.appUserID}/following`);
+          if (!followingResponse.ok) {
+            throw new Error("Failed to fetch following list");
+          }
           if (!friendListResponse.ok) {
             throw new Error("Failed to fetch friends");
           }
+          const followingData = await followingResponse.json();
           const friendData = await friendListResponse.json();
           setFriendList(friendData.friends);
+          setFollowingList(followingData.following);
         }
 
         setIsLoading(false);
@@ -57,15 +77,14 @@ const ProfilePage = () => {
   const removeFriend = (userid) => {
     setFriendList(friendList.filter(friendId => friendId !== userid));
   };
-
+  const isFollowing = accountData && followingList ? followingList.includes(accountData.appUserID) : false;
   const isFriend = accountData && friendList ? friendList.includes(accountData.appUserID) : false;
   const isCurrentUser = user && user.appUserID === parseInt(userid, 10);
-
   const SendMessageButtonClick = (recipientUsername) => {
     console.log("Recipient name at the time of send button click" + recipientUsername);
     history.push({
       pathname: '/Messages',
-      state: { recipientUsername }
+      state: {recipientUsername}
     });
   };
 
@@ -96,6 +115,7 @@ const ProfilePage = () => {
     width: '80px',
     height: '80px',
     borderRadius: '50%',
+    transform: "TranslateY(-10px)",
     backgroundColor: accountData && accountData.online ? 'green' : 'red',
   };
 
@@ -109,6 +129,16 @@ const ProfilePage = () => {
     margin: '10px',
   };
 
+  const toggleSectionStyle = {
+    boxSizing: 'border-box',
+    width: '33.33%',
+    padding: '10px',
+    display: 'inline-block',
+    verticalAlign: 'top',
+    overflow: 'hidden',
+    visibility: 'hidden',
+  };
+
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -117,24 +147,19 @@ const ProfilePage = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-
   return (
       <div>
         {accountData && (
             <div style={containerStyle}>
-              <div style={{transform:'translateX(30px)'}}>
-                <ProfilePictureComponent style={customStyle} userid={accountData.appUserID} />
+              <div style={{transform: 'translateX(30px)'}}>
+                <ProfilePictureComponent style={customStyle} userid={accountData.appUserID}/>
               </div>
               <div style={profileInfoStyle}>
                 <div style={nameAndStatusContainerStyle}>
                   <p>{accountData.firstname} {accountData.lastname}</p>
-                  <div style={onlineStatusStyle} />
                 </div>
-                <p style={{fontSize:'30px'}}>@{accountData.username}</p>
-                <p style={{fontSize:'30px'}}>{accountData.occupation}</p>
-                <p style={{fontSize:'30px'}}>{accountData.biography}</p>
-                <p style={{fontSize: '30px'}}>{accountData.friendCount}</p>
-                <UserStatus appUserId={accountData.appUserID} />
+                <p style={{fontSize: '30px'}}> Friends: {accountData.friendCount} Followers: {followersCount} Following: {followingCount} </p>
+                <UserStatus appUserId={accountData.appUserID}/>
               </div>
             </div>
         )}
@@ -153,19 +178,51 @@ const ProfilePage = () => {
                       error={error}
                   />
               )}
+              {isFollowing ? (
+                  <UnfollowButton followedId={accountData.appUserID}/>
+              ) : (
+                  <FollowButton followedId={accountData.appUserID}/>
+              )}
               <button style={buttonStyle} onClick={() => SendMessageButtonClick(accountData.username)}>
                 Send Message
               </button>
             </>
         )}
         {accountData && (
-            <UserPosts
-                userid={accountData.appUserID}
-                profileUserId={accountData ? accountData.appUserID : null}
-            />
+            <div style={{width: '100%'}}>
+              <div style={{display: 'flex', justifyContent: 'center', margin: '10px 0'}}>
+                <button style={buttonStyle} onClick={togglePosts}>
+                  {visibleSection === 'posts' ? 'Hide Posts' : 'Show Posts'}
+                </button>
+                <button style={buttonStyle} onClick={toggleFollowers}>
+                  {visibleSection === 'followers' ? 'Hide Followers' : 'Show Followers'}
+                </button>
+                <button style={buttonStyle} onClick={toggleFollowing}>
+                  {visibleSection === 'following' ? 'Hide Following' : 'Show Following'}
+                </button>
+              </div>
+
+              {visibleSection === 'posts' && (
+                  <UserPosts
+                      userid={accountData.appUserID}
+                      profileUserId={accountData ? accountData.appUserID : null}
+                  />
+              )}
+              {visibleSection === 'followers' && (
+                  <GetAllFollowers
+                      userId={accountData.appUserID}
+                      setFollowersCount={setFollowersCount}
+                  />
+              )}
+              {visibleSection === 'following' && (
+                  <GetAllFollowing
+                      userId={accountData.appUserID}
+                      setFollowingCount={setFollowingCount}
+                  />
+              )}
+            </div>
         )}
       </div>
-  );
+  )
 }
-
 export default ProfilePage;

@@ -48,16 +48,6 @@ const AllUsersPage = () => {
     color: '#FFFFFF',
   };
 
-  const getOnlineStatusStyle = (isOnline) => ({
-    transform: 'translateY(60px) translateX(30px)',
-    display: 'inline-block',
-    width: '50px',
-    height: '50px',
-    borderRadius: '50%',
-    zIndex: '1000',
-    backgroundColor: isOnline ? 'green' : 'red',
-  });
-
   return (
       <div>
         <p>{addressBookData && addressBookData.message}</p>
@@ -88,10 +78,6 @@ const AllUsersPage = () => {
                           <div style={{fontSize:"30px"}}>
                             @{userItem.username} - {userItem.firstname} {userItem.lastname}
                             <UserStatus appUserId={userItem.appUserID}/>
-                            {userItem.online}
-                          </div>
-                          <div>
-                            <div style={getOnlineStatusStyle(userItem.online)} />
                           </div>
                         </div>
                       </span>

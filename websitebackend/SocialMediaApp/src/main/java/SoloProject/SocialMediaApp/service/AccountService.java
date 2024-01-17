@@ -1,5 +1,6 @@
 package SoloProject.SocialMediaApp.service;
 
+import SoloProject.SocialMediaApp.ColorUtility;
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.CompressedImage;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
@@ -176,6 +177,8 @@ public class AccountService {
         AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
         appUser.addAuthority("ROLE_USER");
         appUser.setFriendCount(0);
+        String randomColor = ColorUtility.getRandomColor();
+        appUser.setProfileColor(randomColor);
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }

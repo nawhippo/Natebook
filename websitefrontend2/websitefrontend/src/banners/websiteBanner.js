@@ -14,6 +14,7 @@ import {useUserContext} from "../pages/usercontext/UserContext";
 import Cookies from 'js-cookie';
 import {getRandomColor} from "../FunSFX/randomColorGenerator";
 import MessageNotifications from "../buttonComponents/MessageNotificationComponent/MessageNotifications";
+import PostNotification from "../buttonComponents/PostNotification/PostNotification";
 const Banner = () => {
     const history = useHistory();
     const [userData, setUserData] = useState(null);
@@ -23,7 +24,10 @@ const Banner = () => {
     const bannerStyle = {
         background: user && user.backgroundColor ? `linear-gradient(to right, ${user.backgroundColor}, black)` : `linear-gradient(to right, ${getRandomColor()}, black)`,
         display: 'flex',
-        flexDirection:'row',
+        flexDirection: 'row',
+        width: '100%',
+        margin: '0 !important',
+        padding: 0,
     };
 
     useEffect(() => {
@@ -42,6 +46,7 @@ const Banner = () => {
         <div className="banner" style={bannerStyle}>
             <h1 className="title">NateBook</h1>
             <PeopleIcon className="button-common" onClick={() => handleLinkClick('/AllUsersPage')} style={{ width: '50px', height: 'auto', background: 'none' }} />
+            <PostNotification/>
             <DynamicFeedIcon className="button-common" onClick={() => handleLinkClick('/Feed')} style={{ width: '50px', height: 'auto', background: 'none' }} />
             {userData ? (
                 <div>

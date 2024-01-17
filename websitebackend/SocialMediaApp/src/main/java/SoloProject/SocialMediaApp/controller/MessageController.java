@@ -2,6 +2,7 @@ package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.Message;
 import SoloProject.SocialMediaApp.models.MessageThread;
+import SoloProject.SocialMediaApp.models.Notification;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.MessageRepository;
 import SoloProject.SocialMediaApp.repository.MessageThreadRepository;
@@ -72,11 +73,7 @@ public class MessageController {
         Optional<MessageThread> thread = messageThreadRepository.findById(threadId);
 
         if (thread.isPresent() && thread.get().getParticipants().contains(appUserID)) {
-            List<Message> messages = messageService.getAllMessagesByThreadId(threadId);
-
-
-            messageService.updateUserLastChecked(appUserID);
-
+            List<Message> messages = messageService.getAllMessagesByThreadId(threadId, appUserID);
             return new ResponseEntity<>(messages, HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied or Thread Not Found");
@@ -84,13 +81,10 @@ public class MessageController {
     }
 
     @GetMapping("/message/{userId}/getMessageNotifications")
-    public ResponseEntity<?> getUserMessageCount(@PathVariable Long userId,
-                                                   Authentication authentication) {
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String authenticatedUsername = userDetails.getUsername();
-        Long authenticatedUserId = appUserRepository.findByUsername(authenticatedUsername).getAppUserID();
-        if (!authenticatedUserId.equals(userId)) {
+    public ResponseEntity<?> getUserMessageCount(@PathVariable Long userId, Authentication authentication) {
+        System.out.println("Request userid: " + userId);
+        String username = appUserRepository.findByAppUserID(userId).getUsername();
+        if (!accountService.checkAuthenticationMatch(username, authentication)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
         }
 
@@ -110,5 +104,21 @@ public class MessageController {
 
         Message message = messageService.replytoExistingThread(threadId, content, userId);
         return ResponseEntity.ok(message);
+    }
+
+
+    @GetMapping("/message/{threadId}/getThreadNotificationsCount")
+    public ResponseEntity<?> getNotificationsByThread(@PathVariable Long threadId, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        Long appUserID = appUserRepository.findByUsername(username).getAppUserID();
+
+        Optional<MessageThread> thread = messageThreadRepository.findById(threadId);
+        if (thread.isPresent() && thread.get().getParticipants().contains(appUserID)) {
+            int notifications = messageService.getMessageNotificationCountByThreadId(threadId, appUserID);
+            return new ResponseEntity<>(notifications, HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied or Thread Not Found");
+        }
     }
 }
