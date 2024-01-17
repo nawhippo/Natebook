@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import {useUserContext} from "../../pages/usercontext/UserContext";
 import styles from './updateAccount.module.css';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 const UpdateAccountButton = () => {
   const { user } = useUserContext();
   const [isVisible, setIsVisible] = useState(false);
@@ -55,7 +57,7 @@ const UpdateAccountButton = () => {
   };
 
     const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+        backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
         color: '#FFFFFF',
         border: '4px solid black',
     };
@@ -67,8 +69,8 @@ const UpdateAccountButton = () => {
     setMessage("");
 
     try {
-      // Update account details
-      const accountResponse = await fetch(`/api/account/${user.appUserID}/updateAccountDetails`, {
+
+      const accountResponse = await fetchWithJWT(`/api/account/${user.appUserID}/updateAccountDetails`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -78,9 +80,9 @@ const UpdateAccountButton = () => {
         throw new Error("Network response was not ok for account update");
       }
 
-      // Upload profile picture
+
       if (base64Image) {
-        const pictureResponse = await fetch(`/api/account/${user.appUserID}/uploadProfilePicture`, {
+        const pictureResponse = fetchWithJWT(`/api/account/${user.appUserID}/uploadProfilePicture`, {
           method: "PUT",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Image }),
@@ -109,6 +111,7 @@ const UpdateAccountButton = () => {
                     <div className={styles.loginFormContainer}>
                         <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={buttonStyle}>X</button>
                         <form onSubmit={handleSubmit} className="updateAccountForm">
+                            <p style={{transform:"translateX(50px)", fontSize: "30px"}}>Update Account</p>
                             <div className={styles.inputGroup}>
                                 <label htmlFor="firstname">First Name:</label>
                                 <input
@@ -153,9 +156,44 @@ const UpdateAccountButton = () => {
                                 />
                             </div>
                             <div className={styles.inputGroup}>
+                                <label htmlFor="occupation">Occupation:</label>
+                                <input
+                                    type="occupation"
+                                    id="occupation"
+                                    name="occupation"
+                                    value={formData.occupation}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div className={styles.inputGroup}>
                                 <label htmlFor="icon-button-file">Profile Picture:</label>
                                 <input accept="image/*" id="icon-button-file" type="file" onChange={handleFileChange}/>
                             </div>
+
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="biography">Biography:</label>
+                                <textarea
+                                    id="biography"
+                                    name="biography"
+                                    value={formData.biography}
+                                    onChange={handleChange}
+                                    rows={4}
+                                />
+                            </div>
+
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="isPrivate">Private Account:</label>
+                                <input
+                                    style={{height:"30px", width:"30px"}}
+                                    type="checkbox"
+                                    id="isPrivate"
+                                    name="isPrivate"
+                                    checked={formData.isPrivate}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
                             <div className={styles.buttonContainer}>
                                 <button type="submit" className={styles.submitButton}   className='button-common' style={buttonStyle}>Submit</button>
                             </div>

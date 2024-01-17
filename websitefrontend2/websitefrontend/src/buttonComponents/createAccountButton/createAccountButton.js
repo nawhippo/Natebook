@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import { useUserContext } from "../../pages/usercontext/UserContext";
 import styles from './createAccount.module.css';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import '../../global.css';
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 const CreateAccount = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,13 +25,24 @@ const CreateAccount = () => {
   };
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'orange'
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
   };
+
+  const isPasswordComplex = (password) => {
+    const regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    return regex.test(password);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     if (!formData.firstname || !formData.lastname || !formData.username || !formData.email || !formData.password) {
       setError("Please fill in all required fields.");
+      return;
+    }
+
+    if (!isPasswordComplex(formData.password)) {
+      setError("Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.");
       return;
     }
 
@@ -52,14 +65,44 @@ const CreateAccount = () => {
             throw new Error("Failed to create account.");
           }
         })
-        .then((userData) => {
-          updateUser(userData);
-          Cookies.set('userData', JSON.stringify(userData));
+        .then(() => {
+          loginAfterCreate(formData.username, formData.password);
           history.push('/feed');
         })
         .catch((error) => {
           console.error("Error:", error);
           setError('Error creating account. Please try again later.');
+        });
+  };
+
+  const loginAfterCreate = (username, password) => {
+    const requestBody = new URLSearchParams();
+    requestBody.append('username', username);
+    requestBody.append('password', password);
+
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: requestBody.toString(),
+    })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Login failed');
+          }
+        })
+        .then((data) => {
+          updateUser(data.user);
+          Cookies.set('userData', JSON.stringify(data.user));
+          Cookies.set('jwt', data.jwt);
+          history.push('/feed');
+        })
+        .catch((error) => {
+          console.error('Error logging in:', error);
+          setError('Error logging in. Please try again later.');
         });
   };
 
@@ -70,7 +113,7 @@ const CreateAccount = () => {
             <div className={styles.overlay}>
               <div className={styles.createAccountFormContainer}>
                 <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={buttonStyle}>X</button>
-                <h2>Create Account</h2>
+                <h2 style={{fontSize:"30px"}}>Create Account</h2>
                 <form onSubmit={handleSubmit} className="createAccountForm">
                   <div className={styles.inputGroup}>
                     <label>First Name:</label>
@@ -93,7 +136,7 @@ const CreateAccount = () => {
                     <input type="password" name="password" value={formData.password} onChange={handleChange} />
                   </div>
                   <div className={styles.buttonContainer}>
-                    <button type="submit" style={buttonStyle}>Submit</button>
+                    <button type="submit" style={{...buttonStyle, border: '3px solid black', color:'white'}}>Submit</button>
                   </div>
                   {error && <p style={{ color: 'red' }}>{error}</p>}
                 </form>

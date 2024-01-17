@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {useUserContext} from "../../pages/usercontext/UserContext";
 import {useHistory} from "react-router-dom";
 import Cookies from 'js-cookie';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 const DeleteAccountButton = () => {
   const { user, setUser } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -12,7 +14,7 @@ const DeleteAccountButton = () => {
   const handleDeleteAccount = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/account/${user.appUserID}/deleteAccount`, {
+      const response = await fetchWithJWT(`/api/account/${user.appUserID}/deleteAccount`, {
         method: "DELETE",
       });
 
@@ -37,7 +39,7 @@ const DeleteAccountButton = () => {
   }
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
     color: '#FFFFFF',
     border: '4px solid black',
   };

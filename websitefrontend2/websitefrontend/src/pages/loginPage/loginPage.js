@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
-
+import '../../global.css';
 const LoginPage = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [username, setUsername] = useState('');
@@ -9,6 +9,8 @@ const LoginPage = () => {
     const [error, setError] = useState('');
 
     const { setUser, user } = useUserContext();
+
+
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -58,7 +60,7 @@ const LoginPage = () => {
 
     return (
         <div>
-            <button onClick={() => setIsVisible(!isVisible)}>Login</button> {/* Toggle button */}
+            <button onClick={() => setIsVisible(!isVisible)}>Login</button>
             {isVisible && (
                 <div>
                     <h2>Login</h2>

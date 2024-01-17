@@ -4,6 +4,8 @@ import CreateMessageForm from '../../../buttonComponents/createMessageButton/cre
 import DeleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
 import SearchIcon from '@mui/icons-material/Search';
 import ProfilePictureComponent from "../../../buttonComponents/ProfilePictureComponent";
+import {fetchWithJWT} from "../../../utility/fetchInterceptor";
+import {getRandomColor} from "../../../FunSFX/randomColorGenerator";
 
 const GetAllFriends = () => {
   const { user } = useUserContext();
@@ -20,7 +22,7 @@ const GetAllFriends = () => {
     const fetchData = async () => {
       if (user) {
         try {
-          const response = await fetch(`/api/friends/${user.appUserID}/getAllFriends`);
+          const response = await fetchWithJWT(`/api/friends/${user.appUserID}/getAllFriends`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -57,14 +59,41 @@ const GetAllFriends = () => {
       )
       : allFriendsData;
 
+  const listItemStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 0',
+  };
 
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : '#FF6D00',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
     color: '#FFFFFF',
   };
 
+  const getOnlineStatusStyle = (isOnline) => ({
+    transform: 'translateY(-90px) translateX(0px)',
+    display: 'inline-block',
+    width: '30px',
+    height: '30px',
+    borderRadius: '50%',
+    zIndex: '1000',
+    backgroundColor: isOnline ? 'green' : 'red',
+  });
+
+  const buttonContainerStyle = {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  };
+
+  const searchBarContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  };
   return (
+
       <div>
         <h1>Friends</h1>
         <div className="search-bar-container">
@@ -75,7 +104,7 @@ const GetAllFriends = () => {
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
           />
-          <button className="search-button" onClick={handleSearch} style={buttonStyle}>
+          <button style={buttonStyle} className="search-button" onClick={handleSearch}>
             <SearchIcon />
           </button>
         </div>
@@ -86,13 +115,16 @@ const GetAllFriends = () => {
         ) : filteredFriends.length > 0 ? (
             <ul>
               {filteredFriends.map(friend => (
-                  <li key={friend.id}>
-                    <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
-                    <p>{friend.email}</p>
-                    <ProfilePictureComponent userid={friend.appUserID}/>
-                    <p>{friend.isOnline ? 'Online' : 'Offline'}</p>
-                    <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
-                    <CreateMessageForm recipient={friend.username} />
+                  <li key={friend.id} className="user-item">
+                    <div className="user-name">
+                      <ProfilePictureComponent userid={friend.appUserID}/>
+                      <div className="user-details">
+                        <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
+                      </div>
+                    </div>
+                    <div className="button-group">
+                      <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
+                    </div>
                   </li>
               ))}
             </ul>

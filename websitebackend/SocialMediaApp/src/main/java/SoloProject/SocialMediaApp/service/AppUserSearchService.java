@@ -1,7 +1,7 @@
 package SoloProject.SocialMediaApp.service;
 
 import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.UserDTO;
+import SoloProject.SocialMediaApp.models.AppUserDTO;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -70,21 +70,7 @@ public class AppUserSearchService {
     }
 
 
-    public ResponseEntity<List<AppUser>> findRelatedUsers(String firstname, String lastname) {
-        List<AppUser> appUsers;
 
-        if (firstname != null && lastname != null) {
-            appUsers = repository.findByFirstnameAndLastname(firstname, lastname);
-        } else if (firstname != null) {
-            appUsers = repository.findByFirstname(firstname);
-        } else if (lastname != null) {
-            appUsers = repository.findByLastname(lastname);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok(appUsers);
-    }
     public ResponseEntity<List<Long>> getAllFriendRequests(Long UserId) {
         AppUser user = repository.findByAppUserID(UserId);
         if (user == null) {
@@ -98,14 +84,10 @@ public class AppUserSearchService {
         return ResponseEntity.ok(allUsers);
     }
     //to display user data extrapolated from longs.
-    private UserDTO convertToUserDTO(Long userId) {
+    private AppUserDTO convertToUserDTO(Long userId) {
         AppUser appUser = repository.findByAppUserID(userId);
-        return new UserDTO(
-                appUser.getAppUserID(),
-                appUser.getUsername(),
-                appUser.getFirstname(),
-                appUser.getLastname(),
-                appUser.getEmail()
+        return new AppUserDTO(
+                appUser
         );
     }
 }

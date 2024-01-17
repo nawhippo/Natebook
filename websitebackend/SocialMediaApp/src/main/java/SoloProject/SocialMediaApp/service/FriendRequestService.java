@@ -1,8 +1,10 @@
 package SoloProject.SocialMediaApp.service;
 
 import SoloProject.SocialMediaApp.models.AppUser;
-import SoloProject.SocialMediaApp.models.UserDTO;
+import SoloProject.SocialMediaApp.models.AppUserDTO;
+import SoloProject.SocialMediaApp.models.Notification;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
+import SoloProject.SocialMediaApp.repository.NotificationRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,32 +18,40 @@ import java.util.List;
 
 public class FriendRequestService {
 
-    private final AppUserRepository repository;
+    private final AppUserRepository appUserRepository;
+    private final NotificationRepository notificationRepository;
 
 
-
-    public FriendRequestService(AppUserRepository repository) {
-        this.repository = repository;
+    public FriendRequestService(AppUserRepository appUserRepository, NotificationRepository notificationRepository) {
+        this.appUserRepository = appUserRepository;
+        this.notificationRepository = notificationRepository;
     }
 
 
 
-    public ResponseEntity<List<UserDTO>> getAllFriendRequestsDTOS(Long UserId) {
-        AppUser user = repository.findByAppUserID(UserId);
+    public ResponseEntity<List<AppUserDTO>> getAllFriendRequestsDTOS(Long userId) {
+        AppUser user = appUserRepository.findByAppUserID(userId);
 
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Long> friendreqs = user.getRequests();
-        List<UserDTO> DTOList = convertToDTOList(friendreqs);
-        for (UserDTO dto : DTOList) {
-            System.out.println(dto);
+        List<Long> friendRequests = user.getRequests();
+        List<AppUserDTO> dtoList = convertToDTOList(friendRequests);
+
+        // Delete notifications related to friend requests
+        for (Long senderId : friendRequests) {
+            // Assuming 'Notification' has a constructor or method to identify friend request notifications
+            // Adjust according to your Notification model
+            Notification notification = new Notification(userId, "FriendRequest", senderId);
+            notificationRepository.delete(notification);
         }
-        return ResponseEntity.ok(DTOList);
+
+        return ResponseEntity.ok(dtoList);
     }
-    private List<UserDTO> convertToDTOList(List<Long> ids) {
-        List<UserDTO> result = new ArrayList<>();
+
+    private List<AppUserDTO> convertToDTOList(List<Long> ids) {
+        List<AppUserDTO> result = new ArrayList<>();
         if (ids != null) {
             for (long id : ids) {
                 result.add(convertToDTO(id));
@@ -49,25 +59,21 @@ public class FriendRequestService {
         }
         return result;
     }
-
-    private UserDTO convertToDTO(Long id) {
-        AppUser user = repository.findByAppUserID(id);
+    private AppUserDTO convertToDTO(Long id) {
+        AppUser user = appUserRepository.findByAppUserID(id);
         if (user != null) {
-            return new UserDTO(
-                    id, user.getUsername(), user.getFirstname(), user.getLastname(), user.getEmail()
+            return new AppUserDTO(
+                    user
             );
         }
         return null;
     }
 
 
-
-
-
     //strings are usernames
 
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, Long friendId) {
-        AppUser recipient = repository.findByAppUserID(friendId);
+        AppUser recipient = appUserRepository.findByAppUserID(friendId);
         if(senderId == friendId){
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
         }
@@ -82,12 +88,12 @@ public class FriendRequestService {
         }
         newRequests.add(senderId);
         recipient.setRequests(newRequests);
-        repository.save(recipient);
+        appUserRepository.save(recipient);
         return new ResponseEntity<>(recipient, HttpStatus.OK);
     }
 
     public ResponseEntity<AppUser> sendFriendRequest(Long senderId, String recipientUsername) {
-        AppUser recipient = repository.findByUsername(recipientUsername);
+        AppUser recipient = appUserRepository.findByUsername(recipientUsername);
         if(senderId == recipient.getAppUserID()){
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
         }
@@ -106,23 +112,22 @@ public class FriendRequestService {
         List<Long> newRequests = recipient.getRequests();
         newRequests.add(senderId);
         recipient.setRequests(newRequests);
-
-        repository.save(recipient);
+        Notification notification = new Notification(recipient.getAppUserID(), "FriendRequest", recipient.getAppUserID());
+        appUserRepository.save(recipient);
 
         return new ResponseEntity<>(recipient, HttpStatus.OK);
     }
 
 
     public ResponseEntity<AppUser> acceptFriendRequest(Long recipientId, Long senderId) {
-        AppUser recipient = repository.findByAppUserID(recipientId);
-        AppUser sender = repository.findByAppUserID(senderId);
+        AppUser recipient = appUserRepository.findByAppUserID(recipientId);
+        AppUser sender = appUserRepository.findByAppUserID(senderId);
 
         // Check if they are already friends
         if(recipient.getFriends().contains(senderId)){
             return new ResponseEntity<>(recipient, HttpStatus.BAD_REQUEST);
         }
 
-        // Update friend requests and friend lists
         recipient.getRequests().remove(senderId);
         recipient.getFriends().add(senderId);
         recipient.setFriendCount(recipient.getFriendCount() + 1);
@@ -130,8 +135,8 @@ public class FriendRequestService {
         sender.getFriends().add(recipientId);
         sender.setFriendCount(sender.getFriendCount() + 1);
 
-        repository.save(sender);
-        repository.save(recipient);
+        appUserRepository.save(sender);
+        appUserRepository.save(recipient);
 
         return new ResponseEntity<>(sender, HttpStatus.OK);
     }
@@ -139,17 +144,28 @@ public class FriendRequestService {
 
 
     public ResponseEntity<AppUser> declineFriendRequest(Long recipientId, Long senderId) {
-        AppUser appUser = repository.findByAppUserID(recipientId);
+        AppUser appUser = appUserRepository.findByAppUserID(recipientId);
         List<Long> requests = appUser.getRequests();
         requests.remove(senderId);
         appUser.setRequests(requests);
-        repository.save(appUser);
+        appUserRepository.save(appUser);
         return new ResponseEntity<>(appUser, HttpStatus.OK);
     }
 
 
     public ResponseEntity<AppUser> saveUser(AppUser appUser) {
-        repository.save(appUser);
+        appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
+    }
+
+
+    public ResponseEntity<List<Notification>> getAllFriendRequestNotifications(Long userId) {
+        List<Notification> notifications = notificationRepository.findByUserIdAndNotificationType(userId, "FriendRequest");
+
+        if (notifications.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return ResponseEntity.ok(notifications);
     }
 }

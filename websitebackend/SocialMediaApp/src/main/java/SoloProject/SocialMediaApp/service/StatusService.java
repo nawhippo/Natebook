@@ -1,27 +1,46 @@
 package SoloProject.SocialMediaApp.service;
+
 import SoloProject.SocialMediaApp.models.Status;
 import SoloProject.SocialMediaApp.repository.StatusRepository;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class StatusService {
 
     @Autowired
-    public StatusService(StatusRepository statusRepository) {
-        this.statusRepository = statusRepository;
+    private StatusRepository statusRepository;
+
+    @Transactional
+    public Status createStatus(Long appUserId, String content, int lifespan) {
+        statusRepository.deleteByAppUserID(appUserId);
+        LocalDateTime start = LocalDateTime.now();
+        LocalDateTime death = start.plusHours(lifespan);
+        Status newStatus = new Status(appUserId, content, start, lifespan, death);
+        return statusRepository.save(newStatus);
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void deleteExpiredStatuses() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Status> expiredStatuses = statusRepository.findByDeathBefore(now);
+        for (Status status : expiredStatuses) {
+            statusRepository.delete(status);
+        }
+
 
     }
-    StatusRepository statusRepository;
+    public Status getStatusByUser(Long appUserId) {
 
-    @Scheduled(fixedDelay = 60000)
-    public void deleteExpiredStatus() {
-        List<Status> expiredStatusList;
-        expiredStatusList = statusRepository.findByDeathBefore(DateTime.now());
-        statusRepository.deleteAll(expiredStatusList);
+        System.out.println(statusRepository.findByAppUserID(appUserId));
+        return statusRepository.findByAppUserID(appUserId);
     }
+
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const GoogleAccountDetails = () => {
     const [firstName, setFirstName] = useState('');
@@ -7,7 +8,7 @@ const GoogleAccountDetails = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch('/api/account/getGoogleAccountDetails')
+        fetchWithJWT('/api/account/getGoogleAccountDetails')
             .then(response => response.json())
             .then(data => {
                 setFirstName(data.firstName);

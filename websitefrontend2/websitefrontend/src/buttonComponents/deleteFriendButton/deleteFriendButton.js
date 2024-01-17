@@ -1,9 +1,19 @@
 import {useUserContext} from "../../pages/usercontext/UserContext";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 
 const DeleteFriendButton = ({ removeFriend }) => {
   const { user } = useUserContext();
+
+
+
+  const buttonStyle = {
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
+    color: '#FFFFFF',
+    border: '4px solid black',
+  };
     const handleClick = () => {
-      fetch(`/api/friends/${user.appUserID}/removeFriend/${removeFriend}`, {
+      fetchWithJWT(`/api/friends/${user.appUserID}/removeFriend/${removeFriend}`, {
         method: 'DELETE',
       })
       .then(response => {
@@ -17,7 +27,7 @@ const DeleteFriendButton = ({ removeFriend }) => {
       });
     };
   
-    return <button onClick={handleClick}>Remove Friend</button>;
+    return <button style={buttonStyle} onClick={handleClick}>Remove Friend</button>;
   };
   
   export default DeleteFriendButton;

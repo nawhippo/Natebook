@@ -1,12 +1,14 @@
 import React from 'react';
 import {useUserContext} from "../../pages/usercontext/UserContext";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
+import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 
 export const DeletePostButton = ({ postId, fetchData }) => {
   const user = useUserContext();
 
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
     color: '#FFFFFF',
     border: '4px solid black',
   };
@@ -14,7 +16,7 @@ export const DeletePostButton = ({ postId, fetchData }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/post/${postId}/deletePost`, { method: 'DELETE' });
+      const response = await fetchWithJWT(`/api/post/${postId}/deletePost`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error('Failed to delete.');
       }

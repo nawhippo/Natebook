@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const ReplyToMessageForm = ({ userId, prefillData, onClose }) => {
   const [messageData, setMessageData] = useState({
@@ -15,7 +16,7 @@ const ReplyToMessageForm = ({ userId, prefillData, onClose }) => {
     }
 
     try {
-      const response = await fetch('/api/message/send', {
+      const response = await fetchWithJWT('/api/message/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

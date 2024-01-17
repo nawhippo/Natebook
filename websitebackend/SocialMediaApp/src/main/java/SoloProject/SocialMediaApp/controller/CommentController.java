@@ -1,6 +1,7 @@
 package SoloProject.SocialMediaApp.controller;
 
 import SoloProject.SocialMediaApp.models.Comment;
+import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,10 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @PutMapping("/comment/{reactorId}/{commentId}/updateReactionComment")
+
+
+
+    @PutMapping("/comment/{commentId}/{reactorId}/updateReactionComment")
     public ResponseEntity<Comment> updateCommentReaction(
             @PathVariable Long reactorId,
             @PathVariable Long commentId,

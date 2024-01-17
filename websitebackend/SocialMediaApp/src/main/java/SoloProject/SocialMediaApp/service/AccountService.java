@@ -1,5 +1,6 @@
 package SoloProject.SocialMediaApp.service;
 
+import SoloProject.SocialMediaApp.ColorUtility;
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.CompressedImage;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
@@ -8,12 +9,15 @@ import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,16 +29,19 @@ public class AccountService {
     private final EmailSenderService emailSenderService;
     private final CompressionService compressionService;
 
+    private PasswordEncoder passwordEncoder;
+
     public AccountService(AppUserRepository appUserRepository,
                           CommentRepository commentRepository,
                           CompressedImageRepository compressedImageRepository, PostRepository postRepository,
-                          EmailSenderService emailSenderService, CompressionService compressionService) {
+                          EmailSenderService emailSenderService, CompressionService compressionService, PasswordEncoder passwordEncoder) {
         this.appUserRepository = appUserRepository;
         this.commentRepository = commentRepository;
         this.compressedImageRepository = compressedImageRepository;
         this.postRepository = postRepository;
         this.emailSenderService = emailSenderService;
         this.compressionService = compressionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseEntity<AppUser> getAccountDetails(Long userid) {
@@ -56,7 +63,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String newPassword) {
+    public ResponseEntity<AppUser> updateAccountDetails(Long userId, String newFirstName, String newLastName, String newEmail, String newPassword, String newOccupation, String newBiography, Boolean newPrivate) {
         AppUser user = appUserRepository.findByAppUserID(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -75,6 +82,18 @@ public class AccountService {
         if (newPassword != null) {
             user.setPassword(newPassword);
         }
+
+        if(newOccupation != null){
+            user.setOccupation(newOccupation);
+        }
+
+        if(newBiography != null){
+            user.setBiography(newBiography);
+        }
+
+        if(newPrivate != null){
+            user.setPrivate(newPrivate);
+        }
         appUserRepository.save(user);
         return ResponseEntity.ok(user);
     }
@@ -84,26 +103,27 @@ public class AccountService {
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }
-    public ResponseEntity<AppUser> createAccountFromUser(OAuth2User principal){
-        String firstName = principal.getAttribute("given_name");
-        String lastName = principal.getAttribute("family_name");
-        String email = principal.getAttribute("email");
-        //username is email removed from it.
-        String username = email.split("@")[0];
-        //username must be added as a parameter
-        AppUser existingUser = appUserRepository.findByUsername(username);
 
-        if (existingUser != null) {
-            // User already exists, update if needed
-            return ResponseEntity.ok(existingUser);
-        }
-        //merely a placeholder, then again, how will users sign back in again if they've already logged in with google
-        String password = "defaultPassword";
-
-        AppUser newUser = new AppUser(firstName, lastName, username, email, password);
-        appUserRepository.save(newUser);
-        return ResponseEntity.ok(newUser);
-    }
+//    public ResponseEntity<AppUser> createAccountFromUser(OAuth2User principal){
+//        String firstName = principal.getAttribute("given_name");
+//        String lastName = principal.getAttribute("family_name");
+//        String email = principal.getAttribute("email");
+//        //username is email removed from it.
+//        String username = email.split("@")[0];
+//        //username must be added as a parameter
+//        AppUser existingUser = appUserRepository.findByUsername(username);
+//
+//        if (existingUser != null) {
+//            // User already exists, update if needed
+//            return ResponseEntity.ok(existingUser);
+//        }
+//        //merely a placeholder, then again, how will users sign back in again if they've already logged in with google
+//        String password = "defaultPassword";
+//
+//        AppUser newUser = new AppUser(firstName, lastName, username, email, password);
+//        appUserRepository.save(newUser);
+//        return ResponseEntity.ok(newUser);
+//    }
 
     //anyone can make a request to this endpoint, potential security concern
     @Transactional
@@ -137,7 +157,7 @@ public class AccountService {
 
             appUser.setProfilePicture(compressedImage.getId());
             compressedImage.setProfileid(appUser.getAppUserID());
-            appUserRepository.save(appUser); // Assuming you have a save method to persist changes
+            appUserRepository.save(appUser);
             compressedImageRepository.save(compressedImage);
             return new ResponseEntity<>(appUser, HttpStatus.OK);
         } else {
@@ -146,6 +166,22 @@ public class AccountService {
     }
 
 
+    public ResponseEntity<AppUser> createAccount(Map<String, String> formData) {
+        String firstName = formData.get("firstname");
+        String lastName = formData.get("lastname");
+        String email = formData.get("email");
+        String password = formData.get("password");
+        String username = formData.get("username");
+
+        String encodedPassword = passwordEncoder.encode(password);
+        AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
+        appUser.addAuthority("ROLE_USER");
+        appUser.setFriendCount(0);
+        String randomColor = ColorUtility.getRandomColor();
+        appUser.setProfileColor(randomColor);
+        appUserRepository.save(appUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
+    }
     public ResponseEntity<?> createAccountFromGoogle(String firstName, String lastName, String email) {
         String username = email.split("@")[0];
         String password = "password";
@@ -160,6 +196,13 @@ public class AccountService {
         return ResponseEntity.ok(user);
     }
 
-
+    public boolean checkAuthenticationMatch(String username, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String authenticatedUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+            System.out.println("USERNAME:  " + authenticatedUsername);
+            return username.equals(authenticatedUsername);
+        }
+        return false;
+    }
 
 }

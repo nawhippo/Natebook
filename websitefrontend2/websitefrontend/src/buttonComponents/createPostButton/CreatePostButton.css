@@ -1,7 +1,7 @@
 .create-post-container {
-    position: relative;
-    margin: 0;
-    padding: 0;
+    background-color: lightgrey;
+    justify-content: center;
+    width: 500px;
 }
 
 .button {
@@ -13,30 +13,17 @@
 }
 
 .form-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 500px;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    z-index: 1000;
+
 }
 
 .post-input, .post-textarea {
-    width: 100%;
+    width: 50%;
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 .public-status-icon {
-    display: flex;
-    align-items: center;
     cursor: pointer;
     margin-bottom: 15px;
 }
@@ -61,6 +48,6 @@
     color: #d9534f;
     text-align: center;
 }
-.button:hover {
-    background-color: darken(#FF6D00, 10%);
+button:hover {
+    transform: scale(1.5);
 }

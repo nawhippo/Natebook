@@ -3,13 +3,14 @@ import {useUserContext} from '../../pages/usercontext/UserContext';
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import './reactPostButtons.css';
-const ReactionButtons = ({ postId, updateLikesDislikes }) => {
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
+const ReactionButtons = ({ postId, updateLikesDislikes, likesCount, dislikesCount }) => {
   const [reactionState, setReactionState] = useState('None');
   const { user } = useUserContext();
   const [isRateLimited, setIsRateLimited] = useState(false);
   const updateReactionOnServer = async (postId, action) => {
     const url = `/api/post/${postId}/${user.appUserID}/updateReactionPost`;
-    const response = await fetch(url, {
+    const response = await fetchWithJWT(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +27,7 @@ const ReactionButtons = ({ postId, updateLikesDislikes }) => {
   };
 
   const handleButtonClick = async (newReaction) => {
-    if (isRateLimited) return;
+    if (isRateLimited || !user) return;
     setIsRateLimited(true);
     const updatedPost = await updateReactionOnServer(postId, newReaction);
     if (updatedPost) {
@@ -42,16 +43,19 @@ const ReactionButtons = ({ postId, updateLikesDislikes }) => {
 
 
   return (
-    <div>
-      <ThumbUpOffAltIcon
-          className={`reaction-icon ${reactionState === 'Like' ? 'active' : ''}`}
-          onClick={() => handleButtonClick('Like')}
-      />
-      <ThumbDownOffAltIcon
-          className={`reaction-icon ${reactionState === 'Dislike' ? 'active' : ''}`}
-          onClick={() => handleButtonClick('Dislike')}
-      />
-    </div>
+      <div className="reaction-buttons-container">
+        <ThumbUpOffAltIcon
+            style={{fontSize:'50px'}}
+            className={`reaction-icon ${reactionState === 'Like' ? 'active' : ''}`}
+            onClick={() => handleButtonClick('Like')}
+        />
+        <span style={{transform: 'translateY(30px)'}}>{likesCount}</span>
+        <ThumbDownOffAltIcon style={{fontSize:'50px'}}
+            className={`reaction-icon ${reactionState === 'Dislike' ? 'active' : ''}`}
+            onClick={() => handleButtonClick('Dislike')}
+        />
+        <span style={{transform: 'translateY(30px)'}}>{dislikesCount}</span>
+      </div>
   );
 };
 

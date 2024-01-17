@@ -20,8 +20,10 @@ const LogoutButton = () => {
               throw new Error('Response was not ok!');
             }
             console.log('Logged out successfully');
-            Cookies.remove('userData'); // Remove user data from cookie
-            history.push('/Feed');
+            Cookies.remove('userData');
+              Cookies.remove('jwt');
+              history.push('/AllUsersPage');
+              clearUserContext();
             window.location.reload();
           })
           .catch(error => {

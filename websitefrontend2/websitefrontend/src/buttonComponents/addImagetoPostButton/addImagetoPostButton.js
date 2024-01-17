@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const AddImageToPostButton = ({ postid }) => {
     const [images, setImages] = useState([]);
@@ -13,7 +14,7 @@ const AddImageToPostButton = ({ postid }) => {
         images.forEach(image => formData.append('image', image));
 
         try {
-            const response = await fetch(`/post/${postid}/uploadImagetoPost`, {
+            const response = await fetchWithJWT(`/post/${postid}/uploadImagetoPost`, {
                 method: 'PUT',
                 body: formData,
             });

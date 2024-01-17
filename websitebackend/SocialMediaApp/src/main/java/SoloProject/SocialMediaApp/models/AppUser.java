@@ -2,19 +2,63 @@ package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "app_users")
 public class AppUser implements UserDetails {
 
+    public AppUser(String firstName, String lastName, String email, String encodedPassword, String username) {
+    this.firstname = firstName;
+    this.lastname = lastName;
+    this.email = email;
+    this.password = encodedPassword;
+    this.username = username;
+    }
+
+    public Boolean getPrivate() {
+        return isPrivate;
+    }
+
+    public List<Long> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<Long> followers) {
+        this.followers = followers;
+    }
+
+    public List<Long> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<Long> following) {
+        this.following = following;
+    }
+
+    private List<Long> followers;
+    private List<Long> following;
     public Long profilePicture;
 
     private int friendCount = 0;
+
+    @Column
+    private String profileColor;
+
+
+    public String getProfileColor() {
+        return profileColor;
+    }
+
+    public void setProfileColor(String profileColor) {
+        this.profileColor = profileColor;
+    }
+
+
     public Long getProfilePicture() {
         return profilePicture;
     }
@@ -25,6 +69,17 @@ public class AppUser implements UserDetails {
 
     public boolean isOnline;
 
+    @Column
+    public Boolean isPrivate = false;
+
+    public Boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(Boolean aPrivate) {
+        isPrivate = aPrivate;
+    }
+
     public boolean isOnline() {
         return isOnline;
     }
@@ -33,15 +88,10 @@ public class AppUser implements UserDetails {
         isOnline = online;
     }
 
-    public Boolean isGoogleUser;
 
-    public void setGoogleUser(Boolean googleUser) {
-        isGoogleUser = googleUser;
-    }
 
-    public Boolean getGoogleUser() {
-        return isGoogleUser;
-    }
+
+
 
 
     public int getFriendCount() {
@@ -52,7 +102,7 @@ public class AppUser implements UserDetails {
         this.friendCount = friendCount;
     }
 
-    @Column
+
     private List<Long> requests;
 
     private List<Long> blockList;
@@ -65,7 +115,7 @@ public class AppUser implements UserDetails {
         this.blockList = blockList;
     }
 
-    public AppUser(String firstName, String lastName, String email, String password, String username) {
+    public AppUser(String firstName, String lastName, String email, String password, String username, String profileColor) {
         this.firstname = firstName;
         this.lastname = lastName;
         this.email=  email;
@@ -73,7 +123,10 @@ public class AppUser implements UserDetails {
         this.username = username;
         this.blockList = new ArrayList<>();
         this.requests = new ArrayList<>();
-        this.isGoogleUser = false;
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
+        this.isPrivate = false;
+        this.profileColor = profileColor;
     }
 
     public List<Long> getRequests() {
@@ -84,7 +137,7 @@ public class AppUser implements UserDetails {
         this.requests = requests;
     }
 
-    @Column
+
     private String role;
 
     public String getRole() {
@@ -99,10 +152,6 @@ public class AppUser implements UserDetails {
         this.appUserID = appUserID;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
 
     public String getPassword() {
         return password;
@@ -123,6 +172,11 @@ public class AppUser implements UserDetails {
     private String lastname;
 
     @Column
+    private String occupation;
+
+    @Column
+    private String biography;
+    @Column
     private String email;
 
     @Column(unique = true)
@@ -130,6 +184,18 @@ public class AppUser implements UserDetails {
 
     @Column
     private String password;
+
+    @Column
+    private Boolean verified;
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
 
 
     @ElementCollection
@@ -146,14 +212,72 @@ public class AppUser implements UserDetails {
         this.friends = friends;
         this.password = password;
         this.requests = requests;
-        this.role = "USER";
-        this.isGoogleUser = false;
+        this.verified = false;
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
+    }
+
+    public AppUser(String firstname, String lastname, String email, String username, List<Long> friends, String password, List<Long> requests, String occupation, String biography) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.friends = friends;
+        this.password = password;
+        this.requests = requests;
+        this.verified = false;
+        this.occupation = occupation;
+        this.biography = biography;
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
     }
 
     public AppUser() {
         this.friends = new ArrayList<>();
         this.requests = new ArrayList<>();
+        this.followers = new ArrayList<>();
+        this.following = new ArrayList<>();
         this.role = "USER";
+    }
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "authority")
+    private Set<String> authorities = new HashSet<>();
+
+    public void setRoles(String[] roles) {
+        this.authorities.clear();
+        for (String role : roles) {
+            this.authorities.add(role);
+        }
+    }
+
+    public void addAuthority(String authority) {
+        this.authorities.add(authority);
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        for (String authority : authorities) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(authority));
+        }
+        return grantedAuthorities;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
     }
 
     public Long getAppUserID() {

@@ -3,10 +3,12 @@ import Post from '../../objects/post';
 import CreatePostButton from '../../../buttonComponents/createPostButton/createPostButton';
 import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
-import {useUserContext} from '../../usercontext/UserContext'; // Import the user context
+import {useUserContext} from '../../usercontext/UserContext';
+import {getRandomColor} from "../../../FunSFX/randomColorGenerator";
+import {fetchWithJWT} from "../../../utility/fetchInterceptor";
 
 const PublicFeed = () => {
-    const { user } = useUserContext(); // Get the user context
+    const { user } = useUserContext();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [inputValue, setInputValue] = useState('');
@@ -18,13 +20,15 @@ const PublicFeed = () => {
         fetchData();
     }, []);
 
-    const searchButtonStyle = {
-        backgroundColor: 'darkgrey'
-    };
+
 
     useEffect(() => {
         if (allPostsData && searchTerm) {
-            setFilteredPosts(allPostsData.filter(post => post.posterUsername.toLowerCase().includes(searchTerm.toLowerCase())));
+            const searchTermLower = searchTerm.toLowerCase();
+            setFilteredPosts(allPostsData.filter(post =>
+                post.posterUsername.toLowerCase().includes(searchTermLower) ||
+                post.title.toLowerCase().includes(searchTermLower)
+            ));
         } else if (allPostsData) {
             setFilteredPosts(allPostsData);
         }
@@ -51,10 +55,29 @@ const PublicFeed = () => {
             });
     };
 
+    const deleteNotificationForPost = (postId) => {
+        if (user && postId) {
+            fetchWithJWT(`/api/notifications/posts/${user.appUserID}/delete/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Notification could not be deleted');
+                    }
+                    console.log('Notification deleted');
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    };
+
     const handleInputChange = (event) => setSearchTerm(event.target.value);
 
+
     const buttonStyle = {
-        backgroundColor: user && user.backgroundColor ? user.backgroundColor : 'grey',
+        backgroundColor: user?.backgroundColor || getRandomColor(),
         color: '#FFFFFF',
     };
 
@@ -66,36 +89,27 @@ const PublicFeed = () => {
                     className="search-input"
                     type="text"
                     value={searchTerm}
-                    placeholder="Search by Username"
+                    placeholder="Search by username or subject"
                     onChange={handleInputChange}
                 />
-                <button className="search-button" type="submit" onClick={() => handleInputChange({ target: { value: searchTerm } })} style={buttonStyle}>
+                <button className="search-button" type="submit" onClick={handleInputChange} style={buttonStyle}>
                     <SearchIcon />
                 </button>
             </div>
 
             {user && (
-                <div className="create-post-section">
+                <div className="create-post-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <CreatePostButton />
                 </div>
             )}
 
-            {isLoading ? (
-                <p>Loading...</p>
-            ) : error ? (
-                <p>Error: {error}</p>
-            ) : filteredPosts && filteredPosts.length > 0 ? (
-                filteredPosts.map((post) => (
-                    <Post
-                        key={post.id}
-                        post={post}
-
-                        fetchData={fetchData}
-                    />
-                ))
-            ) : (
-                <p>No posts found.</p>
-            )}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                {isLoading ? <p>Loading...</p> : error ? <p>Error: {error}</p> : filteredPosts.length > 0 ? filteredPosts.map((post) => (
+                    <div key={post.id} onMouseEnter={() => deleteNotificationForPost(post.id)}>
+                        <Post post={post} posterid={post.posterAppUserId} fetchData={fetchData} />
+                    </div>
+                )) : <p>No posts found.</p>}
+            </div>
         </div>
     );
 };

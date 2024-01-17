@@ -4,6 +4,7 @@ import CreatePostButton from '../../../buttonComponents/createPostButton/createP
 import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
 import {useUserContext} from '../../usercontext/UserContext';
+import {fetchWithJWT} from "../../../utility/fetchInterceptor";
 
 const FriendFeed = () => {
   const { user } = useUserContext();
@@ -32,7 +33,7 @@ const FriendFeed = () => {
     const endpoint = userId ? `/api/post/${userId}/friendPosts` : '/api/publicFeed';
 
     setIsLoading(true);
-    fetch(endpoint)
+    fetchWithJWT(endpoint)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
