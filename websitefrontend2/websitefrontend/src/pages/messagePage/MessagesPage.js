@@ -121,7 +121,7 @@
 
                 interval = setInterval(() => {
                     getAllMessagesByThread(selectedThreadId);
-                }, 5000); 
+                }, 5000);
             }
 
             return () => {
