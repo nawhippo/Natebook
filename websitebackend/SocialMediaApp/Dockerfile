@@ -1,21 +1,10 @@
+# Stage 1: Build the application
 FROM maven:3.6-jdk-11 as builder
+COPY . .
+RUN mvn package
 
-
-COPY . /app
-WORKDIR /app
-
-
-RUN mvn package -X
-
-
+# Stage 2: Setup the runtime environment
 FROM eclipse-temurin:17-jre
-WORKDIR /app
-
-
-COPY --from=builder /app/target/SocialMediaApp-0.0.1-SNAPSHOT.jar app.jar
-
-
+COPY --from=builder /target/*.jar app.jar
 EXPOSE 8080
-
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
