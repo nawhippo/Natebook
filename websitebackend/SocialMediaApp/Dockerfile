@@ -5,7 +5,7 @@ COPY . /app
 WORKDIR /app
 
 
-RUN mvn package
+RUN mvn package -X
 
 
 FROM eclipse-temurin:17-jre
