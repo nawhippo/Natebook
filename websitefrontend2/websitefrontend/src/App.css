@@ -17,16 +17,32 @@
 
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'Orbitron', sans-serif;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+
+
 .polkadots {
-  background-image: radial-gradient(circle, #00000020 1px, transparent 1px);
+  background-image: radial-gradient(circle, #D3D3D320 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
 .slantylines {
   background-image: repeating-linear-gradient(
           45deg,
-          #00000020,
-          #00000020 1px,
+          #D3D3D320,
+          #D3D3D320 1px,
           transparent 1px,
           transparent 50%
   );
@@ -36,8 +52,8 @@
 .diagonalStripes {
   background-image: repeating-linear-gradient(
           45deg,
-          #00000020,
-          #00000020 10px,
+          #D3D3D320,
+          #D3D3D320 10px,
           transparent 10px,
           transparent 20px
   );
@@ -45,41 +61,39 @@
 }
 
 .checkerboard {
-  background-image: linear-gradient(45deg, #00000020 25%, transparent 25%, transparent 75%, #00000020 75%, #00000020),
-  linear-gradient(45deg, #00000020 25%, transparent 25%, transparent 75%, #00000020 75%, #00000020);
+  background-image: linear-gradient(45deg, #D3D3D320 25%, transparent 25%, transparent 75%, #D3D3D320 75%, #D3D3D320),
+  linear-gradient(45deg, #D3D3D320 25%, transparent 25%, transparent 75%, #D3D3D320 75%, #D3D3D320);
   background-size: 60px 60px;
   background-position: 0 0, 30px 30px;
 }
 
 .zigzag {
-  background-image: linear-gradient(135deg, #00000020 25%, transparent 25%),
-  linear-gradient(225deg, #00000020 25%, transparent 25%),
-  linear-gradient(45deg, #00000020 25%, transparent 25%),
-  linear-gradient(315deg, #00000020 25%, transparent 25%);
+  background-image: linear-gradient(135deg, #D3D3D320 25%, transparent 25%),
+  linear-gradient(225deg, #D3D3D320 25%, transparent 25%),
+  linear-gradient(45deg, #D3D3D320 25%, transparent 25%),
+  linear-gradient(315deg, #D3D3D320 25%, transparent 25%);
   background-size: 40px 40px;
   background-position: 0 0, 0 20px, 20px -20px, 20px 0px;
 }
 
-
 .dottedGrid {
-  background-image: radial-gradient(#00000020 10%, transparent 10%),
-  radial-gradient(#00000020 10%, transparent 10%);
+  background-image: radial-gradient(#D3D3D320 10%, transparent 10%),
+  radial-gradient(#D3D3D320 10%, transparent 10%);
   background-size: 30px 30px;
   background-position: 0 0, 15px 15px;
 }
 
 .houndstooth {
-  background-image: linear-gradient(45deg, #00000020 25%, transparent 25%),
-  linear-gradient(-45deg, #00000020 25%, transparent 25%),
-  linear-gradient(45deg, transparent 75%, #00000020 75%),
-  linear-gradient(-45deg, transparent 75%, #00000020 75%);
+  background-image: linear-gradient(45deg, #D3D3D320 25%, transparent 25%),
+  linear-gradient(-45deg, #D3D3D320 25%, transparent 25%),
+  linear-gradient(45deg, transparent 75%, #D3D3D320 75%),
+  linear-gradient(-45deg, transparent 75%, #D3D3D320 75%);
   background-size: 40px 40px;
   background-position: 0 0, 0 20px, 20px -20px, 20px 0;
 }
 
-
 .lattice {
-  background-image: linear-gradient(45deg, #00000020 25%, transparent 25%),
-  linear-gradient(-45deg, #00000020 25%, transparent 25%);
+  background-image: linear-gradient(45deg, #D3D3D320 25%, transparent 25%),
+  linear-gradient(-45deg, #D3D3D320 25%, transparent 25%);
   background-size: 30px 30px;
 }

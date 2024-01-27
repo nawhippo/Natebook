@@ -20,6 +20,9 @@ const PublicFeed = () => {
         fetchData();
     }, []);
 
+    const refreshPosts = () => {
+        fetchData();
+    };
 
 
     useEffect(() => {
@@ -82,8 +85,8 @@ const PublicFeed = () => {
     };
 
     return (
-        <div>
-            <h1>Feed</h1>
+        <div style={{marginRight: "30px", marginLeft: "30px"}}>
+            <h1 style={{textAlign:'center'}}>Feed</h1>
             <div className="search-bar-container">
                 <input
                     className="search-input"
@@ -99,7 +102,7 @@ const PublicFeed = () => {
 
             {user && (
                 <div className="create-post-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <CreatePostButton />
+                    <CreatePostButton onPostCreated={refreshPosts}/>
                 </div>
             )}
 

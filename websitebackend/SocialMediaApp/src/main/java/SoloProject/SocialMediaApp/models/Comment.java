@@ -62,7 +62,16 @@ public class Comment {
     @Column
     Long commenterid;
 
+    @Column
+    String dateTime;
 
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
 
     public Long getCommenterid() {
         return commenterid;

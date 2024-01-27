@@ -18,6 +18,11 @@ public class AppUser implements UserDetails {
     this.email = email;
     this.password = encodedPassword;
     this.username = username;
+    this.following = new ArrayList<>();
+    this.followers = new ArrayList<>();
+    this.friends = new ArrayList<>();
+    this.requests = new ArrayList<>();
+    this.blockList = new ArrayList<>();
     }
 
     public Boolean getPrivate() {

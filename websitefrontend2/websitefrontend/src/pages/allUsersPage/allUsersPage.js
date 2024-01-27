@@ -49,7 +49,7 @@ const AllUsersPage = () => {
   };
 
   return (
-      <div>
+      <div style={{marginRight: "30px", marginLeft: "30px"}}>
         <p>{addressBookData && addressBookData.message}</p>
         <h2 style={{textAlign: 'center', fontSize: '30px'}}>Users</h2>
         <div className="search-bar-container">

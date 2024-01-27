@@ -63,7 +63,7 @@ const AccountPage = () => {
   }
 
   return (
-    <div>
+      <div style={{marginRight: "30px", marginLeft: "30px"}}>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
       </div>
       {overlay &&
@@ -78,12 +78,15 @@ const AccountPage = () => {
       <p>Password: ****** </p>
       </overlay>
 }
-<StatusForm/>
+<div style={{display:'flex', flexDirection:'row'}}>
+      <StatusForm/>
       <UpdateAccountButton></UpdateAccountButton>
       <DeleteAccountButton></DeleteAccountButton>
+  </div>
       <p>Choose Theme Color: <ColorWheel/></p>
-    </div>
-  );
+
+</div>
+        );
 };
 
 export default AccountPage;

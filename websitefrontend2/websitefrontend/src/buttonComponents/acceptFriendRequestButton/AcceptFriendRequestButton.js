@@ -2,6 +2,7 @@ import React from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+import {Add} from "@mui/icons-material";
 const AcceptFriendRequestButton = ({ friendId, triggerFetch }) => {
   const { user } = useUserContext();
   const buttonStyle = {
@@ -9,8 +10,9 @@ const AcceptFriendRequestButton = ({ friendId, triggerFetch }) => {
     color: '#FFFFFF',
     cursor: 'pointer',
     outline: "3px solid black",
-    width: '150px',
-    height: '50px'
+    width: '100px',
+    height: '50px',
+    borderRadius: '30px',
   };
 
 
@@ -28,7 +30,7 @@ const AcceptFriendRequestButton = ({ friendId, triggerFetch }) => {
     }
   };
 
-  return <button style={{...buttonStyle}}onClick={handleClick}  className='button-common'>Accept Friend Request</button>;
+  return <Add style={{...buttonStyle}}onClick={handleClick}  className='button-common'>Accept Friend Request</Add>;
 };
 
 export default AcceptFriendRequestButton;

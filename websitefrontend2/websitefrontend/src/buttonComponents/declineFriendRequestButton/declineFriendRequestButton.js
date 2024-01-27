@@ -2,6 +2,7 @@ import React from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import {fetchWithJWT} from "../../utility/fetchInterceptor";
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+import RemoveIcon from '@mui/icons-material/Remove';
 const DeclineFriendRequestButton = ({ friendId, triggerFetch  }) => {
   const { user } = useUserContext();
 
@@ -10,8 +11,10 @@ const DeclineFriendRequestButton = ({ friendId, triggerFetch  }) => {
     color: '#FFFFFF',
     cursor: 'pointer',
     outline: "3px solid black",
-    width: '150px',
-    height: '50px'
+    width: '125px',
+    height: '70px',
+    borderRadius: '30px',
+    transform: 'TranslateY(-10px)',
   };
 
   const handleClick = () => {
@@ -26,7 +29,7 @@ const DeclineFriendRequestButton = ({ friendId, triggerFetch  }) => {
     });
   };
 
-  return <button style={{...buttonStyle}} onClick={handleClick}>Decline Friend Request</button>;
+  return <RemoveIcon style={{...buttonStyle}} onClick={handleClick}>Decline Friend Request</RemoveIcon>;
 };
 
 export default DeclineFriendRequestButton;

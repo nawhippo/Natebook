@@ -22,12 +22,14 @@ const Banner = () => {
 
 
     const bannerStyle = {
-        background: user && user.backgroundColor ? `linear-gradient(to right, ${user.backgroundColor}, black)` : `linear-gradient(to right, ${getRandomColor()}, black)`,
+        background: user && user.backgroundColor ? `${user.backgroundColor}` : `${getRandomColor()}`,
         display: 'flex',
+        backgroundSize: 'cover',
         flexDirection: 'row',
         width: '100%',
         margin: '0 !important',
-        padding: 0,
+        padding: '0 !important',
+
     };
 
     useEffect(() => {
@@ -44,7 +46,7 @@ const Banner = () => {
 
     return (
         <div className="banner" style={bannerStyle}>
-            <h1 className="title">NateBook</h1>
+            <h1 style={{marginLeft: '20px'}} className="title">MyFace</h1>
             <PeopleIcon className="button-common" onClick={() => handleLinkClick('/AllUsersPage')} style={{ width: '50px', height: 'auto', background: 'none' }} />
             <PostNotification/>
             <DynamicFeedIcon className="button-common" onClick={() => handleLinkClick('/Feed')} style={{ width: '50px', height: 'auto', background: 'none' }} />

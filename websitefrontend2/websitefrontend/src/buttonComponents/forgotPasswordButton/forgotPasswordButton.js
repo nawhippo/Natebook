@@ -10,7 +10,11 @@ const ForgotPasswordButton = () => {
 
     const buttonStyle = {
         backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
-        border: '3px solid black'
+        border: '3px solid black',
+        width:'245px',
+        borderRadius:'200px',
+        height: '45px',
+        transform: 'translateX(5px)'
     };
 
     const handleButtonClick = () => {

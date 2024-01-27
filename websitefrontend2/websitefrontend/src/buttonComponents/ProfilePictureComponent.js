@@ -74,7 +74,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
             });
 
         console.log('Beginning userid fetch for profile pic component:', userid);
-        fetchWithJWT(`/api/user/${userid}/getProfile`)
+        fetchWithJWT(`/api/user/${userid}`)
             .then(response => response.json())
             .then(userData => {
                 console.log('User data from fetchWithJWT:', userData);
@@ -82,6 +82,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
                     const userInitials = `${userData.firstname[0].toUpperCase()} ${userData.lastname[0].toUpperCase()}`;
                     console.log('Initials from fetchWithJWT:', userInitials);
                     setInitials(userInitials);
+                    setIsOnline(userData.online);
                 }
             })
             .catch(error => console.error('Error fetching user data with JWT:', error));
@@ -99,6 +100,21 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
         borderRadius: '50%',
         backgroundColor: profileColor,
         position: 'relative',
+        border: '3px solid black',
+    };
+    const imageStyle = {
+        ...customStyle,
+        objectFit: 'cover',
+        borderRadius: '50%',
+        width: style?.width || '70px',
+        height: style?.height || '70px',
+    };
+
+    const profileImageStyle = {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        borderRadius: '50%',
     };
 
     const onlineStatusStyle = {
@@ -109,8 +125,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
         left: '65%',
         borderRadius: '50%',
         backgroundColor: isOnline ? 'green' : 'red',
-        bottom: '5px',
-        border: '2px solid white',
+        border: '3px solid black',
     };
 
     const circleStyle = {
@@ -147,7 +162,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
                 <Link to={profileLink}>
                     <div style={customStyle} className={`profile-picture ${className}`}>
                         {profile ? (
-                            <img src={profile} alt="Profile" style={customStyle} />
+                            <img src={profile} alt="Profile" style={profileImageStyle} />
                         ) : (
                             <>
                                 <div style={circleStyle}></div>
@@ -160,7 +175,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
             ) : (
                 <div style={customStyle} className={`profile-picture ${className}`}>
                     {profile ? (
-                        <img src={profile} alt="Profile" />
+                        <img src={profile} alt="Profile" style={profileImageStyle}  />
                     ) : (
                         <>
                             <div style={circleStyle}></div>

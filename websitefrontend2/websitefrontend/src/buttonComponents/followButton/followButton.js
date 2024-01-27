@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useUserContext } from '../../pages/usercontext/UserContext';
 import { fetchWithJWT } from '../../utility/fetchInterceptor';
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
-
+import FollowTheSignsIcon from '@mui/icons-material/FollowTheSigns';
 const FollowButton = ({ followedId }) => {
     const [error, setError] = useState('');
     const { user } = useUserContext();
@@ -12,9 +12,9 @@ const FollowButton = ({ followedId }) => {
         backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
         color: '#FFFFFF',
         border: '4px solid black',
-        height: '50px',
-        width: '250px',
-        margin: '10px',
+        padding: '10px',
+        borderRadius: '15px',
+        transform: 'TranslateY(10px)',
     };
 
 
@@ -47,9 +47,9 @@ const FollowButton = ({ followedId }) => {
 
     return (
         <div>
-            <button style={buttonStyle} onClick={handleButtonClick}>
+            <FollowTheSignsIcon style={buttonStyle} onClick={handleButtonClick}>
                 Follow
-            </button>
+            </FollowTheSignsIcon>
             {error && <p>Error following user: {error}</p>}
         </div>
     );

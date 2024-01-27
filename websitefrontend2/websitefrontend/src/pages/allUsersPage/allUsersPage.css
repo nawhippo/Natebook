@@ -10,6 +10,7 @@
      border-color: black;
      outline-width: 3px;
     margin-bottom: 20px;
+    margin-right: 50px;
  }
 
 .user-item:hover {
@@ -31,3 +32,4 @@
 .user-item:nth-child(even) {
     background-color: lightgrey;
 }
+

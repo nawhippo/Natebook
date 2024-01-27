@@ -97,25 +97,25 @@ const Post = ({ post, fetchData, posterid }) => {
         <div className="post-container">
             <PostNotification postId={post.id}/>
             <div style={{display: 'flex', justifyContent: "center"}}>
-                <div style={{ transform: 'translateY(35px)', fontSize: '20px' }}>{post.posterUsername} </div>
+                <div style={{ transform: 'translateY(37.5px)', fontSize: '20px' }}>{post.posterUsername} </div>
                 <ProfilePictureComponent userid={posterid}/>
             </div>
             <div className="post-title">{post.title}</div>
             <div className="post-description">{processedDescription}</div>
             <div className="post-content">{post.content}</div>
-            <div className="post-datetime">{post.datetime}</div>
+
                 <br/>
-            <div className="image" style={{display: 'flex', justifyContent: "center"}}>
+            <div className="image" style={{display: 'flex', justifyContent: "center", flexDirection: 'column', alignItems: "center"}}>
             {images.map((image) => (
                 <img
                     key={image.id}
                     src={`data:image/${image.format};base64,${image.base64EncodedImage}`}
-                    alt="Post"
-                    style={{ width: image.width, height: image.height, marginBottom: '30px' }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                    style={{ width: 'auto', height: "auto", marginBottom: '30px', display: 'block', padding: '5px'}}
                 />
             ))}
             </div>
-
+            <div style={{color:"gray", fontSize:'13px', textAlign:'right'}} className="post-datetime">{post.dateTime}</div>
             <div className="interactions-container" style={{ display:'flex'}}>
                 <ReactionButtons
                     postId={post.id}
@@ -137,7 +137,7 @@ const Post = ({ post, fetchData, posterid }) => {
                         updateComments={fetchComments}
                     />
             </div>
-            <div style={{transform: 'translateX(100px)'}}>
+            <div style={{transform: 'translateX(97.5px)'}}>
             {user && user.username === post.posterUsername && (
                 <DeletePostButton
                     postId={post.id}

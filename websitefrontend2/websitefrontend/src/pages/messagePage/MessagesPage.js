@@ -39,29 +39,25 @@
             }
         };
 
-        const handleThreadClick = async (threadId) => {
-            setSelectedThreadId(threadId);
-            await getAllMessagesByThread(threadId);
+        const handleThreadClick = async (thread) => {
+            setSelectedThreadId(thread.id);
+            setCurrentThreadParticipants(thread.participantsNames)
+            await getAllMessagesByThread(thread.id);
         };
 
         const profilePicStyle = {
-            width: '30px',
-            height: '30px',
+            width: '70px',
+            height: '70px',
             position: 'relative',
-            zIndex: 1,
         };
 
-        const overlapStyle = {
-            ...profilePicStyle,
-            marginLeft: '-30px',
-        };
 
         const sentMessageStyle = {
             textAlign: 'right',
             backgroundColor: '#ADD8E6',
             color: 'black',
             padding: '10px',
-            borderRadius: '10px',
+            borderRadius: '30px',
             margin: '5px 0',
             maxWidth: '80%',
             alignSelf: 'flex-end',
@@ -72,11 +68,16 @@
             backgroundColor: '#f0f0f0',
             color: 'black',
             padding: '10px',
-            borderRadius: '10px',
+            borderRadius: '30px',
             margin: '5px 0',
             maxWidth: '80%',
             alignSelf: 'flex-start',
         };
+
+
+
+
+
         const getAllMessagesByThread = async (threadId) => {
             try {
                 const response = await fetchWithJWT(`/api/message/${threadId}/getAllMessages`);
@@ -106,7 +107,7 @@
                 console.log("Setting localRecipientUsername:", location.state.recipientUsername);
                 setLocalRecipientUsername(location.state.recipientUsername);
             }
-        }, [location, location.state]);
+        }, [location, location.state, selectedThreadId]);
 
 
         useEffect(() => {
@@ -132,37 +133,48 @@
         }, [selectedThreadId]);
     
         const formatParticipants = (participants) => {
-    
-            return participants.filter(name => name !== user.username).join(', ');
+            const currentUserLower = user.username.trim().toLowerCase();
+            const filteredNames = participants.filter(
+                name => name.trim().toLowerCase() !== currentUserLower
+            );
+            return filteredNames.join(', ');
         };
-    
+
+        const threadContainerStyle = {
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            width: '100%',
+            position: 'relative',
+            padding: '10px',
+        };
+
+        const profilePicContainerStyle = {
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'nowrap',
+            marginRight: 'auto',
+        };
+
         return (
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '20px' }}>
-                <ul style={{ listStyleType: 'none', padding: 0, margin: 0, width: '20%' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '20px'}}>
+                <ul style={{ listStyleType: 'none', padding: 0, margin: 0, width: '30%'}}>
                     {threads && threads.length > 0 ? (
                         threads.map((thread) => (
-                            <div key={thread.id} className="profile-picture-container" onClick={() => handleThreadClick(thread.id)}>
-
-                                {thread.participants
-                                    .filter(participant => participant !== user.appUserID)
-                                    .map((participant, index) => {
-                                        const isNotFirst = index > 0;
-                                        return (
+                            <div key={thread.id} className="profile-picture-container" style={threadContainerStyle} onClick={() => handleThreadClick(thread)}>
+                                <div style={profilePicContainerStyle}>
+                                    {thread.participants
+                                        .filter(participant => participant !== user.appUserID)
+                                        .map((participant, index) => (
                                             <ProfilePictureComponent
                                                 key={participant}
                                                 userid={participant}
-                                                style={isNotFirst ? overlapStyle : profilePicStyle}
+                                                style={profilePicStyle}
                                             />
-                                        );
-                                    })}
-                                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: -40,
-                                        right: -15,
-                                    }}>
-                                        <ThreadNotification threadId={thread.id} />
-                                    </div>
+                                        ))}
+                                </div>
+                                <div style={{position: "absolute", top: "-15px", right:"-10px"}}>
+                                    <ThreadNotification threadId={thread.id} />
                                 </div>
                             </div>
                         ))
@@ -171,8 +183,8 @@
                     )}
                 </ul>
                 {selectedThreadId && (
-                    <div style={{ width: '75%', marginLeft: '5%' }}>
-                        <h3 style={{textAlign: "center"}}>Conversation with: {formatParticipants(currentThreadParticipants)}</h3>
+                    <div style={{ width: '75%', marginLeft: '5%', marginRight:'5%' }}>
+                        <h3 style={{textAlign: "center", fontSize:"30px"}}>Conversation with: {formatParticipants(currentThreadParticipants)}</h3>
                         <ul style={{ listStyleType: 'none', padding: 0 }}>
                             {messages && messages.length > 0 ? (
                                 messages.map((message) => (

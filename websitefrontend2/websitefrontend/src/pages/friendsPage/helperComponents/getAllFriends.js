@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {useUserContext} from '../../usercontext/UserContext';
-import CreateMessageForm from '../../../buttonComponents/createMessageButton/createMessageButton';
 import DeleteFriendButton from '../../../buttonComponents/deleteFriendButton/deleteFriendButton';
 import SearchIcon from '@mui/icons-material/Search';
 import ProfilePictureComponent from "../../../buttonComponents/ProfilePictureComponent";
@@ -67,35 +66,9 @@ const GetAllFriends = () => {
   };
 
 
-  const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
-    color: '#FFFFFF',
-  };
-
-  const getOnlineStatusStyle = (isOnline) => ({
-    transform: 'translateY(-90px) translateX(0px)',
-    display: 'inline-block',
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    zIndex: '1000',
-    backgroundColor: isOnline ? 'green' : 'red',
-  });
-
-  const buttonContainerStyle = {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  };
-
-  const searchBarContainerStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  };
   return (
-
-      <div>
-        <h1>Friends</h1>
+      <div style={{ }}>
+        <h2 style={{ textAlign: 'center', fontSize: '30px' }}>Friends</h2>
         <div className="search-bar-container">
           <input
               className="search-input"
@@ -104,7 +77,7 @@ const GetAllFriends = () => {
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
           />
-          <button style={buttonStyle} className="search-button" onClick={handleSearch}>
+          <button className="search-button" style={{ backgroundColor: user?.backgroundColor || getRandomColor(), color: '#FFFFFF' }} onClick={handleSearch}>
             <SearchIcon />
           </button>
         </div>
@@ -114,16 +87,14 @@ const GetAllFriends = () => {
             <div>Error: {error}</div>
         ) : filteredFriends.length > 0 ? (
             <ul>
-              {filteredFriends.map(friend => (
-                  <li key={friend.id} className="user-item">
-                    <div className="user-name">
-                      <ProfilePictureComponent userid={friend.appUserID}/>
-                      <div className="user-details">
-                        <h2>{friend.username} - {friend.firstname} {friend.lastname}</h2>
-                      </div>
-                    </div>
-                    <div className="button-group">
+              {filteredFriends.map((friend, index) => (
+                  <li key={friend.id} className="user-item" style={{ ...listItemStyle, backgroundColor: index % 2 === 0 ? 'lightgray' : 'whitesmoke' }}>
+                    <div style={{ fontSize:'40px', marginLeft:'10px' }}>@{friend.username} - {friend.firstname} {friend.lastname}</div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
                       <DeleteFriendButton removeFriend={() => removeFriend(friend.username)} />
+                      <div style={{marginRight:'5px', marginLeft: '25px'}}>
+                      <ProfilePictureComponent userid={friend.appUserID} style={{ width: '150px', height: '150px' }}/>
+                      </div>
                     </div>
                   </li>
               ))}

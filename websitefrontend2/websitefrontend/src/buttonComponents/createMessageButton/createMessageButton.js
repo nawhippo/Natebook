@@ -89,7 +89,7 @@ const CreateMessageForm = ({ recipientUsername }) => {
                 />
             </div>
             <div className="form-field">
-                <textarea
+                <textarea style={{maxWidth: '100%'}}
                     className="textarea-field"
                     placeholder="Enter your message"
                     value={content}

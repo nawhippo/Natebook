@@ -5,13 +5,14 @@ import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
 import SoloProject.SocialMediaApp.repository.NotificationRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.multipart.MultipartFile;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -120,8 +121,12 @@ public class PostService {
                 notificationRepository.save(notification);
             }
         }
-
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy 'at' hh:mm:ss a");
+        String formattedDateTime = now.format(formatter);
+        post.setDateTime(formattedDateTime);
         postRepository.save(post);
+
         for(Long userid : appUser.getFollowers()){
             Notification notification = new Notification(userId, "Post", post.getId());
             notificationRepository.save(notification);

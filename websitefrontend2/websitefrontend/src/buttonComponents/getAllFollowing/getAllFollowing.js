@@ -5,6 +5,7 @@ import {useUserContext} from "../../pages/usercontext/UserContext";
 import { fetchWithJWT } from '../../utility/fetchInterceptor';
 import UserStatus from "../../buttonComponents/getStatus/getStatus";
 import { getRandomColor } from "../../FunSFX/randomColorGenerator";
+
 import './getAllFollowing.css';
 const GetAllFollowing = ({ userId, setFollowingCount }) => {
     const [followingData, setFollowingData] = useState([]);
@@ -47,6 +48,7 @@ const GetAllFollowing = ({ userId, setFollowingCount }) => {
     const buttonStyle = {
         backgroundColor: userContext?.user?.backgroundColor || getRandomColor(),
         color: '#FFFFFF',
+        height: '44.5px'
     };
 
     const getOnlineStatusStyle = (isOnline) => ({

@@ -45,38 +45,32 @@ const StatusForm = () => {
         border: '4px solid black',
     };
 
-    if (!isVisible) {
-        return (
-            <button onClick={() => setIsVisible(true)} style={buttonStyle}>
-                Post Status
-            </button>
-        );
-    }
     return (
         <div>
             {!isVisible && (
-                <button onClick={() => setIsVisible(true)} style={buttonStyle}>
+                <button className='button-common' onClick={() => setIsVisible(true)} style={{...buttonStyle, width: '200px', height: '50px'}}>
                     Post Status
                 </button>
             )}
             {isVisible && (
                 <div className={styles.overlay}>
                     <div className={styles.loginFormContainer}>
-                        <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={{...buttonStyle, borderRadius: '5px'}}>
+                        <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={{...buttonStyle, border:'2px solid black', borderRadius: '5px'}}>
                             X
                         </button>
-                        <h2>Status Form</h2>
+                        <h2>Status</h2>
                         <form onSubmit={handleSubmit}>
                             <div>
-                                <label htmlFor="content">Status Content:</label>
-                                <textarea
+                                <textarea style={{width: '350px'}}
                                     id="content"
                                     value={content}
+                                    placeholder={'How are you feeling?'}
                                     onChange={(e) => setContent(e.target.value)}
                                 />
                             </div>
                             <div>
                                 <label htmlFor="lifespan">Lifespan (minutes): {lifespan}</label>
+                                <br></br>
                                 <input
                                     type="range"
                                     id="lifespan"

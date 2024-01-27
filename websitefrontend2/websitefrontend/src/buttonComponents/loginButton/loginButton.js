@@ -74,7 +74,7 @@ const LoginButton = () => {
         {isVisible && (
             <div className={styles.overlay}>
               <div className={styles.loginFormContainer}>
-                <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={{...buttonStyle,  border: '4px solid black', borderRadius: '5px'}}>
+                <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={{...buttonStyle,  border: '2px solid black', borderRadius: '5px'}}>
                   X
                 </button>
                 <h2 style={{fontSize: "30px"}}>Login</h2>

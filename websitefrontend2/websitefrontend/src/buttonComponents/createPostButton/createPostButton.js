@@ -8,13 +8,14 @@ import './CreatePostButton.css';
 import ProfilePictureComponent from "../ProfilePictureComponent";
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
 
-const CreatePostButton = () => {
+const CreatePostButton = ({ onPostCreated }) => {
   const { user } = useUserContext();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState([]);
   const [publicStatus, setPublicStatus] = useState(true);
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlePublicStatusToggle = () => {
     setPublicStatus(!publicStatus);
@@ -36,11 +37,17 @@ const CreatePostButton = () => {
   };
 
   const handleImageChange = async (e) => {
+    setIsLoading(true);
+    try{
     const selectedImages = Array.from(e.target.files);
     const base64Images = await Promise.all(selectedImages.map(async (file) => {
       return await convertToBase64(file);
     }));
     setImages(base64Images);
+  } catch (error) {
+    console.error('Error processing images:', error);
+  }
+    setIsLoading(false);
   };
 
   const buttonStyle = {
@@ -48,7 +55,7 @@ const CreatePostButton = () => {
     color: '#FFFFFF',
     border: 'none',
     padding: '10px 20px',
-    borderRadius: '4px',
+    borderRadius: '15px',
     cursor: 'pointer',
     margin: '10px 0'
 
@@ -91,6 +98,7 @@ const CreatePostButton = () => {
         setTitle('');
         setDescription('');
         setImages([]);
+        onPostCreated();
       } else {
         setMessage('Failed to create post.');
       }
@@ -113,7 +121,7 @@ const CreatePostButton = () => {
         marginBottom: '30px'
       }}>
         <div style={{display: 'flex', justifyContent: "center", marginBottom: '15px'}}>
-          <div style={{ transform: 'translateY(50px)', fontSize: '20px' }}>{user.username} </div>
+          <div style={{ transform: 'translateY(37.5px)', fontSize: '20px' }}>{user.username} </div>
           <ProfilePictureComponent userid={user.appUserID}/>
         </div>
         <input style={{width:'400px', transform:"translateX(30px)"}}
@@ -142,8 +150,22 @@ const CreatePostButton = () => {
             onChange={handleImageChange}
         />
         <label htmlFor="image-upload" className="image-upload-label">Upload Image</label>
+        <div className="image-preview-container">
+          {images.map((image, index) => (
+              <img
+                  key={index}
+                  src={`data:image/jpeg;base64,${image}`}
+                  alt="Uploaded"
+                  style={{ width: '100px', height: '100px', margin: '5px' }}
+              />
+          ))}
+        </div>
+        {isLoading ? (
+            <div>Loading...</div>
+        ) : (
         <button className="button" onClick={handleCreatePost} style={{...buttonStyle, transform:'translateX(95px)',  border: '3px solid black', }} >Submit Post</button>
-        {message && <p className="create-post-message">{message}</p>}
+        )}
+        {message && <p className="create-post-message" style={{ color: 'black' }}>{message}</p>}
       </div>
   );
 };

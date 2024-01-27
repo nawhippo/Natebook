@@ -14,6 +14,7 @@ import FollowButton from "../../buttonComponents/followButton/followButton";
 import UnfollowButton from "../../buttonComponents/unfollowButton/unfollowButton";
 import GetAllFollowing from "../../buttonComponents/getAllFollowing/getAllFollowing";
 import GetAllFollowers from "../../buttonComponents/getAllFollowers/getAllFollowers";
+import MessageIcon from '@mui/icons-material/Message';
 const ProfilePage = () => {
   const {userid} = useParams();
   const {user} = useUserContext();
@@ -108,18 +109,6 @@ const ProfilePage = () => {
     transform: "TranslateY(50px)"
   };
 
-  const onlineStatusStyle = {
-    position: 'absolute',
-    top: '100%',
-    left: '-22%',
-    width: '80px',
-    height: '80px',
-    borderRadius: '50%',
-    transform: "TranslateY(-10px)",
-    backgroundColor: accountData && accountData.online ? 'green' : 'red',
-  };
-
-
   const buttonStyle = {
     backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
     color: '#FFFFFF',
@@ -127,6 +116,7 @@ const ProfilePage = () => {
     height: '50px',
     width: '250px',
     margin: '10px',
+    borderRadius:'15px',
   };
 
   const toggleSectionStyle = {
@@ -148,7 +138,7 @@ const ProfilePage = () => {
     return <div>Loading...</div>;
   }
   return (
-      <div>
+      <div style={{marginRight: "30px", marginLeft: "30px"}}>
         {accountData && (
             <div style={containerStyle}>
               <div style={{transform: 'translateX(30px)'}}>
@@ -158,12 +148,16 @@ const ProfilePage = () => {
                 <div style={nameAndStatusContainerStyle}>
                   <p>{accountData.firstname} {accountData.lastname}</p>
                 </div>
+                <p style={{fontSize: '20px'}}>@{accountData.username}</p>
+                <UserStatus style={{fontSize: '50px'}} appUserId={accountData.appUserID}/>
+                <p style={{fontSize: '20px'}}>{accountData.biography}</p>
                 <p style={{fontSize: '30px'}}> Friends: {accountData.friendCount} Followers: {followersCount} Following: {followingCount} </p>
-                <UserStatus appUserId={accountData.appUserID}/>
+
               </div>
             </div>
         )}
 
+        <div style={{display:'flex', flexDirection:'row', transform:'translateX(70px)', background:'lightgray', width: '220px', borderRadius: '30px', border: user && !isCurrentUser ? 'solid black 3px' : 'none'}}>
         {user && !isCurrentUser && (
             <>
               {isFriend ? (
@@ -183,11 +177,11 @@ const ProfilePage = () => {
               ) : (
                   <FollowButton followedId={accountData.appUserID}/>
               )}
-              <button style={buttonStyle} onClick={() => SendMessageButtonClick(accountData.username)}>
-                Send Message
-              </button>
+              <MessageIcon style={{...buttonStyle, width:'35px', height: '35px', fontSize:'10px !important', padding:'5px', marginLeft: '20px'}} onClick={() => SendMessageButtonClick(accountData.username)}>
+              </MessageIcon>
             </>
         )}
+        </div>
         {accountData && (
             <div style={{width: '100%'}}>
               <div style={{display: 'flex', justifyContent: 'center', margin: '10px 0'}}>

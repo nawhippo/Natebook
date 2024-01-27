@@ -5,6 +5,7 @@
     max-width: 500px;
     margin: auto;
     justify-content: center;
+    border: 2px solid black;
 }
 
 .form-field {

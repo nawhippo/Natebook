@@ -193,5 +193,7 @@ public class AppUserDTO {
         this.profilePicture = appUser.getProfilePicture();
         this.isPrivate = appUser.isPrivate();
         this.profileColor = appUser.getProfileColor();
+        this.occupation = appUser.getOccupation();
+        this.biography = appUser.getBiography();
     }
 }

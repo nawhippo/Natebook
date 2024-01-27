@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
@@ -104,26 +105,6 @@ public class AccountService {
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }
 
-//    public ResponseEntity<AppUser> createAccountFromUser(OAuth2User principal){
-//        String firstName = principal.getAttribute("given_name");
-//        String lastName = principal.getAttribute("family_name");
-//        String email = principal.getAttribute("email");
-//        //username is email removed from it.
-//        String username = email.split("@")[0];
-//        //username must be added as a parameter
-//        AppUser existingUser = appUserRepository.findByUsername(username);
-//
-//        if (existingUser != null) {
-//            // User already exists, update if needed
-//            return ResponseEntity.ok(existingUser);
-//        }
-//        //merely a placeholder, then again, how will users sign back in again if they've already logged in with google
-//        String password = "defaultPassword";
-//
-//        AppUser newUser = new AppUser(firstName, lastName, username, email, password);
-//        appUserRepository.save(newUser);
-//        return ResponseEntity.ok(newUser);
-//    }
 
     //anyone can make a request to this endpoint, potential security concern
     @Transactional

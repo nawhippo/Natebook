@@ -39,7 +39,7 @@ const DeleteAccountButton = () => {
   }
 
   const buttonStyle = {
-    backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
+    backgroundColor: 'Red',
     color: '#FFFFFF',
     border: '4px solid black',
   };

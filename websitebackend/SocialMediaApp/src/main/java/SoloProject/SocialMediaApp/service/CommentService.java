@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +31,11 @@ public class CommentService {
 
     public Comment createComment(Long PostId, Comment comment) {
         comment.setPostid(PostId);
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy 'at' hh:mm:ss a");
+        String formattedDateTime = now.format(formatter);
+        comment.setDateTime(formattedDateTime);
         return commentRepository.save(comment);
     }
 

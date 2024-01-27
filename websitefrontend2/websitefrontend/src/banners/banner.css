@@ -2,20 +2,22 @@
     text-align: left;
     text-decoration-color: bisque;
     font-size: 11px;
+    font-color: 'white';
     font-weight: bold;
     display: flex;
     flex-direction: row !important;
     position: relative;
-    width: 100%;
+    width: 100% !important;
 }
 
 .banner {
     display: flex;
     align-items: center;
+    margin-bottom: 15px;
 }
 .title {
-    color: black;
-    font-size: 30px;
+    color: white;
+    font-size: 50px;
 }
 
 .dropbtn {

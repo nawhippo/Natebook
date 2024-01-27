@@ -41,7 +41,7 @@ function App() {
               <Banner />
               <header className="App-header">
                 <Switch>
-                  <Route path="/Account" exact component={AccountPage} />
+                  <Route path="/Account"  exact component={AccountPage} />
                   <Route path="/Feed" exact component={FeedPage} />
                   <Route path="/AllUsersPage" exact component={AllUserPage} />
                   <Route path="/Friends" component={FriendsPage} />
