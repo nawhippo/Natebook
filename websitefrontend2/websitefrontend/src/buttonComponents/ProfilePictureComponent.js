@@ -23,7 +23,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
             return;
         }
 
-        fetch(`/api/user/${userid}`)
+        fetchWithJWT(`/api/user/${userid}`)
             .then(response => response.json())
             .then(userData => {
 
