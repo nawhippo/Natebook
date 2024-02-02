@@ -20,7 +20,7 @@ const ReactionButtons = ({ commentId, updateLikesDislikes, likesCount, dislikesC
         },
         body: JSON.stringify({ action }),
       });
-      const data = await response.json(); // Assuming the server returns the updated comment
+      const data = await response.json();
       if (response.ok) {
         return data;
       } else {

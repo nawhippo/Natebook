@@ -17,7 +17,7 @@ const UserPosts = ({ userid, profileUserId }) => {
   };
 
   const fetchData = async () => {
-    const response = await fetch(`/api/posts/${profileUserId}`);
+    const response = await fetchWithJWT(`/api/posts/${profileUserId}`);
 
     if (response.status === 204) {
       setError("User's posts not found.");

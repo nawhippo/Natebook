@@ -6,6 +6,7 @@ import styles from './createAccount.module.css';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import '../../global.css';
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 const CreateAccount = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -46,7 +47,7 @@ const CreateAccount = () => {
       return;
     }
 
-    fetch("/api/account/createAccount", {
+    fetchWithJWT("/api/account/createAccount", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -80,7 +81,7 @@ const CreateAccount = () => {
     requestBody.append('username', username);
     requestBody.append('password', password);
 
-    fetch('/api/login', {
+    fetchWithJWT('/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

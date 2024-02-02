@@ -7,6 +7,7 @@ import '../../global.css';
 import { useHistory } from 'react-router-dom';
 import ForgotPasswordButton from "../forgotPasswordButton/forgotPasswordButton";
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState('');
@@ -32,7 +33,7 @@ const LoginButton = () => {
     requestBody.append('username', username);
     requestBody.append('password', password);
 
-    fetch('/api/login', {
+    fetchWithJWT('/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

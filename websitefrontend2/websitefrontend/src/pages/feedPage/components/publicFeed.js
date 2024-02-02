@@ -40,7 +40,7 @@ const PublicFeed = () => {
     const fetchData = () => {
         const endpoint = '/api/publicFeed';
         setIsLoading(true);
-        fetch(endpoint)
+        fetchWithJWT(endpoint)
             .then((response) => {
                 if (response.status === 404) {
                     setAllPostsData([]);

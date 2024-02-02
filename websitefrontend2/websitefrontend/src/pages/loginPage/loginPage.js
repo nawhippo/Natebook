@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import Cookies from 'js-cookie';
 import '../../global.css';
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 const LoginPage = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [username, setUsername] = useState('');
@@ -30,7 +31,7 @@ const LoginPage = () => {
             password: password,
         };
 
-        fetch('/api/login', {
+        fetchWithJWT('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

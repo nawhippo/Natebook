@@ -1,21 +1,21 @@
 import Cookies from 'js-cookie';
 import { showSessionExpiredOverlay } from './sessionExpiredOverlay';
 
-
 const backendBaseUrl = 'https://natebook.onrender.com';
 const fetchWithJWT = async (endpoint, options = {}) => {
-    let token = Cookies.get('jwt');
+    const token = Cookies.get('jwt')?.trim();
 
-    if (token) {
-        token = token.trim();
-    }
-
-    const url = `${backendBaseUrl}${endpoint}`;
 
     const headers = {
         ...options.headers,
-        Authorization: `Bearer ${token}`,
     };
+
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+
+    const url = `${backendBaseUrl}${endpoint}`;
 
     try {
         const response = await fetch(url, { ...options, headers });
@@ -27,7 +27,6 @@ const fetchWithJWT = async (endpoint, options = {}) => {
                 showSessionExpiredOverlay();
                 return Promise.reject('Session expired');
             }
-
             throw new Error('Response was not ok!');
         }
 
@@ -38,4 +37,4 @@ const fetchWithJWT = async (endpoint, options = {}) => {
     }
 };
 
-export {fetchWithJWT};
+export { fetchWithJWT };

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useUserContext} from '../../pages/usercontext/UserContext';
 import {getRandomColor} from "../../FunSFX/randomColorGenerator";
+import {fetchWithJWT} from "../../utility/fetchInterceptor";
 
 const ForgotPasswordButton = () => {
     const [buttonUsed, setButtonUsed] = useState('');
@@ -19,7 +20,7 @@ const ForgotPasswordButton = () => {
 
     const handleButtonClick = () => {
         if (visible) {
-            fetch(`/api/account/ForgotPassword`, {
+            fetchWithJWT(`/api/account/ForgotPassword`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

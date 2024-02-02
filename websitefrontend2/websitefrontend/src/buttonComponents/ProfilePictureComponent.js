@@ -52,7 +52,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
                 setInitialsError(true);
             });
 
-        fetch(`/api/account/${userid}/getProfilePicture`)
+        fetchWithJWT(`/api/account/${userid}/getProfilePicture`)
             .then(response => {
                 if (!response.ok) throw Error('Network response was not ok');
                 if (response.headers.get('content-length') === '0') {
