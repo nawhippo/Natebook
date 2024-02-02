@@ -1,7 +1,12 @@
 package SoloProject.SocialMediaApp.models;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class PostCreationResponse {
     private Post post;
     private List<String> approvedUsernames;
@@ -11,19 +16,4 @@ public class PostCreationResponse {
         this.approvedUsernames = approvedUsernames;
     }
 
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public List<String> getApprovedUsernames() {
-        return approvedUsernames;
-    }
-
-    public void setApprovedUsernames(List<String> approvedUsernames) {
-        this.approvedUsernames = approvedUsernames;
-    }
 }

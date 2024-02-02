@@ -19,7 +19,7 @@ const Comment = ({ comment, updateComments }) => {
         <div key={comment.id} className='comment-container' style={{ width: '100%', margin: '15px 0', borderRadius: '20px', backgroundColor: 'lightgray', border:'2px solid black' }}>
             <div className='comment-header' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                 <p style={{ fontSize: '20px', marginLeft: '10px' }}>{comment.commenterusername}</p>
-                <ProfilePictureComponent userid={comment.commenterid} style={{ width: '50px', height: '50px' }} />
+                <ProfilePictureComponent userid={comment.commenterid} style={{ width: '55px', height: '50px' }} />
 
             </div>
             <div className='comment-body' style={{ padding: '10px' }}>

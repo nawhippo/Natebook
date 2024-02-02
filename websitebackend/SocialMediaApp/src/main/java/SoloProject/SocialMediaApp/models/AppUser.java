@@ -1,13 +1,18 @@
 package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "app_users")
 public class AppUser implements UserDetails {
@@ -25,25 +30,6 @@ public class AppUser implements UserDetails {
     this.blockList = new ArrayList<>();
     }
 
-    public Boolean getPrivate() {
-        return isPrivate;
-    }
-
-    public List<Long> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(List<Long> followers) {
-        this.followers = followers;
-    }
-
-    public List<Long> getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(List<Long> following) {
-        this.following = following;
-    }
 
     private List<Long> followers;
     private List<Long> following;
@@ -55,18 +41,10 @@ public class AppUser implements UserDetails {
     private String profileColor;
 
 
-    public String getProfileColor() {
-        return profileColor;
-    }
-
     public void setProfileColor(String profileColor) {
         this.profileColor = profileColor;
     }
 
-
-    public Long getProfilePicture() {
-        return profilePicture;
-    }
 
     public void setProfilePicture(Long profilePicture) {
         this.profilePicture = profilePicture;
@@ -77,48 +55,10 @@ public class AppUser implements UserDetails {
     @Column
     public Boolean isPrivate = false;
 
-    public Boolean isPrivate() {
-        return isPrivate;
-    }
-
-    public void setPrivate(Boolean aPrivate) {
-        isPrivate = aPrivate;
-    }
-
-    public boolean isOnline() {
-        return isOnline;
-    }
-
-    public void setOnline(boolean online) {
-        isOnline = online;
-    }
-
-
-
-
-
-
-
-    public int getFriendCount() {
-        return friendCount;
-    }
-
-    public void setFriendCount(int friendCount) {
-        this.friendCount = friendCount;
-    }
-
 
     private List<Long> requests;
 
     private List<Long> blockList;
-
-    public List<Long> getBlockList() {
-        return blockList;
-    }
-
-    public void setBlockList(List<Long> blockList) {
-        this.blockList = blockList;
-    }
 
     public AppUser(String firstName, String lastName, String email, String password, String username, String profileColor) {
         this.firstname = firstName;
@@ -134,20 +74,12 @@ public class AppUser implements UserDetails {
         this.profileColor = profileColor;
     }
 
-    public List<Long> getRequests() {
-        return requests;
-    }
-
     public void setRequests(List<Long> requests) {
         this.requests = requests;
     }
 
 
     private String role;
-
-    public String getRole() {
-        return role;
-    }
 
     public void setRole(String role) {
         this.role = role;
@@ -157,10 +89,6 @@ public class AppUser implements UserDetails {
         this.appUserID = appUserID;
     }
 
-
-    public String getPassword() {
-        return password;
-    }
 
     public void setPassword(String password) {
         this.password = password;
@@ -192,15 +120,6 @@ public class AppUser implements UserDetails {
 
     @Column
     private Boolean verified;
-
-    public Boolean getVerified() {
-        return verified;
-    }
-
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
-
 
 
     @ElementCollection
@@ -250,6 +169,14 @@ public class AppUser implements UserDetails {
     @Column(name = "authority")
     private Set<String> authorities = new HashSet<>();
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
     public void setRoles(String[] roles) {
         this.authorities.clear();
         for (String role : roles) {
@@ -259,62 +186,6 @@ public class AppUser implements UserDetails {
 
     public void addAuthority(String authority) {
         this.authorities.add(authority);
-    }
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for (String authority : authorities) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(authority));
-        }
-        return grantedAuthorities;
-    }
-
-    public String getBiography() {
-        return biography;
-    }
-
-    public void setBiography(String biography) {
-        this.biography = biography;
-    }
-
-    public String getOccupation() {
-        return occupation;
-    }
-
-    public void setOccupation(String occupation) {
-        this.occupation = occupation;
-    }
-
-    public Long getAppUserID() {
-        return appUserID;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     @Override
@@ -337,21 +208,6 @@ public class AppUser implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-
-
-    public List<Long> getFriends() {
-        return friends;
-    }
-
-    public void setFriends(List<Long> friends) {
-        this.friends = friends;
-    }
-
-
     @Override
     public String toString() {
         return "User{" +
@@ -361,10 +217,4 @@ public class AppUser implements UserDetails {
                 ", email='" + email + '\'' +
                 '}';
     }
-
-    public Long getId() {
-        return this.appUserID;
-    }
-
-
 }

@@ -39,10 +39,7 @@ public class FriendRequestService {
         List<Long> friendRequests = user.getRequests();
         List<AppUserDTO> dtoList = convertToDTOList(friendRequests);
 
-        // Delete notifications related to friend requests
         for (Long senderId : friendRequests) {
-            // Assuming 'Notification' has a constructor or method to identify friend request notifications
-            // Adjust according to your Notification model
             Notification notification = new Notification(userId, "FriendRequest", senderId);
             notificationRepository.delete(notification);
         }
@@ -152,11 +149,6 @@ public class FriendRequestService {
         return new ResponseEntity<>(appUser, HttpStatus.OK);
     }
 
-
-    public ResponseEntity<AppUser> saveUser(AppUser appUser) {
-        appUserRepository.save(appUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
-    }
 
 
     public ResponseEntity<List<Notification>> getAllFriendRequestNotifications(Long userId) {

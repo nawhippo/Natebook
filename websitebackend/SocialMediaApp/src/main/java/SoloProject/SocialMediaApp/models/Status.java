@@ -1,9 +1,16 @@
 package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "status")
 public class Status {
     @Id
@@ -24,9 +31,6 @@ public class Status {
 
     @Column(name = "death_time")
     private LocalDateTime death;
-
-    public Status() {
-    }
 
     public Status(Long id, Long appUserID, String content, LocalDateTime start, int lifespan, LocalDateTime death) {
         this.id = id;
@@ -53,54 +57,5 @@ public class Status {
         this.start = LocalDateTime.now();
         this.lifespan = lifespan;
         this.death = this.start.plusHours(lifespan);
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getAppUserID() {
-        return appUserID;
-    }
-
-    public void setAppUserID(Long appUserID) {
-        this.appUserID = appUserID;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getStart() {
-        return start;
-    }
-
-    public void setStart(LocalDateTime start) {
-        this.start = start;
-    }
-
-    public int getLifespan() {
-        return lifespan;
-    }
-
-    public void setLifespan(int lifespan) {
-        this.lifespan = lifespan;
-    }
-
-    public LocalDateTime getDeath() {
-        return death;
-    }
-
-    public void setDeath(LocalDateTime death) {
-        this.death = death;
     }
 }

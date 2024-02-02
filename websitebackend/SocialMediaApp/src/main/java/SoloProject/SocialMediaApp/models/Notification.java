@@ -2,10 +2,14 @@ package SoloProject.SocialMediaApp.models;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Optional;
-
+@Getter
+@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "notifications")
 public class Notification {
 
@@ -26,8 +30,6 @@ public class Notification {
     @Column(name = "thread_id")
     private Long threadId;
 
-    public Notification() {
-    }
 
     public Notification(Long userId, String notificationType, Long objectId) {
         this.userId = userId;
@@ -40,45 +42,5 @@ public class Notification {
         this.notificationType = notificationType;
         this.objectId = objectId;
         this.threadId = threadId;
-    }
-
-    public Long getThreadId() {
-        return threadId;
-    }
-
-    public void setThreadId(Long threadId) {
-        this.threadId = threadId;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getNotificationType() {
-        return notificationType;
-    }
-
-    public void setNotificationType(String notificationType) {
-        this.notificationType = notificationType;
-    }
-
-    public Long getObjectId() {
-        return this.objectId;
-    }
-
-    public void setObjectId(Long objectId) {
-        this.objectId = objectId;
     }
 }

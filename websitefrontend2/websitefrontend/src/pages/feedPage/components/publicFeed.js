@@ -3,6 +3,7 @@ import Post from '../../objects/post';
 import CreatePostButton from '../../../buttonComponents/createPostButton/createPostButton';
 import SearchIcon from '@mui/icons-material/Search';
 import '../../../global.css';
+import './publicFeed.css'
 import {useUserContext} from '../../usercontext/UserContext';
 import {getRandomColor} from "../../../FunSFX/randomColorGenerator";
 import {fetchWithJWT} from "../../../utility/fetchInterceptor";
@@ -109,7 +110,7 @@ const PublicFeed = () => {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 {isLoading ? <p>Loading...</p> : error ? <p>Error: {error}</p> : filteredPosts.length > 0 ? filteredPosts.map((post) => (
                     <div key={post.id} onMouseEnter={() => deleteNotificationForPost(post.id)}>
-                        <Post post={post} posterid={post.posterAppUserId} fetchData={fetchData} />
+                        <Post post={post} posterid={post.posterId} fetchData={fetchData} />
                     </div>
                 )) : <p>No posts found.</p>}
             </div>

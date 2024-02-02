@@ -40,15 +40,6 @@ public class FriendService {
     }
 
 
-    public ResponseEntity<List<Long>> getFriends(Long userId) {
-        AppUser appUser = repository.findByAppUserID(userId);
-        if(appUser != null){
-            return ResponseEntity.ok(appUser.getFriends());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     public ResponseEntity<AppUser> getFriend(Long userId, Long friendId) {
         AppUser appUser = repository.findByAppUserID(userId);
         if(appUser != null){
@@ -76,53 +67,6 @@ public class FriendService {
     }
 
 
-
-
-
-
-
-
-
-
-
-//    public ResponseEntity<List<AppUserDTO>> getAllFriendsDTOS(Long UserId) {
-//        AppUser user = repository.findByAppUserID(UserId);
-//        if (user != null && user.getFriends() != null) {
-//            List<Long> friends = user.getFriends();
-//            List<UserDTO> DTOList = convertToDTOList(friends);
-//            return ResponseEntity.ok(DTOList);
-//        }
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//    }
-
-//    private List<UserDTO> convertToDTOList(List<Long> ids) {
-//        List<UserDTO> result = new ArrayList<>();
-//        if (ids != null) {
-//            for (long id : ids) {
-//                result.add(convertToDTO(id));
-//            }
-//        }
-//        return result;
-//    }
-
-    private AppUserDTO convertToDTO(Long id) {
-        AppUser user = repository.findByAppUserID(id);
-        if (user != null) {
-            return new AppUserDTO(
-                    user);
-        }
-        return null;
-    }
-
-
-    public ResponseEntity<List<Long>> getAllFriendsIDS(Long userId) {
-        AppUser user = repository.findByAppUserID(userId);
-        if(user == null) {
-            return ResponseEntity.notFound().build();
-        }else {
-            return ResponseEntity.ok(user.getFriends());
-        }
-    }
 
 
     public ResponseEntity<List<AppUser>> getAllFriendsAppUsers(Long userId) {

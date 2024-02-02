@@ -90,17 +90,20 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
     }, [userid]);
 
 
+    const height = style?.height || 75;
+    const width = style?.width || 75;
+
     const customStyle = {
         ...style,
-        width: style?.width || '70px',
-        height: style?.height || '70px',
+        height: height,
+        width: width,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '50%',
         backgroundColor: profileColor,
         position: 'relative',
-        border: '3px solid black',
+
     };
     const imageStyle = {
         ...customStyle,
@@ -108,6 +111,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
         borderRadius: '50%',
         width: style?.width || '70px',
         height: style?.height || '70px',
+        border: '3px solid black',
     };
 
     const profileImageStyle = {
@@ -115,6 +119,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
         height: '100%',
         objectFit: 'cover',
         borderRadius: '50%',
+        border: '3px solid black',
     };
 
     const onlineStatusStyle = {
@@ -130,6 +135,7 @@ const ProfilePictureComponent = ({ userid, className, style }) => {
 
     const circleStyle = {
         ...customStyle,
+        border: '3px solid black',
         backgroundColor: profileColor,
     };
 

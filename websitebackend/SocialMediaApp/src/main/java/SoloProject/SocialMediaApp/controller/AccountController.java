@@ -50,7 +50,7 @@ public class AccountController {
     }
 
     @PostMapping("/account/createAccount")
-    public ResponseEntity<AppUser> createAccount(@RequestBody Map<String, String> formData) {
+    public ResponseEntity<?> createAccount(@RequestBody Map<String, String> formData) {
         return accountService.createAccount(formData);
     }
 

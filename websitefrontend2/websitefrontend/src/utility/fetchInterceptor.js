@@ -1,7 +1,11 @@
 import Cookies from 'js-cookie';
 import { showSessionExpiredOverlay } from './sessionExpiredOverlay';
 
-const backendBaseUrl = 'https://natebook.onrender.com';
+//because proxy stopped working
+// const backendBaseUrl = 'https://natebook.onrender.com';
+
+
+const backendBaseUrl = 'http://localhost:8081';
 const fetchWithJWT = async (endpoint, options = {}) => {
     const token = Cookies.get('jwt')?.trim();
 

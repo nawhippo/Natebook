@@ -1,36 +1,21 @@
 package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class MessageThread {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Long> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(List<Long> participants) {
-        this.participants = participants;
-    }
-
-    public MessageThread() {
-
-    }
 
     public MessageThread(List<Long> participants, List<String> participantsNanes) {
         this.participants = participants;
@@ -38,10 +23,6 @@ public class MessageThread {
     }
     @ElementCollection
     List<Long> participants;
-
-    public List<String> getParticipantsNames() {
-        return participantsNames;
-    }
 
     @ElementCollection
     List<String> participantsNames;

@@ -53,10 +53,10 @@ public class PostService {
 
         List<Post> allPosts = postRepository.findAll();
         Collections.sort(allPosts, (post1, post2) -> {
-            boolean isFriend1 = friends.contains(post1.getPosterAppUserId());
-            boolean isFriend2 = friends.contains(post2.getPosterAppUserId());
-            boolean isFollowing1 = following.contains(post1.getPosterAppUserId());
-            boolean isFollowing2 = following.contains(post2.getPosterAppUserId());
+            boolean isFriend1 = friends.contains(post1.getPosterId());
+            boolean isFriend2 = friends.contains(post2.getPosterId());
+            boolean isFollowing1 = following.contains(post1.getPosterId());
+            boolean isFollowing2 = following.contains(post2.getPosterId());
 
             if ((isFriend1 && isFriend2) || (isFollowing1 && isFollowing2)) {
                 return post1.getDateTime().compareTo(post2.getDateTime());
@@ -107,7 +107,7 @@ public class PostService {
         Post post = createPostRequest.getPost();
         AppUser appUser = appUserRepository.findByAppUserID(userId);
         post.setPosterUsername(appUser.getUsername());
-        post.setPosterAppUserId(appUser.getAppUserID());
+        post.setPosterId(appUser.getAppUserID());
 
         String description = post.getDescription();
         ArrayList<String> usernames = parseUsernames(description);

@@ -3,10 +3,7 @@ package SoloProject.SocialMediaApp.service;
 import SoloProject.SocialMediaApp.ColorUtility;
 import SoloProject.SocialMediaApp.models.AppUser;
 import SoloProject.SocialMediaApp.models.CompressedImage;
-import SoloProject.SocialMediaApp.repository.AppUserRepository;
-import SoloProject.SocialMediaApp.repository.CommentRepository;
-import SoloProject.SocialMediaApp.repository.CompressedImageRepository;
-import SoloProject.SocialMediaApp.repository.PostRepository;
+import SoloProject.SocialMediaApp.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,11 +26,13 @@ public class AccountService {
     private final PostRepository postRepository;
     private final EmailSenderService emailSenderService;
     private final CompressionService compressionService;
+    private final VerificationService verificationService;
 
     private PasswordEncoder passwordEncoder;
 
     public AccountService(AppUserRepository appUserRepository,
                           CommentRepository commentRepository,
+                          VerificationService verificationService,
                           CompressedImageRepository compressedImageRepository, PostRepository postRepository,
                           EmailSenderService emailSenderService, CompressionService compressionService, PasswordEncoder passwordEncoder) {
         this.appUserRepository = appUserRepository;
@@ -43,16 +42,12 @@ public class AccountService {
         this.emailSenderService = emailSenderService;
         this.compressionService = compressionService;
         this.passwordEncoder = passwordEncoder;
+        this.verificationService = verificationService;
     }
 
     public ResponseEntity<AppUser> getAccountDetails(Long userid) {
         AppUser user = appUserRepository.findByAppUserID(userid);
         return ResponseEntity.ok(user);
-    }
-
-    public AppUser getAccountDetails(String username) {
-        AppUser user = appUserRepository.findByUsername(username);
-        return user;
     }
 
     public CompressedImage getProfilePicture(Long userId) {
@@ -93,7 +88,7 @@ public class AccountService {
         }
 
         if(newPrivate != null){
-            user.setPrivate(newPrivate);
+            user.setIsPrivate(newPrivate);
         }
         appUserRepository.save(user);
         return ResponseEntity.ok(user);
@@ -105,8 +100,6 @@ public class AccountService {
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }
 
-
-    //anyone can make a request to this endpoint, potential security concern
     @Transactional
     public ResponseEntity<AppUser> deleteAccount(Long userId) {
         AppUser user = appUserRepository.findByAppUserID(userId);
@@ -147,28 +140,26 @@ public class AccountService {
     }
 
 
-    public ResponseEntity<AppUser> createAccount(Map<String, String> formData) {
+    public ResponseEntity<?> createAccount(Map<String, String> formData) {
         String firstName = formData.get("firstname");
         String lastName = formData.get("lastname");
         String email = formData.get("email");
         String password = formData.get("password");
         String username = formData.get("username");
 
+        if(!verificationService.getVerified(email)){
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Your email address has not been verified yet."));
+        }
+
         String encodedPassword = passwordEncoder.encode(password);
         AppUser appUser = new AppUser(firstName, lastName, email, encodedPassword, username);
-        appUser.addAuthority("ROLE_USER");
         appUser.setFriendCount(0);
         String randomColor = ColorUtility.getRandomColor();
         appUser.setProfileColor(randomColor);
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
-    }
-    public ResponseEntity<?> createAccountFromGoogle(String firstName, String lastName, String email) {
-        String username = email.split("@")[0];
-        String password = "password";
-        AppUser user = new AppUser(firstName, lastName, email, password, username);
-        appUserRepository.save(user);
-        return ResponseEntity.ok(user);
     }
 
     public ResponseEntity<AppUser> forgotPassword(String email) {

@@ -97,8 +97,8 @@ const Post = ({ post, fetchData, posterid }) => {
         <div className="post-container">
             <PostNotification postId={post.id}/>
             <div style={{display: 'flex', justifyContent: "center"}}>
-                <div style={{ transform: 'translateY(37.5px)', fontSize: '20px' }}>{post.posterUsername} </div>
-                <ProfilePictureComponent userid={posterid}/>
+                <div style={{ transform: 'translateY(38.75px)', fontSize: '20px' }}>{post.posterUsername} </div>
+                <ProfilePictureComponent style={{width:'77.5px'}} userid={posterid}/>
             </div>
             <div className="post-title">{post.title}</div>
             <div className="post-description">{processedDescription}</div>

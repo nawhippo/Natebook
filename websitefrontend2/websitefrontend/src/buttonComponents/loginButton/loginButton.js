@@ -88,7 +88,7 @@ const LoginButton = () => {
                     <label style={{fontSize:"15px"}}>Password:</label>
                     <input type="password" name="password" value={password} onChange={handleInputChange} autoComplete={'off'} />
                   </div>
-                  <ForgotPasswordButton />
+                  {/*<ForgotPasswordButton />*/}
                   <div className={styles.buttonContainer}>
 
                     <button

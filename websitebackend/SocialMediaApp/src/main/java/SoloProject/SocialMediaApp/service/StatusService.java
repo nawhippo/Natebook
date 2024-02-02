@@ -27,16 +27,6 @@ public class StatusService {
         return statusRepository.save(newStatus);
     }
 
-    @Scheduled(fixedRate = 60000)
-    public void deleteExpiredStatuses() {
-        LocalDateTime now = LocalDateTime.now();
-        List<Status> expiredStatuses = statusRepository.findByDeathBefore(now);
-        for (Status status : expiredStatuses) {
-            statusRepository.delete(status);
-        }
-
-
-    }
     public Status getStatusByUser(Long appUserId) {
 
         System.out.println(statusRepository.findByAppUserID(appUserId));

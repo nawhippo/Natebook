@@ -17,9 +17,9 @@ public class FollowService {
     public ResponseEntity<?> followUser(Long userid, Long followedid){
         AppUser appUser = appUserRepository.findByAppUserID(userid);
         AppUser appUser1 = appUserRepository.findByAppUserID(followedid);
-        if(!appUser1.getBlockList().contains(appUser.getId())) {
-            appUser.getFollowing().add(appUser1.getId());
-            appUser1.getFollowers().add(appUser.getId());
+        if(!appUser1.getBlockList().contains(appUser.getAppUserID())) {
+            appUser.getFollowing().add(appUser1.getAppUserID());
+            appUser1.getFollowers().add(appUser.getAppUserID());
             appUserRepository.save(appUser);
             appUserRepository.save(appUser1);
             return ResponseEntity.ok(appUser);

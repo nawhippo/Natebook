@@ -1,8 +1,13 @@
 package SoloProject.SocialMediaApp.models;
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "images")
 public class CompressedImage {
 
@@ -32,11 +37,11 @@ public class CompressedImage {
     @Column
     private String format;
 
-    @Column(columnDefinition = "TEXT") // Use TEXT for long strings like Base64
+
+    //long string, so text is necessary
+    @Column(columnDefinition = "TEXT")
     private String base64EncodedImage;
-    public CompressedImage() {
-        // Default constructor
-    }
+
 
     public CompressedImage(byte[] imageData, int width, int height, String format, String base64EncodedImage) {
         this.imageData = imageData;
@@ -46,59 +51,4 @@ public class CompressedImage {
         this.base64EncodedImage = base64EncodedImage;
     }
 
-    public String getBase64EncodedImage() {
-        return base64EncodedImage;
-    }
-
-    public void setBase64EncodedImage(String base64EncodedImage) {
-        this.base64EncodedImage = base64EncodedImage;
-    }
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getPostid() {
-        return postid;
-    }
-
-    public void setPostid(Long postid) {
-        this.postid = postid;
-    }
-
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
 }

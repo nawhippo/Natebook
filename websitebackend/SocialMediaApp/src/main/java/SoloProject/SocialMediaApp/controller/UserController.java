@@ -92,7 +92,7 @@ public class UserController {
     public ResponseEntity<Long> checkUserExistence(@PathVariable String userName) {
         AppUser appUser = appUserRepository.findByUsername(userName);
         if (appUser != null) {
-            return ResponseEntity.ok(appUser.getId());
+            return ResponseEntity.ok(appUser.getAppUserID());
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -27,7 +27,6 @@ public class CompressionService {
     public CompressedImage compressImage(byte[] imageData, String originalFileName) throws IOException {
         System.out.println("ROOT LOCATION: " + rootLocation);
 
-        // Check if the image data is empty
         if (imageData.length == 0) {
             throw new IOException("Cannot compress an empty image.");
         }
@@ -47,17 +46,14 @@ public class CompressionService {
             outputStream.close();
         }
 
-        // Encode the compressed bytes to Base64
         String base64EncodedImage = Base64.getEncoder().encodeToString(compressedImageBytes);
 
-        // Save the compressed image to the file system
         String compressedFileName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) + "_compressed.jpg";
         Path compressedImagePath = rootLocation.resolve(compressedFileName);
         try (FileOutputStream fileOutputStream = new FileOutputStream(compressedImagePath.toFile())) {
             fileOutputStream.write(compressedImageBytes);
         }
 
-        // Create a CompressedImage object and save it to the database
         CompressedImage compressedImage = new CompressedImage();
         compressedImage.setImageData(base64EncodedImage.getBytes()); // Assuming imageData is a byte array in CompressedImage
         compressedImage.setBase64EncodedImage(base64EncodedImage); // Assuming there is a field to store Base64 string in CompressedImage

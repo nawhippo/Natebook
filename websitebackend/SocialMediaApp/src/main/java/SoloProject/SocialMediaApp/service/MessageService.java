@@ -43,11 +43,11 @@ public class MessageService {
         List<Long> recipientIds = new ArrayList<>();
         for (String username : recipientusernames) {
             AppUser appUser = appUserRepository.findByUsername(username);
-            if (appUser == null || !appUser.getFriends().contains(senderId) && !appUser.isPrivate() || appUser.getBlockList().contains(senderId)) {
+            if (appUser == null || !appUser.getFriends().contains(senderId) && !appUser.getIsPrivate() || appUser.getBlockList().contains(senderId)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Message cannot be sent due to privacy settings or block list.");
             }
-            recipientIds.add(appUser.getId());
+            recipientIds.add(appUser.getAppUserID());
 
         }
 
@@ -62,7 +62,7 @@ public class MessageService {
 
         for (String username : recipientusernames) {
             AppUser appUser = appUserRepository.findByUsername(username);
-            Notification notification = new Notification(appUser.getId(), "Message", message.getId(), message.getThreadid());
+            Notification notification = new Notification(appUser.getAppUserID(), "Message", message.getId(), message.getThreadid());
             System.out.println("Notification stored for user " + notification.getUserId() + " with message ID: " + notification.getObjectId());
             notificationRepository.save(notification);
         }

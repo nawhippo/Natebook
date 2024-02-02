@@ -1,13 +1,14 @@
 package SoloProject.SocialMediaApp.models;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "posts")
 public class Post {
     private ArrayList<Long> images;
@@ -49,13 +50,6 @@ public class Post {
     }
 
 
-    public ArrayList<Long> getImages() {
-        return images;
-    }
-
-    public void setImages(ArrayList<Long> images) {
-        this.images = images;
-    }
 
     @ElementCollection
     @MapKeyColumn(name="user_id")
@@ -64,18 +58,7 @@ public class Post {
     private Map<Long, String> reactions = new HashMap<>();
 
 
-    private void setFriendsOnly(boolean friendsOnly) {
-        this.friendsOnly = friendsOnly;
-    }
-
     private boolean friendsOnly;
-    public Long getPosterAppUserId() {
-        return posterId;
-    }
-
-    public void setPosterAppUserId(Long posterAppUserId) {
-        this.posterId = posterAppUserId;
-    }
 
     public Post() {
         reactions = new HashMap<>();
@@ -117,23 +100,8 @@ public class Post {
     //for display
     private int likesCount;
 
-    public int getLikesCount() {
-        return likesCount;
-    }
-
-    public void setLikesCount(int likesCount) {
-        this.likesCount = likesCount;
-    }
 
     private int dislikesCount;
-
-    public int getDislikesCount() {
-        return dislikesCount;
-    }
-
-    public void setDislikesCount(int dislikesCount) {
-        this.dislikesCount = dislikesCount;
-    }
 
     @Column
     private String dateTime;
@@ -144,37 +112,6 @@ public class Post {
         return sdf.format(new Date());
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public void addReaction(Long userId, String action) {
         String existingReaction = reactions.getOrDefault(userId, "None");
