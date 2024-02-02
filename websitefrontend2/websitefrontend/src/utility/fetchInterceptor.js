@@ -1,11 +1,16 @@
 import Cookies from 'js-cookie';
 import { showSessionExpiredOverlay } from './sessionExpiredOverlay';
-const fetchWithJWT = async (url, options = {}) => {
+
+
+const backendBaseUrl = 'https://natebook.onrender.com';
+const fetchWithJWT = async (endpoint, options = {}) => {
     let token = Cookies.get('jwt');
 
     if (token) {
         token = token.trim();
     }
+
+    const url = `${backendBaseUrl}${endpoint}`;
 
     const headers = {
         ...options.headers,
