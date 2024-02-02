@@ -47,6 +47,7 @@ const GetAllFollowers = ({ userId, setFollowersCount }) => {
     const buttonStyle = {
         backgroundColor: user?.backgroundColor || getRandomColor(),
         color: '#FFFFFF',
+        height: '44.5px'
     };
 
     const getOnlineStatusStyle = (isOnline) => ({

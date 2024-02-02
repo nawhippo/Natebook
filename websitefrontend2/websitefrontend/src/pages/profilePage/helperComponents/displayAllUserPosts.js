@@ -59,7 +59,7 @@ const UserPosts = ({ userid, profileUserId }) => {
 
   return (
       <div>
-        <h1>User Posts</h1>
+        <h1 style={{textAlign:'center'}}>User Posts</h1>
         <div className="search-bar-container">
           <input
               className="search-input"
@@ -77,7 +77,7 @@ const UserPosts = ({ userid, profileUserId }) => {
         ) : error ? (
             <div>{error}</div>
         ) : (
-            <div>
+            <div style={{alignItems: "center", display: 'flex', flexDirection: 'column'}}>
               {filteredPosts.length > 0 ? (
                   filteredPosts.map((post) => (
                       <Post

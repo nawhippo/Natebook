@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
   }
-  
+
   .friends-container > div {
     width: 48%;
   }

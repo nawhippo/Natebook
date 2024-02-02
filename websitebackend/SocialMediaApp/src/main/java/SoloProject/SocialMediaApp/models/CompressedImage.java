@@ -21,7 +21,7 @@ public class CompressedImage {
     }
 
     @Lob
-    private byte[] imageData; // Image data stored as a byte array
+    private byte[] imageData;
 
     @Column
     private int width;
