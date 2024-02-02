@@ -48,7 +48,7 @@ const Post = ({ post, fetchData, posterid }) => {
     };
     const fetchComments = async () => {
         try {
-            const response = await fetch(`/api/post/${post.id}/comments`);
+            const response = await fetchWithJWT(`/api/post/${post.id}/comments`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
