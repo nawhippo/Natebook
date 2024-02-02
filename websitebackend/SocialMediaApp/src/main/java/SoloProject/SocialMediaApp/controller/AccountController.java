@@ -8,6 +8,7 @@ import SoloProject.SocialMediaApp.repository.PostRepository;
 import SoloProject.SocialMediaApp.service.AccountService;
 import SoloProject.SocialMediaApp.service.CompressionService;
 import SoloProject.SocialMediaApp.service.PostService;
+import SoloProject.SocialMediaApp.service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,15 @@ public class AccountController {
     private final AccountService accountService;
     private final AppUserRepository appUserRepository;
 
+    private final VerificationService verificationService;
 
     @Autowired
     public AccountController(CommentRepository commentRepository, PostRepository postRepository,
                              AccountService userserviceimpl, AppUserRepository appUserRepository,
-                             PostService postService, CompressionService compressionService) {
+                             PostService postService, CompressionService compressionService, VerificationService verificationService) {
         this.accountService = userserviceimpl;
         this.appUserRepository = appUserRepository;
+        this.verificationService = verificationService;
     }
 
     @GetMapping("/account/{userId}/accountDetails")
@@ -78,6 +81,10 @@ public class AccountController {
         return accountService.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword, newOccupation, newBiography, newIsPrivate);
     }
 
+    @PostMapping("/account/generateVerificationToken")
+    public ResponseEntity<String> generateVerificationToken(@RequestBody String email) {
+        String verificationToken = verificationService.createAndSendEmailToken(email);
+    }
 
 
     @GetMapping("/account/{userid}/getProfilePicture")

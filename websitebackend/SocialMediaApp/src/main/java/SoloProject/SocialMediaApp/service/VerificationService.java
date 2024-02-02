@@ -4,6 +4,7 @@ import SoloProject.SocialMediaApp.models.EmailToken;
 import SoloProject.SocialMediaApp.repository.EmailTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,7 +23,7 @@ public class VerificationService {
     @Value("${app.verification-url}")
     private String verificationUrl;
 
-    public void createAndSendEmailToken(String email) {
+    public ResponseEntity<Object> createAndSendEmailToken(String email) {
         String token = UUID.randomUUID().toString().substring(0, 8);
         EmailToken emailToken = new EmailToken();
         emailToken.setToken(token);
@@ -31,10 +32,11 @@ public class VerificationService {
         emailTokenRepository.save(emailToken);
         String content = "Your email verification code is: " + token + ". Please enter this code on the verification page to verify your email.";
         mailService.sendVerificationMail(email, "Verify your email", content);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
-    public boolean verifyEmailToken(String token) {
+    public ResponseEntity<Void> verifyEmailToken(String token) {
         EmailToken emailToken = emailTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid verification token."));
 
@@ -43,12 +45,12 @@ public class VerificationService {
         }
         emailToken.setVerified(true);
         emailTokenRepository.save(emailToken);
-        return true;
+        return ResponseEntity.ok().build();
     }
 
-    public boolean getVerified(String email){
+    public ResponseEntity<Boolean> getVerified(String email) {
         Optional<EmailToken> token = emailTokenRepository.findByEmail(email);
-        return token.get().isVerified();
+        boolean isVerified = token.isPresent() && token.get().isVerified();
+        return ResponseEntity.ok(isVerified);
     }
-
 }
