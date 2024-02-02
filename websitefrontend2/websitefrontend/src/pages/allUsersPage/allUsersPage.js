@@ -17,7 +17,7 @@ const AllUsersPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchWithJWT('/api/user/getAllWebsiteUsers');
+        const response = await fetchWithJWT('https://natebook.onrender.com/api/user/getAllWebsiteUsers');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
