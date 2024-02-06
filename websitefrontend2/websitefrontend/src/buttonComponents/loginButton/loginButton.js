@@ -12,6 +12,8 @@ const LoginButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
   const history = useHistory();
   const { user, updateUser } = useUserContext();
@@ -25,6 +27,7 @@ const LoginButton = () => {
     }
     setError('');
   };
+
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -65,32 +68,37 @@ const LoginButton = () => {
     backgroundColor: user && user.backgroundColor ? user.backgroundColor : getRandomColor(),
   };
 
+
+
   return (
       <div>
         <LoginIcon
             className="button-common"
             onClick={() => setIsVisible(!isVisible)}
-            style={{ width: '50px', height: 'auto', background: 'none', color: 'white'}}
-        />{' '}
+            style={{ width: '50px', height: 'auto', background: 'none', color: 'white' }}
+        />
         {isVisible && (
             <div className={styles.overlay}>
               <div className={styles.loginFormContainer}>
-                <button className={styles.closeButton} onClick={() => setIsVisible(false)} style={{...buttonStyle,  border: '2px solid black', borderRadius: '5px'}}>
+                <button
+                    className={styles.closeButton}
+                    onClick={() => setIsVisible(false)}
+                    style={{ ...buttonStyle, border: '2px solid black', borderRadius: '5px' }}
+                >
                   X
                 </button>
-                <h2 style={{fontSize: "30px"}}>Login</h2>
+                <h2 style={{ fontSize: "30px" }}>Login</h2>
                 <form onSubmit={handleLogin}>
                   <div className={styles.inputGroup}>
-                    <label style={{fontSize:"15px"}}>Username:</label>
+                    <label style={{ fontSize: "15px" }}>Username:</label>
                     <input type="text" name="username" value={username} onChange={handleInputChange} />
                   </div>
                   <div className={styles.inputGroup}>
-                    <label style={{fontSize:"15px"}}>Password:</label>
+                    <label style={{ fontSize: "15px" }}>Password:</label>
                     <input type="password" name="password" value={password} onChange={handleInputChange} autoComplete={'off'} />
                   </div>
-                  {/*<ForgotPasswordButton />*/}
+                  <ForgotPasswordButton />
                   <div className={styles.buttonContainer}>
-
                     <button
                         type="submit"
                         style={{ ...buttonStyle, border: '3px solid black', borderRadius: '40px', color: "white", alignItems: "center" }}
@@ -99,7 +107,7 @@ const LoginButton = () => {
                       Login
                     </button>
                   </div>
-                  {error && <p style={{ color: 'red', transform:"translateX(60px)" }}>{error}</p>}
+                  {error && <p style={{ color: 'red', transform: "translateX(60px)" }}>{error}</p>}
                 </form>
               </div>
             </div>
@@ -107,5 +115,6 @@ const LoginButton = () => {
       </div>
   );
 };
+
 
 export default LoginButton;

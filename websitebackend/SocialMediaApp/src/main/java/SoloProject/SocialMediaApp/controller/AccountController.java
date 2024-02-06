@@ -5,10 +5,10 @@ import SoloProject.SocialMediaApp.models.CompressedImage;
 import SoloProject.SocialMediaApp.repository.AppUserRepository;
 import SoloProject.SocialMediaApp.repository.CommentRepository;
 import SoloProject.SocialMediaApp.repository.PostRepository;
-import SoloProject.SocialMediaApp.service.AccountService;
-import SoloProject.SocialMediaApp.service.CompressionService;
-import SoloProject.SocialMediaApp.service.PostService;
-import SoloProject.SocialMediaApp.service.VerificationService;
+import SoloProject.SocialMediaApp.service.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +27,19 @@ public class AccountController {
 
     private final VerificationService verificationService;
 
+    private final AccountRecoveryService accountRecoveryService;
     @Autowired
-    public AccountController(CommentRepository commentRepository, PostRepository postRepository,
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    public AccountController(CommentRepository commentRepository, PostRepository postRepository, AccountRecoveryService accountRecoveryService,
                              AccountService userserviceimpl, AppUserRepository appUserRepository,
-                             PostService postService, CompressionService compressionService, VerificationService verificationService) {
+                             PostService postService, CompressionService compressionService, VerificationService verificationService, ObjectMapper objectMapper) {
         this.accountService = userserviceimpl;
         this.appUserRepository = appUserRepository;
         this.verificationService = verificationService;
+        this.objectMapper = objectMapper;
+        this.accountRecoveryService = accountRecoveryService;
     }
 
     @GetMapping("/account/{userId}/accountDetails")
@@ -81,12 +87,34 @@ public class AccountController {
         return accountService.updateAccountDetails(userId, newFirstName, newLastName, newEmail, newPassword, newOccupation, newBiography, newIsPrivate);
     }
 
-    @PostMapping("/account/generateVerificationToken")
-    public ResponseEntity<String> generateVerificationToken(@RequestBody String email) {
-        String verificationToken = verificationService.createAndSendEmailToken(email);
+    @PostMapping("/account/recover")
+    public ResponseEntity<?> recoverAccount(@RequestBody Map<String, String> formData) {
+        String email = formData.get("email");
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body("Email is required for account recovery.");
+        }
+        return accountRecoveryService.sendEmail(email);
     }
 
+    @PostMapping("/account/generateVerificationToken")
+    public ResponseEntity<Object> generateVerificationToken(@RequestBody String email) throws JsonProcessingException {
+        Map<String, String> jsonMap = objectMapper.readValue(email, new TypeReference<Map<String,String>>(){});
+        String parsedEmail = jsonMap.get("email");
+        return verificationService.createAndSendEmailToken(parsedEmail);
+    }
 
+    @PostMapping("/account/checkVerification")
+    public ResponseEntity<Boolean> checkVerificationStatus(@RequestBody String email) throws JsonProcessingException {
+        Map<String, String> jsonMap = objectMapper.readValue(email, new TypeReference<Map<String,String>>(){});
+        String parsedEmail = jsonMap.get("email");
+        return verificationService.getVerified(parsedEmail);
+    }
+
+    @PostMapping("/account/verifyEmailToken")
+    public ResponseEntity<?> verifyEmailToken(@RequestBody Map<String, String> tokenData) {
+        String token = tokenData.get("token");
+        return verificationService.verifyEmailToken(token);
+    }
     @GetMapping("/account/{userid}/getProfilePicture")
     @Transactional
     public CompressedImage getProfilePictureFromUserId(@PathVariable Long userid){
@@ -108,6 +136,7 @@ public class AccountController {
         }
         return accountService.uploadProfilePicture(userId, base64Image);
     }
+
 
     @DeleteMapping("/account/{userId}/deleteAccount")
     public ResponseEntity<?> deleteAccount(@PathVariable Long userId,

@@ -9,12 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,10 +32,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.security.authentication.AuthenticationProvider;
+import java.util.*;
 
 @Configuration
 @EnableWebSecurity
@@ -42,6 +47,15 @@ public class SecurityConfig {
 
     @Autowired
     AppUserRepository appUserRepository;
+
+    @Autowired
+    private CustomAuthenticationProvider customAuthenticationProvider;
+
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(customAuthenticationProvider);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,7 +83,7 @@ public class SecurityConfig {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
                     }
-
+                    appUser.setOtp(null);
                     appUser.setOnline(true);
                     appUserRepository.save(appUser);
                     AppUserDTO appUserDTO = new AppUserDTO(appUser);
@@ -111,7 +125,12 @@ public class SecurityConfig {
                                 "/api/status/getByUser/*",
                                 "/api/post/*/posts/*",
                                 "/api/*/followers",
-                                "/api/*/following"
+                                "/api/*/following",
+                                "/api/account/generateVerificationToken",
+                                "/api/account/verifyEmailToken",
+                                "/api/account/checkVerification",
+                                "/account/recover"
+
                         ).permitAll()
                         .anyRequest().hasRole("USER")
                 )
@@ -163,9 +182,6 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
-
-
-
 
 
     @Bean

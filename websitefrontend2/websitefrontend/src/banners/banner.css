@@ -1,6 +1,5 @@
 .banner {
     text-align: left;
-    text-decoration-color: bisque;
     font-size: 11px;
     font-color: 'white';
     font-weight: bold;
@@ -29,6 +28,7 @@
     font-size: 70px;
     font-family: "Courier New";
     padding-right: 80px;
+    padding-left: 50px;
 }
 
 .dropdown {

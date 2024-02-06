@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useHistory} from 'react-router-dom/cjs/react-router-dom.min';
 import LoginButton from '../buttonComponents/loginButton/loginButton';
 import LogoutButton from '../buttonComponents/logoutButton/logoutButton';
-import CreateAccount from '../buttonComponents/createAccountButton/createAccountButton';
+import enterEmailButton from "../buttonComponents/createAccountButton/enterEmailButton";
 import SettingsIcon from '@mui/icons-material/Settings';
 import PeopleIcon from '@mui/icons-material/People';
 import MessageIcon from '@mui/icons-material/Message';
@@ -15,6 +15,7 @@ import Cookies from 'js-cookie';
 import {getRandomColor} from "../FunSFX/randomColorGenerator";
 import MessageNotifications from "../buttonComponents/MessageNotificationComponent/MessageNotifications";
 import PostNotification from "../buttonComponents/PostNotification/PostNotification";
+import EnterEmailButton from "../buttonComponents/createAccountButton/enterEmailButton";
 const Banner = () => {
     const history = useHistory();
     const [userData, setUserData] = useState(null);
@@ -60,8 +61,8 @@ const Banner = () => {
                 </div>
             ) : (
                 <>
-                    <LoginButton />
-                    <CreateAccount />
+                    <LoginButton className="button-common"/>
+                    <EnterEmailButton className="button-common"/>
                 </>
             )}
             {user &&

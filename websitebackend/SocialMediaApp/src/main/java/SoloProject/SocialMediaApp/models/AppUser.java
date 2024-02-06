@@ -121,6 +121,8 @@ public class AppUser implements UserDetails {
     @Column
     private Boolean verified;
 
+    @Column
+    private String otp;
 
     @ElementCollection
     @CollectionTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_id"))
@@ -217,4 +219,7 @@ public class AppUser implements UserDetails {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+
+
 }

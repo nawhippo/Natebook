@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +23,7 @@ public class AccountService {
     private final CommentRepository commentRepository;
     private final CompressedImageRepository compressedImageRepository;
     private final PostRepository postRepository;
-    private final EmailSenderService emailSenderService;
+    private final AccountRecoveryService accountRecoveryService;
     private final CompressionService compressionService;
     private final VerificationService verificationService;
 
@@ -34,12 +33,12 @@ public class AccountService {
                           CommentRepository commentRepository,
                           VerificationService verificationService,
                           CompressedImageRepository compressedImageRepository, PostRepository postRepository,
-                          EmailSenderService emailSenderService, CompressionService compressionService, PasswordEncoder passwordEncoder) {
+                          AccountRecoveryService accountRecoveryService, CompressionService compressionService, PasswordEncoder passwordEncoder) {
         this.appUserRepository = appUserRepository;
         this.commentRepository = commentRepository;
         this.compressedImageRepository = compressedImageRepository;
         this.postRepository = postRepository;
-        this.emailSenderService = emailSenderService;
+        this.accountRecoveryService = accountRecoveryService;
         this.compressionService = compressionService;
         this.passwordEncoder = passwordEncoder;
         this.verificationService = verificationService;
@@ -147,7 +146,9 @@ public class AccountService {
         String password = formData.get("password");
         String username = formData.get("username");
 
-        if(!verificationService.getVerified(email)){
+        ResponseEntity<Boolean> verificationResponse = verificationService.getVerified(email);
+
+        if (!verificationResponse.getBody()) {
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Your email address has not been verified yet."));
@@ -164,7 +165,7 @@ public class AccountService {
 
     public ResponseEntity<AppUser> forgotPassword(String email) {
         AppUser user = appUserRepository.findByEmail(email);
-        emailSenderService.sendEmail(email);
+        accountRecoveryService.sendEmail(email);
         return ResponseEntity.ok(user);
     }
 
