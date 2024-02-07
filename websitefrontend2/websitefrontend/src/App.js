@@ -48,6 +48,7 @@ function App() {
                   <Route path="/UserProfile/:userid" component={ProfilePage}/>
                   <Route path="/Messages" component={MessagesPage}/>
                   <Route path="/Login" component={LoginPage}/>
+                  <Route path="/" component={FeedPage}/>
                 </Switch>
               </header>
             </div>
