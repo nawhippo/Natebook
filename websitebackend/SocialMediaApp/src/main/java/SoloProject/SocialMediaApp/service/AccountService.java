@@ -159,6 +159,7 @@ public class AccountService {
         appUser.setFriendCount(0);
         String randomColor = ColorUtility.getRandomColor();
         appUser.setProfileColor(randomColor);
+        appUser.setRole("USER");
         appUserRepository.save(appUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(appUser);
     }
