@@ -1,5 +1,4 @@
-Natebook is a social networking application designed to connect users through real-time messaging, group chats, live feeds, and more. This document provides an overview of its features and how to get started.
-Features
+Natebook is a social networking application designed to connect users through real-time messaging, group chats, live feeds, and more. 
 Real-Time Messaging System
 
     Instant Messaging: Send and receive messages instantly with other users.
